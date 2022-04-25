@@ -1,2 +1,4 @@
-package br.com.meli.fresh.dto.request;public class BuyerRequestDTO {
+package br.com.meli.fresh.dto.request;
+
+public class BuyerRequestDTO {
 }

@@ -8,4 +8,5 @@ public interface ICrudService <T> {
     T update(String id, T t);
     Page<T> getAll(Pageable pageable);
     void delete(String id);
+
 }
