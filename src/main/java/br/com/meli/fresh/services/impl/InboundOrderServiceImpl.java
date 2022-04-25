@@ -1,6 +1,7 @@
 package br.com.meli.fresh.services.impl;
 
 import br.com.meli.fresh.model.InboundOrder;
+import br.com.meli.fresh.repository.IBatchRepository;
 import br.com.meli.fresh.repository.IInboundOrderRepository;
 import br.com.meli.fresh.services.ICrudService;
 import lombok.AllArgsConstructor;
@@ -12,11 +13,21 @@ import org.springframework.stereotype.Service;
 @AllArgsConstructor
 public class InboundOrderServiceImpl implements ICrudService<InboundOrder> {
 
-    private final IInboundOrderRepository repository;
+    private final IInboundOrderRepository orderRepository;
+    private final IBatchRepository batchRepository;
 
     @Override
     public InboundOrder create(InboundOrder inboundOrder) {
-        return null;
+        /*
+        TO-DO
+
+        Validate Section
+        Validate Batch List
+        Add Exceptions
+        ...
+         */
+        batchRepository.saveAll(inboundOrder.getBatchList());
+        return orderRepository.save(inboundOrder);
     }
 
     @Override
