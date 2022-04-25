@@ -25,6 +25,11 @@ public class ProductServiceImpl implements ICrudService<Product> {
     }
 
     @Override
+    public Product getById(String id) {
+        return null;
+    }
+
+    @Override
     public Page<Product> getAll(Pageable pageable) {
         return null;
     }

@@ -25,6 +25,11 @@ public class InboundOrderServiceImpl implements ICrudService<InboundOrder> {
     }
 
     @Override
+    public InboundOrder getById(String id) {
+        return null;
+    }
+
+    @Override
     public Page<InboundOrder> getAll(Pageable pageable) {
         return null;
     }
