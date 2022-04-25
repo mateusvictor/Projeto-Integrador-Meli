@@ -25,6 +25,11 @@ public class BatchServiceImpl implements ICrudService<Batch> {
     }
 
     @Override
+    public Batch getById(String id) {
+        return null;
+    }
+
+    @Override
     public Page<Batch> getAll(Pageable pageable) {
         return null;
     }

@@ -25,6 +25,11 @@ public class WarehouseManagerServiceImpl implements ICrudService<WarehouseManage
     }
 
     @Override
+    public WarehouseManager getById(String id) {
+        return null;
+    }
+
+    @Override
     public Page<WarehouseManager> getAll(Pageable pageable) {
         return null;
     }
