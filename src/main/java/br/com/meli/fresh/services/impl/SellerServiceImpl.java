@@ -25,6 +25,11 @@ public class SellerServiceImpl implements ICrudService<Seller> {
     }
 
     @Override
+    public Seller getById(String id) {
+        return null;
+    }
+
+    @Override
     public Page<Seller> getAll(Pageable pageable) {
         return null;
     }

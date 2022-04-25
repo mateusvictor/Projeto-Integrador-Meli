@@ -25,6 +25,11 @@ public class SectionServiceImpl implements ICrudService<Section> {
     }
 
     @Override
+    public Section getById(String id) {
+        return null;
+    }
+
+    @Override
     public Page<Section> getAll(Pageable pageable) {
         return null;
     }

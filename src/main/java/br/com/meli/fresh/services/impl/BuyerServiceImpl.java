@@ -25,6 +25,11 @@ public class BuyerServiceImpl implements ICrudService<Buyer> {
     }
 
     @Override
+    public Buyer getById(String id) {
+        return null;
+    }
+
+    @Override
     public Page<Buyer> getAll(Pageable pageable) {
         return repository.findAll(pageable);
     }
