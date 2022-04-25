@@ -60,9 +60,6 @@ public class ProductController {
                 .path("/{id}")
                 .buildAndExpand(p.getId())
                 .toUri());
-
-
-
     }
 
     @DeleteMapping("{id}")
