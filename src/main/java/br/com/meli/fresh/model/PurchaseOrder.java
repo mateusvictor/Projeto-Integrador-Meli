@@ -23,9 +23,11 @@ public class PurchaseOrder {
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
     private LocalDateTime date;
+
+    @Enumerated
     private OrderStatus orderStatus;
 
-    @ManyToOne
+    @OneToOne
     private Buyer buyer;
 
     @OneToMany

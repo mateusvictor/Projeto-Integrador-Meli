@@ -19,6 +19,9 @@ public class ProductOrder {
     private int quantity;
 
     @ManyToOne
+    private PurchaseOrder purchaseOrder;
+
+    @ManyToOne
     @JoinColumn(name= "product_id")
     private Product product;
 
