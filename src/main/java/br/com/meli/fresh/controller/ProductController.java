@@ -6,6 +6,7 @@ import br.com.meli.fresh.dto.response.productResponse.ProductResponse;
 import br.com.meli.fresh.model.Product;
 import br.com.meli.fresh.services.impl.ProductServiceImpl;
 import lombok.AllArgsConstructor;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -50,4 +51,25 @@ public class ProductController {
                 )
         );
     }
+
+    @PutMapping("{id}")
+    public ResponseEntity<?> updateProductById(@PathVariable String id, @RequestBody ProductRequest productRequest){
+        Product p = service.update(id, mapper.toDomainObject(productRequest));
+        return ResponseEntity.ok(ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(p.getId())
+                .toUri());
+
+
+
+    }
+
+    @DeleteMapping("{id}")
+    public ResponseEntity<?> deleteProductById(@PathVariable String id){
+        service.delete(id);
+        return ResponseEntity.ok().build();
+    }
 }
+
+

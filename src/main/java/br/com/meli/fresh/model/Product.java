@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
 import java.util.List;
@@ -15,6 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Where(clause = "isActive=true")
 public class Product {
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -28,4 +30,6 @@ public class Product {
 
     @OneToMany(mappedBy = "product")
     private List<Batch> batchList;
+
+    private Boolean isActive = true;
 }

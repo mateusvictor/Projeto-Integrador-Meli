@@ -45,8 +45,8 @@ public class ProductServiceImpl implements ICrudService<Product> {
 
     @Override
     public void delete(String id) {
-        repository.findById(id).orElseThrow(()-> new ProductNotFoundException(id));
-        repository.deleteById(id);
+        Product p = repository.findById(id).orElseThrow(()-> new ProductNotFoundException(id));
+        p.setIsActive(false);
 
     }
 }
