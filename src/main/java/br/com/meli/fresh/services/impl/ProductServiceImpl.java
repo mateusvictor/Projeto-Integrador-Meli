@@ -1,6 +1,7 @@
 package br.com.meli.fresh.services.impl;
 
 import br.com.meli.fresh.model.Product;
+import br.com.meli.fresh.model.exception.ProductNotFoundException;
 import br.com.meli.fresh.repository.IProductRepository;
 import br.com.meli.fresh.services.ICrudService;
 import lombok.AllArgsConstructor;
@@ -16,26 +17,36 @@ public class ProductServiceImpl implements ICrudService<Product> {
 
     @Override
     public Product create(Product product) {
-        return null;
+
+        return repository.save(product);
+
     }
 
     @Override
     public Product update(String id, Product product) {
-        return null;
+
+        Product productToBeUpdated = repository.findById(id).orElseThrow(()-> new ProductNotFoundException(id));
+        product.setId(productToBeUpdated.getId());
+        return repository.save(product);
+
+
     }
 
     @Override
     public Product getById(String id) {
-        return null;
+
+        return repository.findById(id).orElseThrow(()-> new ProductNotFoundException(id));
     }
 
     @Override
     public Page<Product> getAll(Pageable pageable) {
-        return null;
+        return repository.findAll(pageable);
     }
 
     @Override
     public void delete(String id) {
+        repository.findById(id).orElseThrow(()-> new ProductNotFoundException(id));
+        repository.deleteById(id);
 
     }
 }
