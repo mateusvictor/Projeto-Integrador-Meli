@@ -9,4 +9,5 @@ public interface ICrudService <T> {
     T getById(String id);
     Page<T> getAll(Pageable pageable);
     void delete(String id);
+
 }

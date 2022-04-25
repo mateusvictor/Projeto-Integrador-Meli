@@ -1,10 +1,12 @@
 package br.com.meli.fresh.model;
 
+import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 
 @MappedSuperclass
+@Data
 public abstract class User {
     @Id
     @GeneratedValue(generator = "uuid2")

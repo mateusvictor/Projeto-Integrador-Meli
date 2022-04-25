@@ -31,7 +31,7 @@ public class BuyerServiceImpl implements ICrudService<Buyer> {
 
     @Override
     public Page<Buyer> getAll(Pageable pageable) {
-        return null;
+        return repository.findAll(pageable);
     }
 
     @Override
