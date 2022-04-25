@@ -30,24 +30,35 @@ public class BuyerController {
     @PostMapping()
     public ResponseEntity<BuyerResponseDTO> create(@RequestBody BuyerRequestDTO request, UriComponentsBuilder uriBuilder){
         Buyer buyer = this.mapper.toDomainObject(request);
-
+        buyer = this.service.create(buyer);
         URI uri = uriBuilder
                 .path("/{id}")
                 .buildAndExpand(buyer.getId())
                 .toUri();
-        return ResponseEntity.created(uri).body(this.mapper.toResponseObject(this.service.create(buyer)));
+        return ResponseEntity.created(uri).body(this.mapper.toResponseObject(buyer));
     }
 
     @GetMapping()
     public ResponseEntity<Page<BuyerResponseDTO>> getAll(Pageable pageable){
-        Page<BuyerResponseDTO> page = new PageImpl<BuyerResponseDTO>(this.service.getAll(pageable).stream().map(this.mapper::toResponseObject).collect(Collectors.toList()));
-        return ResponseEntity.ok(page);
+        List<BuyerResponseDTO> list = this.service.getAll(pageable).stream().map(this.mapper::toResponseObject).collect(Collectors.toList());
+        Page<BuyerResponseDTO> pageList = new PageImpl<>(list);
+        return ResponseEntity.ok(pageList);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<BuyerResponseDTO> getById()
+    public ResponseEntity<BuyerResponseDTO> getById(@PathVariable String id){
+        return ResponseEntity.ok(this.mapper.toResponseObject(this.service.getById(id)));
+    }
 
+    @PutMapping("/{id}")
+    public ResponseEntity<BuyerResponseDTO> update(@PathVariable String id, @RequestBody BuyerRequestDTO requestDTO){
+        return ResponseEntity.ok(this.mapper.toResponseObject(this.service.update(id, this.mapper.toDomainObject(requestDTO))));
+    }
 
-
+    @DeleteMapping("/{id}")
+    public ResponseEntity<String> delete(@PathVariable String id){
+        this.service.delete(id);
+        return ResponseEntity.ok("Buyer deleted!");
+    }
 
 }

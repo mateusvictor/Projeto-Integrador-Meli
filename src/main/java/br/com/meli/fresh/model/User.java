@@ -13,7 +13,8 @@ public abstract class User {
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
     private String name;
+    @Column(unique = true)
     private String email;
     private String password;
-    private String role;
+    //private String role;
 }

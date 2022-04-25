@@ -14,7 +14,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "buyers")
 @AllArgsConstructor
-@NoArgsConstructor
+//@NoArgsConstructor
 @Getter
 @Setter
 public class Buyer extends User {
