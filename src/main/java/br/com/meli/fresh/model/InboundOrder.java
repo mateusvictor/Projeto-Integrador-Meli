@@ -31,4 +31,13 @@ public class InboundOrder {
     @ManyToOne
     @JoinColumn(name = "section_id")
     private Section section;
+
+    public Double calculateBatchesTotalVolume(){
+        // Calculates the sum of all batches volumes
+        Double batchesTotalVolume = 0.0;
+        for (Batch batch : batchList){
+            batchesTotalVolume += batch.getVolume();
+        }
+        return batchesTotalVolume;
+    }
 }
