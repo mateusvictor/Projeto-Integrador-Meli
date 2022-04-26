@@ -5,6 +5,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OrderStatusRequest {
-    private String orderStatus;
+public class CartItemRequest {
+    private String productId;
+    private int quantity;
 }

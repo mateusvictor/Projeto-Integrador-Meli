@@ -7,16 +7,15 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
-
-import br.com.meli.fresh.model.Buyer;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Entity
-@Table(name="purchase_orders")
-public class PurchaseOrder {
+@Table(name="carts")
+public class Cart {
 
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -24,13 +23,13 @@ public class PurchaseOrder {
     private String id;
     private LocalDateTime date;
 
-    @Enumerated
-    private OrderStatus orderStatus;
+    @Enumerated(EnumType.STRING)
+    private CartStatus cartStatus;
 
     @OneToOne
     private Buyer buyer;
 
-    @OneToMany
-    private List<ProductOrder> products;
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    private List<CartItem> items;
 
 }

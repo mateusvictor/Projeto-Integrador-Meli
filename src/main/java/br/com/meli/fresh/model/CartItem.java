@@ -11,15 +11,12 @@ import javax.persistence.*;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ProductOrder {
+public class CartItem {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
     private int quantity;
-
-    @ManyToOne
-    private PurchaseOrder purchaseOrder;
 
     @ManyToOne
     @JoinColumn(name= "product_id")

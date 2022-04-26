@@ -7,8 +7,8 @@ import java.util.List;
 
 @Getter
 @Setter
-public class OrderRequest {
+public class CartRequest {
     private String buyerId;
-    private OrderStatusRequest orderStatus;
-    private List<ProductOrderRequest> products;
+    private String status;
+    private List<CartItemRequest> items;
 }

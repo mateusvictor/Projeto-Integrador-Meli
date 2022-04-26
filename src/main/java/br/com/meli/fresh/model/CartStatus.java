@@ -1,5 +1,5 @@
 package br.com.meli.fresh.model;
 
-public enum OrderStatus {
+public enum CartStatus {
     OPEN, CLOSE;
 }
