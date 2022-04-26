@@ -11,6 +11,7 @@ import br.com.meli.fresh.model.Product;
 import br.com.meli.fresh.model.Section;
 import br.com.meli.fresh.repository.IProductRepository;
 import br.com.meli.fresh.repository.ISectionRepository;
+import br.com.meli.fresh.services.exception.EntityNotFoundException;
 import br.com.meli.fresh.services.impl.InboundOrderServiceImpl;
 import br.com.meli.fresh.services.impl.ProductServiceImpl;
 import br.com.meli.fresh.services.impl.SectionServiceImpl;
@@ -36,38 +37,82 @@ public class InboundOrderController {
     private final InboundOrderMapper orderMapper;
     private final BatchMapper batchMapper;
 
-    @PostMapping("/")
-    public ResponseEntity<InboundOrderResponse> createOrder(@RequestBody InboundOrderRequest inboundOrderRequest){
+    @PostMapping()
+    public ResponseEntity<InboundOrderResponse> createOrder(@Valid @RequestBody InboundOrderRequest inboundOrderRequest,
+                                                            UriComponentsBuilder uriBuilder){
+        InboundOrder inboundOrder = this.inboundOrderRequestToEntity(inboundOrderRequest);
+        inboundOrder = inboundOrderService.create(inboundOrder);
+
+        URI uri = uriBuilder
+                .path("/{id}")
+                .buildAndExpand(inboundOrder.getId())
+                .toUri();
+
+        return ResponseEntity.created(uri)
+                .body(orderMapper.toResponseObject(inboundOrder));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<InboundOrderResponse> updateOrder(@PathVariable String id,
+                                                            @RequestBody InboundOrderRequest inboundOrderRequest,
+                                                            UriComponentsBuilder uriBuilder){
+        InboundOrder inboundOrder = this.inboundOrderRequestToEntity(inboundOrderRequest);
+        inboundOrder = inboundOrderService.update(id, inboundOrder);
+
+        URI uri = uriBuilder
+                .path("/{id}")
+                .buildAndExpand(inboundOrder.getId())
+                .toUri();
+
+        return ResponseEntity.created(uri)
+                .body(orderMapper.toResponseObject(inboundOrder));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<InboundOrderResponse> getOrder(@PathVariable String id){
+        return ResponseEntity.ok(
+                orderMapper.toResponseObject(
+                        inboundOrderService.getById(id)
+                )
+        );
+    }
+
+    private InboundOrder inboundOrderRequestToEntity(InboundOrderRequest inboundOrderRequest){
+        // Method used to convert all DTOs nested in the InboundOrderRequest to entities
+        // Used in POST and PUT endpoints
+
+        // Converts non nested fields from inboundOrderRequest
         InboundOrder inboundOrder = orderMapper.toDomainObject(inboundOrderRequest);
 
-        // Converts the section id received to a section entity
-        Section section = sectionRepository.getById(inboundOrderRequest.getSectionId());
+        // Searches the section entity based on the ID provided in the DTO
+        Section section = sectionRepository
+                .findById(inboundOrderRequest.getSectionId())
+                .orElseThrow(() -> new EntityNotFoundException("Invalid section ID: " + inboundOrderRequest.getSectionId()));
 
-        // Converts the dto batch list received to a entity batch list
+        // Converts the DTO batch list received to a entity batch list
         List<Batch> batchList = requestListToEntityList(inboundOrderRequest.getBatchStock());
 
         inboundOrder.setSection(section);
         inboundOrder.setBatchList(batchList);
 
-        return ResponseEntity.ok(
-                orderMapper.toResponseObject(
-                        inboundOrderService.create(inboundOrder))
-        );
+        return inboundOrder;
     }
 
     private List<Batch> requestListToEntityList(List<BatchRequest> batchRequestList){
-        //
-        // List<BatchRequest> --> List<Batch>
+        // Converts List<BatchRequest> to List<Batch>
         //
         List<Batch> batchList = new ArrayList<>();
         for (BatchRequest batchRequest : batchRequestList){
+            // Converts non nested models from batchRequest
             Batch newBatch = batchMapper.toDomainObject(batchRequest);
-            newBatch.setId(null);
-            newBatch.setProduct(
-                    productRepository.getById(batchRequest.getProductId())
-            );
-            batchList.add(newBatch);
 
+            // Searches the product entity based on the ID provided in the DTO
+            Product batchProduct =  productRepository
+                    .findById(batchRequest.getProductId())
+                    .orElseThrow(() -> new EntityNotFoundException("Invalid product ID: " + batchRequest.getProductId()));
+
+            newBatch.setProduct(batchProduct);
+            batchList.add(newBatch);
         }
         return batchList;
     }
