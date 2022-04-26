@@ -47,6 +47,6 @@ public class ProductServiceImpl implements ICrudService<Product> {
     public void delete(String id) {
         Product p = repository.findById(id).orElseThrow(()-> new ProductNotFoundException(id));
         p.setIsActive(false);
-
+        repository.save(p);
     }
 }

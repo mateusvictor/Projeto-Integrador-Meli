@@ -16,5 +16,4 @@ public class ProductResponse {
     private Float maxTemperature;
     private Float weight;
     private List<Batch> batchList;
-
 }

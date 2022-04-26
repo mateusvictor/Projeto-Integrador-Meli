@@ -17,7 +17,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-@Where(clause = "isActive=true")
+@Where(clause = "is_active = true")
 public class Product {
     @Id
     @GeneratedValue(generator = "uuid2")

@@ -55,11 +55,10 @@ public class ProductController {
     @PutMapping("{id}")
     public ResponseEntity<?> updateProductById(@PathVariable String id, @RequestBody ProductRequest productRequest){
         Product p = service.update(id, mapper.toDomainObject(productRequest));
-        return ResponseEntity.ok(ServletUriComponentsBuilder
-                .fromCurrentRequest()
-                .path("/{id}")
-                .buildAndExpand(p.getId())
-                .toUri());
+        return ResponseEntity
+                .ok()
+                .header("Location", "http://localhost:8080/api/v1/fresh-products/products/" + p.getId())
+                .build();
     }
 
     @DeleteMapping("{id}")
