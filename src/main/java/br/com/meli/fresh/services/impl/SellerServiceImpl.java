@@ -22,14 +22,14 @@ public class SellerServiceImpl implements ICrudService<Seller> {
             try{
                 return this.repository.save(seller);
             }catch(DataIntegrityViolationException e){
-                throw new EmailAlreadyExistsException("Email already exists!");//////Alterar
+                throw new EmailAlreadyExistsException("Email already exists!");
             }
     }
 
     @Override
     public Seller update(String id, Seller seller) {
         seller.setId(id);
-        this.repository.findById(id).orElseThrow(()-> new SellerNotFoundException("Seller not found!"));/////alterar
+        this.repository.findById(id).orElseThrow(()-> new SellerNotFoundException("Seller not found!"));
         return this.repository.save(seller);
     }
 

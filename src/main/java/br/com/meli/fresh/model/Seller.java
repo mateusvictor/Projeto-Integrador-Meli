@@ -19,4 +19,10 @@ import javax.persistence.Table;
 @Setter
 public class Seller extends User {
 
+    public Seller(String id, String name, String email, String password) {
+        super.setEmail(email);
+        super.setId(id);
+        super.setName(name);
+        super.setPassword(password);
+    }
 }
