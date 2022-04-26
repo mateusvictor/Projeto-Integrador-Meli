@@ -4,6 +4,8 @@ import br.com.meli.fresh.assembler.CartMapper;
 import br.com.meli.fresh.dto.request.CartRequest;
 import br.com.meli.fresh.dto.response.OrderTotalPriceResponse;
 import br.com.meli.fresh.model.Cart;
+import br.com.meli.fresh.model.CartStatus;
+import br.com.meli.fresh.model.exception.InvalidEnumCartStatusException;
 import br.com.meli.fresh.services.impl.CartServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,9 @@ public class CartController {
     @PostMapping
     public ResponseEntity<OrderTotalPriceResponse> creteCart(@Valid @RequestBody CartRequest request, UriComponentsBuilder uriBuilder){
 
+        if(!CartStatus.isEnumValid(request.getStatus().toUpperCase())){
+            throw new InvalidEnumCartStatusException("Status not valid.");
+        }
         OrderTotalPriceResponse orderTotalPriceResponse = new OrderTotalPriceResponse();
         Cart cart = cartService.create(mapper.toDomainObject(request));
 
