@@ -8,6 +8,7 @@ import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.Where;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 import java.util.List;
 
 @Entity
@@ -27,6 +28,7 @@ public class Product {
     private Float minTemperature;
     private Float maxTemperature;
     private Float weight;
+    private BigDecimal price;
 
     @OneToMany(mappedBy = "product")
     private List<Batch> batchList;
