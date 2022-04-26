@@ -16,7 +16,9 @@ public class BatchMapper {
     private final ModelMapper modelMapper;
 
     public Batch toDomainObject(BatchRequest dto){
-        return modelMapper.map(dto, Batch.class);
+        Batch batch = modelMapper.map(dto, Batch.class);
+        batch.setId(null);
+        return batch;
     }
 
     public BatchResponse toResponseObject(Batch entity){
