@@ -12,5 +12,5 @@ public class WarehouseManagerRequestDTO {
     private String name;
     private String email;
     private String password;
-    private Warehouse warehouse;
+    private String warehouse;
 }
