@@ -27,12 +27,9 @@ public class ProductServiceImpl implements ICrudService<Product> {
 
     @Override
     public Product update(String id, Product product) {
-
         Product productToBeUpdated = repository.findById(id).orElseThrow(()-> new ProductNotFoundException(id));
         product.setId(productToBeUpdated.getId());
         return repository.save(product);
-
-
     }
 
     @Override
