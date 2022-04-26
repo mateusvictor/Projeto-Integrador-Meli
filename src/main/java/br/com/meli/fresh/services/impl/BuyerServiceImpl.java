@@ -50,5 +50,4 @@ public class BuyerServiceImpl implements ICrudService<Buyer> {
         this.repository.delete(this.repository.findById(id).orElseThrow(()-> new BuyerNotFoundException("Buyer not found!")));
 
     }
-
 }

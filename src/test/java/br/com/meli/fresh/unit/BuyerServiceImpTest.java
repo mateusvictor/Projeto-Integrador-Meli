@@ -30,7 +30,7 @@ public class BuyerServiceImpTest {
     private BuyerServiceImpl service;
 
     private Buyer setupBuyer(){
-        Buyer buyer = UserFactory.createBuyer();
+        Buyer buyer = UserFactory.createBuyerDefault();
         Mockito.when(repository.save(buyer)).thenReturn(buyer);
         return buyer;
     }
@@ -43,19 +43,18 @@ public class BuyerServiceImpTest {
     }
 
     private Buyer setupThrowEmailException(){
-        Buyer buyer = UserFactory.createBuyer();
+        Buyer buyer = UserFactory.createBuyerDefault();
         Mockito.when(repository.save(buyer)).thenThrow(EmailAlreadyExistsException.class);
         return buyer;
     }
 
     private Buyer setupFindById(){
-        Buyer buyer = UserFactory.createBuyer();
+        Buyer buyer = UserFactory.createBuyerDefault();
         Mockito.when(repository.findById(Mockito.any())).thenReturn(java.util.Optional.of(buyer));
         return buyer;
     }
 
     private void setupThrowNotFoundException(){
-        Buyer buyer = UserFactory.createBuyer();
         Mockito.when(repository.findById(Mockito.any())).thenThrow(BuyerNotFoundException.class);
     }
 
