@@ -2,6 +2,8 @@ package br.com.meli.fresh.services.impl;
 
 import br.com.meli.fresh.model.*;
 import br.com.meli.fresh.model.exception.BuyerNotFoundException;
+import br.com.meli.fresh.model.exception.CartNotFoundException;
+import br.com.meli.fresh.model.exception.InsufficientQuantityOfProductException;
 import br.com.meli.fresh.model.exception.ProductNotFoundException;
 import br.com.meli.fresh.repository.*;
 import br.com.meli.fresh.services.ICartService;
@@ -23,7 +25,6 @@ public class CartServiceImpl implements ICartService {
     private ICartRepository cartRepository;
     private IProductRepository productRepository;
     private IBuyerRepository buyerRepository;
-    private ICartItemRepository cartItemRepository;
     private IBatchRepository batchRepository;
 
     @Override
@@ -35,7 +36,6 @@ public class CartServiceImpl implements ICartService {
 
         cart.setBuyer(opBuyer);
 
-        Double totalPrice = 0.0;
         List<CartItem> cartItems = cart.getItems().stream().map(item -> {
             CartItem cartItem = new CartItem();
 
@@ -56,7 +56,7 @@ public class CartServiceImpl implements ICartService {
     @Override
     public Cart update(String id) {
         Cart cart = cartRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Cart not found."));
+                .orElseThrow(() -> new CartNotFoundException("Cart not found."));
 
         if (cart.getCartStatus().equals(CartStatus.CLOSE)) {
             return cart;
@@ -73,13 +73,13 @@ public class CartServiceImpl implements ICartService {
     @Override
     public Cart getById(String id) {
         Cart cart = cartRepository.findById(id)
-                .orElseThrow(() -> new ProductNotFoundException("Cart not found."));
+                .orElseThrow(() -> new CartNotFoundException("Cart not found."));
 
         return cart;
     }
 
 
-    private boolean duaDateIsNoLessThanThreeWeeks(LocalDate dueDate) {
+    private boolean dueDateIsNoLessThanThreeWeeks(LocalDate dueDate) {
         LocalDate date = LocalDate.now();
         WeekFields weekFields = WeekFields.of(Locale.getDefault());
         int weekNumber = date.get(weekFields.weekOfWeekBasedYear());
@@ -93,10 +93,14 @@ public class CartServiceImpl implements ICartService {
     }
 
     private void isQuantityValid(List<Batch> batches, int quantity) {
+        String productName = null;
         int sum = 0;
 
         for (Batch batch : batches) {
-            if (duaDateIsNoLessThanThreeWeeks(batch.getDueDate())) {
+            if(productName == null) {
+                productName = batch.getProduct().getName();
+            }
+            if (dueDateIsNoLessThanThreeWeeks(batch.getDueDate())) {
                 sum += batch.getCurrentQuantity();
             }
             if (sum >= quantity) {
@@ -104,9 +108,8 @@ public class CartServiceImpl implements ICartService {
             }
         }
         if (sum < quantity) {
-            throw new IllegalArgumentException("Erro quantidade");
+            throw new InsufficientQuantityOfProductException("Insufficient quantity of the product " + productName + " for the request.");
         }
-
     }
 
     private void decrementOfBatchAndProductQuantity(String productId, int quantity) {
@@ -130,6 +133,4 @@ public class CartServiceImpl implements ICartService {
         }
         batchRepository.saveAll(batchesUpdated);
     }
-
-
 }

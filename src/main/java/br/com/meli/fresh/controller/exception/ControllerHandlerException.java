@@ -1,9 +1,7 @@
 package br.com.meli.fresh.controller.exception;
 
 import br.com.meli.fresh.dto.response.ErrorDTO;
-import br.com.meli.fresh.model.exception.BuyerNotFoundException;
-import br.com.meli.fresh.model.exception.InvalidEnumCartStatusException;
-import br.com.meli.fresh.model.exception.ProductNotFoundException;
+import br.com.meli.fresh.model.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
@@ -41,6 +39,16 @@ public class ControllerHandlerException {
     @ExceptionHandler(InvalidEnumCartStatusException.class)
     public ResponseEntity<?> invalidEnumCartStatusException(InvalidEnumCartStatusException err){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err.getMessage());
+    }
+
+    @ExceptionHandler(InsufficientQuantityOfProductException.class)
+    public ResponseEntity<?> insufficientQuantityOfProductException(InsufficientQuantityOfProductException err){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err.getMessage());
+    }
+
+    @ExceptionHandler(CartNotFoundException.class)
+    public ResponseEntity<?> cartNotFoundException(CartNotFoundException err){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err.getMessage());
     }
 
 
