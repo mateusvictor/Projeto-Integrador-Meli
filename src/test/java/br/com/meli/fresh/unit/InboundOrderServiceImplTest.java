@@ -149,7 +149,7 @@ public class InboundOrderServiceImplTest {
     }
 
     @Test
-    public void TestInsufficientAvailableSpaceException(){
+    public void testInsufficientAvailableSpaceException(){
         InboundOrder invalidInboundOrder = this.getInstanceWithInvalidVolume();
         assertThrows(InsufficientAvailableSpaceException.class, () -> {
             orderService.create(invalidInboundOrder);
