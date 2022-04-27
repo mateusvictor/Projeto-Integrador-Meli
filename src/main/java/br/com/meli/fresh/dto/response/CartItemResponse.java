@@ -6,6 +6,8 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class OrderTotalPriceResponse {
-    private Double totalPrice;
+@AllArgsConstructor
+public class CartItemResponse {
+    private String productId;
+    private int quantity;
 }

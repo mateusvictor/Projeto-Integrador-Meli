@@ -2,27 +2,23 @@ package br.com.meli.fresh.services.impl;
 
 import br.com.meli.fresh.model.*;
 import br.com.meli.fresh.model.exception.BuyerNotFoundException;
-import br.com.meli.fresh.model.exception.InvalidEnumCartStatusException;
 import br.com.meli.fresh.model.exception.ProductNotFoundException;
 import br.com.meli.fresh.repository.*;
-import br.com.meli.fresh.services.ICrudService;
+import br.com.meli.fresh.services.ICartService;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.yaml.snakeyaml.util.EnumUtils;
 
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
+import java.util.ArrayList;
 import java.util.List;
 import java.time.LocalDateTime;
 import java.util.Locale;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
-public class CartServiceImpl implements ICrudService<Cart> {
+public class CartServiceImpl implements ICartService {
 
     private ICartRepository cartRepository;
     private IProductRepository productRepository;
@@ -39,104 +35,100 @@ public class CartServiceImpl implements ICrudService<Cart> {
 
         cart.setBuyer(opBuyer);
 
-       List<CartItem> cartItems = cart.getItems().stream().map(item -> {
+        Double totalPrice = 0.0;
+        List<CartItem> cartItems = cart.getItems().stream().map(item -> {
             CartItem cartItem = new CartItem();
 
             Product opProduct = productRepository.findById(item.getProduct().getId())
                     .orElseThrow(() -> new ProductNotFoundException("Product not found."));
 
             isQuantityValid(opProduct.getBatchList(), item.getQuantity());
-
             cartItem.setQuantity(item.getQuantity());
-
             cartItem.setProduct(opProduct);
 
             return cartItem;
         }).collect(Collectors.toList());
 
-       cart.setItems(cartItems);
-        return   cartRepository.save(cart);
+        cart.setItems(cartItems);
+        return cartRepository.save(cart);
     }
 
     @Override
-    public Cart update(String id, Cart cart) {
-        Cart cartUpdate = cartRepository.findById(id)
+    public Cart update(String id) {
+        Cart cart = cartRepository.findById(id)
                 .orElseThrow(() -> new ProductNotFoundException("Cart not found."));
-        cartUpdate.getItems().stream().forEach(cartItem -> {
+
+        if (cart.getCartStatus().equals(CartStatus.CLOSE)) {
+            return cart;
+        }
+
+        cart.getItems().stream().forEach(cartItem -> {
             decrementOfBatchAndProductQuantity(cartItem.getProduct().getId(), cartItem.getQuantity());
         });
-        cartUpdate.setCartStatus(CartStatus.CLOSE);
-        cartRepository.save(cartUpdate);
-        return null;
+
+        cart.setCartStatus(CartStatus.CLOSE);
+        return cartRepository.save(cart);
     }
 
     @Override
     public Cart getById(String id) {
-        return null;
+        Cart cart = cartRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Cart not found."));
+
+        return cart;
     }
 
-    @Override
-    public Page<Cart> getAll(Pageable pageable) {
-        return null;
-    }
 
-    @Override
-    public void delete(String id) {
-
-    }
-
-    public void createOrder(CartStatus status, CartItem order, String buyerId) {
-
-    }
-
-    public boolean duaDateIsNoLessThanThreeWeeks(LocalDate dueDate){
+    private boolean duaDateIsNoLessThanThreeWeeks(LocalDate dueDate) {
         LocalDate date = LocalDate.now();
         WeekFields weekFields = WeekFields.of(Locale.getDefault());
         int weekNumber = date.get(weekFields.weekOfWeekBasedYear());
         int weekDueDateNumber = dueDate.get(weekFields.weekOfWeekBasedYear());
         int weekTotal = weekDueDateNumber - weekNumber;
 
-        if(weekTotal >= 3){
-           return true;
+        if (weekTotal >= 3) {
+            return true;
         }
         return false;
     }
 
-    public void isQuantityValid(List<Batch> batches, int quantity){
+    private void isQuantityValid(List<Batch> batches, int quantity) {
         int sum = 0;
 
         for (Batch batch : batches) {
-            if(duaDateIsNoLessThanThreeWeeks(batch.getDueDate())) {
+            if (duaDateIsNoLessThanThreeWeeks(batch.getDueDate())) {
                 sum += batch.getCurrentQuantity();
             }
-            if(sum >= quantity) {
+            if (sum >= quantity) {
                 break;
             }
         }
-        if (sum < quantity){
+        if (sum < quantity) {
             throw new IllegalArgumentException("Erro quantidade");
         }
 
     }
 
-    public void decrementOfBatchAndProductQuantity(String productId, int quantity){
+    private void decrementOfBatchAndProductQuantity(String productId, int quantity) {
         List<Batch> batches = batchRepository.findAllByProduct_Id(productId);
         isQuantityValid(batches, quantity);
 
         int total = quantity;
-        for(Batch batch : batches){
-            if(total >= batch.getCurrentQuantity()){
+        List<Batch> batchesUpdated = new ArrayList<>();
+        for (Batch batch : batches) {
+            if (total >= batch.getCurrentQuantity()) {
                 total -= batch.getCurrentQuantity();
                 batch.setCurrentQuantity(0);
-            } else if (total < batch.getCurrentQuantity()){
+            } else if (total < batch.getCurrentQuantity()) {
                 batch.setCurrentQuantity(batch.getCurrentQuantity() - total);
                 total = 0;
             }
-            if(total == 0){
+            batchesUpdated.add(batch);
+            if (total == 0) {
                 break;
             }
         }
-        batchRepository.saveAll(batches);
+        batchRepository.saveAll(batchesUpdated);
     }
 
 

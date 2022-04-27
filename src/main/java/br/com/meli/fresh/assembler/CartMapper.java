@@ -1,11 +1,14 @@
 package br.com.meli.fresh.assembler;
 
 import br.com.meli.fresh.dto.request.CartRequest;
+import br.com.meli.fresh.dto.response.CartItemResponse;
+import br.com.meli.fresh.dto.response.CartResponse;
 import br.com.meli.fresh.model.*;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
@@ -36,7 +39,17 @@ public class CartMapper {
         return object;
     }
 
-//    public SellerResponse toResponseObject(Seller entity) {
-//        return modelMapper.map(entity, SellerResponse.class);
-//    }
+    public CartResponse toResponseObject(Cart entity) {
+        CartResponse cartResponse = new CartResponse();
+        cartResponse.setDate(entity.getDate());
+
+        cartResponse.setItems(new ArrayList<>());
+
+        cartResponse.setStatus(entity.getCartStatus().cartStatus);
+        entity.getItems().stream().forEach(product -> {
+            cartResponse.getItems().add(new CartItemResponse(product.getProduct().getId(), product.getQuantity()));
+        });
+
+        return cartResponse;
+    }
 }
