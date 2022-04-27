@@ -15,8 +15,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -56,7 +54,6 @@ public class BuyerControllerTest {
     }
 
     @Test
-    
     public void mustThrowNotFoundException() throws Exception {
         ErrorDTO errorDTO = new ErrorDTO("BuyerNotFoundException", "Buyer not found!");
         MvcResult mvcResult =
@@ -134,9 +131,5 @@ public class BuyerControllerTest {
         System.out.println(totalElements);
         assertEquals(4, totalElements);
     }
-
-
-
-
 
 }
