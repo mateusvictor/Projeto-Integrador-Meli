@@ -11,7 +11,6 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "buyers")
 @AllArgsConstructor
-//@NoArgsConstructor
 @Getter
 @Setter
 @Builder

@@ -1,16 +1,15 @@
 package br.com.meli.fresh.dto.response;
 
-
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Data
-public class ErrorDTO {
-
-    private String error;
-    private String description;
-
+@Getter
+@Setter
+public class WarehouseResponse {
+    private String id;
+    private String name;
 }

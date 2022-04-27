@@ -31,5 +31,4 @@ public class Section {
     @JoinColumn(name = "warehouse_id")
     private Warehouse warehouse;
 
-
 }
