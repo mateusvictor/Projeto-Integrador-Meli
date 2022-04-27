@@ -12,8 +12,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.yaml.snakeyaml.util.EnumUtils;
 
+import java.time.LocalDate;
+import java.time.temporal.WeekFields;
 import java.util.List;
 import java.time.LocalDateTime;
+import java.util.Locale;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -42,7 +45,8 @@ public class CartServiceImpl implements ICrudService<Cart> {
             Product opProduct = productRepository.findById(item.getProduct().getId())
                     .orElseThrow(() -> new ProductNotFoundException("Product not found."));
 
-            System.out.println(item.getQuantity());
+            isQuantityValid(opProduct.getBatchList(), item.getQuantity());
+
             cartItem.setQuantity(item.getQuantity());
 
             cartItem.setProduct(opProduct);
@@ -56,6 +60,13 @@ public class CartServiceImpl implements ICrudService<Cart> {
 
     @Override
     public Cart update(String id, Cart cart) {
+        Cart cartUpdate = cartRepository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException("Cart not found."));
+        cartUpdate.getItems().stream().forEach(cartItem -> {
+            decrementOfBatchAndProductQuantity(cartItem.getProduct().getId(), cartItem.getQuantity());
+        });
+        cartUpdate.setCartStatus(CartStatus.CLOSE);
+        cartRepository.save(cartUpdate);
         return null;
     }
 
@@ -78,30 +89,48 @@ public class CartServiceImpl implements ICrudService<Cart> {
 
     }
 
-    public void isQuantityValid(String productId, int quantity){
+    public boolean duaDateIsNoLessThanThreeWeeks(LocalDate dueDate){
+        LocalDate date = LocalDate.now();
+        WeekFields weekFields = WeekFields.of(Locale.getDefault());
+        int weekNumber = date.get(weekFields.weekOfWeekBasedYear());
+        int weekDueDateNumber = dueDate.get(weekFields.weekOfWeekBasedYear());
+        int weekTotal = weekDueDateNumber - weekNumber;
 
-        List<Batch> batches = batchRepository.findAllByProduct_Id(productId);
+        if(weekTotal >= 3){
+           return true;
+        }
+        return false;
+    }
+
+    public void isQuantityValid(List<Batch> batches, int quantity){
         int sum = 0;
 
         for (Batch batch : batches) {
-            sum += batch.getCurrentQuantity();
+            if(duaDateIsNoLessThanThreeWeeks(batch.getDueDate())) {
+                sum += batch.getCurrentQuantity();
+            }
+            if(sum >= quantity) {
+                break;
+            }
         }
         if (sum < quantity){
-            throw new IllegalArgumentException();
+            throw new IllegalArgumentException("Erro quantidade");
         }
 
     }
 
     public void decrementOfBatchAndProductQuantity(String productId, int quantity){
         List<Batch> batches = batchRepository.findAllByProduct_Id(productId);
-        //reduce
+        isQuantityValid(batches, quantity);
+
         int total = quantity;
         for(Batch batch : batches){
-            if(batch.getCurrentQuantity() <= total){
+            if(total >= batch.getCurrentQuantity()){
                 total -= batch.getCurrentQuantity();
                 batch.setCurrentQuantity(0);
-            } else {
+            } else if (total < batch.getCurrentQuantity()){
                 batch.setCurrentQuantity(batch.getCurrentQuantity() - total);
+                total = 0;
             }
             if(total == 0){
                 break;
