@@ -3,6 +3,8 @@ package br.com.meli.fresh.unit;
 import br.com.meli.fresh.model.Product;
 import br.com.meli.fresh.model.exception.ProductAlreadyExistsException;
 import br.com.meli.fresh.model.exception.ProductNotFoundException;
+import br.com.meli.fresh.model.exception.ProductsNotFoundException;
+import br.com.meli.fresh.model.filter.ProductFilter;
 import br.com.meli.fresh.repository.IProductRepository;
 import br.com.meli.fresh.services.impl.ProductServiceImpl;
 import com.fasterxml.jackson.databind.ser.DefaultSerializerProvider;
@@ -54,14 +56,23 @@ public class ProductServiceImplTest {
         return p;
     }
 
+    public void productsNotFoundExceptionSetup() {
+        Pageable pageable = Pageable.unpaged();
+        Mockito.when(productRepository.findAll(pageable)).thenThrow(ProductsNotFoundException.class);
+    }
+
     public Page<Product> productListSetup() {
-        List<Product> list = List.of(
-                new Product(),
-                new Product(),
-                new Product(),
-                new Product(),
-                new Product()
-        );
+        Product p1 = new Product();
+        Product p2 = new Product();
+        Product p3 = new Product();
+        Product p4 = new Product();
+        Product p5 = new Product();
+        p1.setCategory("FF");
+        p2.setCategory("FF");
+        p3.setCategory("FF");
+        p4.setCategory("FF");
+        p5.setCategory("RF");
+        List<Product> list = List.of(p1, p2, p3, p4, p5);
 
         Page<Product> page = new PageImpl<Product>(list);
         Pageable pageable = Pageable.unpaged();
@@ -116,10 +127,30 @@ public class ProductServiceImplTest {
     }
 
     @Test
+    public void testProductsWereNotFoundException() {
+        this.productsNotFoundExceptionSetup();
+        ProductFilter filter = new ProductFilter();
+        assertThrows(ProductsNotFoundException.class, () -> {
+            productService.getAll(filter, Pageable.unpaged());
+        });
+    }
+
+    @Test
     public void testGetAllProducts() {
         this.productListSetup();
         Pageable pageable = Pageable.unpaged();
-        assertEquals(5, productService.getAll(pageable).getSize());
+        ProductFilter filter = new ProductFilter();
+        assertEquals(5, productService.getAll(filter, pageable).getSize());
+    }
+
+    @Test
+    public void testFilterGetAllProducts() {
+        this.productListSetup();
+        Pageable pageable = Pageable.unpaged();
+        ProductFilter filter = new ProductFilter();
+        filter.setCategory("RF");
+        assertEquals(1, productService.getAll(filter, pageable).getSize());
+
     }
 
     @Test

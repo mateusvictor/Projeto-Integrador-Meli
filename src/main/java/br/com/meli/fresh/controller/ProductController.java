@@ -4,6 +4,7 @@ import br.com.meli.fresh.assembler.ProductMapper;
 import br.com.meli.fresh.dto.request.ProductRequest;
 import br.com.meli.fresh.dto.response.productResponse.ProductResponse;
 import br.com.meli.fresh.model.Product;
+import br.com.meli.fresh.model.filter.ProductFilter;
 import br.com.meli.fresh.services.impl.ProductServiceImpl;
 import lombok.AllArgsConstructor;
 
@@ -44,10 +45,10 @@ public class ProductController {
     }
 
     @GetMapping
-    public ResponseEntity<Page<ProductResponse>> getAllProducts(Pageable pageable){
+    public ResponseEntity<Page<ProductResponse>> getAllProducts(ProductFilter filter, Pageable pageable){
         return ResponseEntity.ok(
                 new PageImpl<ProductResponse>(
-                        service.getAll(pageable).stream().map(mapper::toResponseObject).collect(Collectors.toList())
+                        service.getAll(filter, pageable).stream().map(mapper::toResponseObject).collect(Collectors.toList())
                 )
         );
     }
