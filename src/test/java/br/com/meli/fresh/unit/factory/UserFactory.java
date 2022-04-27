@@ -24,6 +24,13 @@ public class UserFactory {
         return new Buyer("1", "Luiza", "pedrinho@email.com", "password");
     }
 
+    public static Buyer createBuyerD() {
+        return new Buyer("1", "Caio", "caio@email.com", "password");
+    }
+    public static Buyer createBuyerE() {
+        return new Buyer("1", "Vinicius", "vinicius@email.com", "password");
+    }
+
 
     public static Buyer createBuyerDefault() {
         return new Buyer("1", "teste", "teste@email.com", "password");

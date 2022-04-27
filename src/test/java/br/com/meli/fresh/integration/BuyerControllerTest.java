@@ -5,18 +5,20 @@ import br.com.meli.fresh.dto.request.BuyerRequestDTO;
 import br.com.meli.fresh.dto.response.BuyerResponseDTO;
 import br.com.meli.fresh.dto.response.ErrorDTO;
 import br.com.meli.fresh.model.Buyer;
-import br.com.meli.fresh.model.User;
 import br.com.meli.fresh.services.impl.BuyerServiceImpl;
 import br.com.meli.fresh.unit.factory.UserFactory;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -25,8 +27,10 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestPropertySource({ "/application-test.properties" })
 public class BuyerControllerTest {
 
     @Autowired
@@ -37,6 +41,7 @@ public class BuyerControllerTest {
 
     @Autowired
     private BuyerMapper mapper;
+
 
     @Test
     public void mustGetBuyerByID() throws Exception {
@@ -51,6 +56,7 @@ public class BuyerControllerTest {
     }
 
     @Test
+    
     public void mustThrowNotFoundException() throws Exception {
         ErrorDTO errorDTO = new ErrorDTO("BuyerNotFoundException", "Buyer not found!");
         MvcResult mvcResult =
@@ -79,13 +85,14 @@ public class BuyerControllerTest {
     @Test
     public void mustThrowEmailAlreadyExistsException() throws Exception {
         ErrorDTO errorDTO = new ErrorDTO("EmailAlreadyExistsException", "Email already exists!");
-        this.service.create(UserFactory.createBuyerDefault());
         BuyerRequestDTO requestDto = UserFactory.createBuyerRequestDtoToThrow();
         ObjectWriter writer  = new ObjectMapper().configure(SerializationFeature.WRAP_ROOT_VALUE, false)
                 .writer().withDefaultPrettyPrinter();
         String payloadRequestJson = writer.writeValueAsString(requestDto);
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/fresh-products/buyer/")
+                .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson)).andDo(print()).andExpect(status().isCreated()).andReturn();
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/fresh-products/buyer/")
-                .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson)).andDo(print()).andExpect(status().isBadRequest()).andReturn();
+                .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson)).andDo(print()).andExpect(status().isBadRequest()).andReturn();;
         String jsonReturned =  mvcResult.getResponse().getContentAsString();
         ErrorDTO errorDtoResult = new ObjectMapper().readValue(jsonReturned, ErrorDTO.class);
         assertEquals(errorDtoResult.getError(), errorDTO.getError());
@@ -116,6 +123,18 @@ public class BuyerControllerTest {
         String jsonReturned = mvcResult.getResponse().getContentAsString();
         assertEquals("Buyer deleted!", jsonReturned);
     }
+
+    @Test
+    public void mustGetAllBuyers() throws Exception {
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/fresh-products/buyer/"))
+                .andDo(print()).andExpect(status().isOk()).andReturn();
+        String jsonObjectReturned = mvcResult.getResponse().getContentAsString();
+        JSONObject obj = new JSONObject(jsonObjectReturned);
+        Integer totalElements = obj.getInt("totalElements");
+        System.out.println(totalElements);
+        assertEquals(4, totalElements);
+    }
+
 
 
 
