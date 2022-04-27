@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import javax.validation.ConstraintViolationException;
+import java.util.List;
+import java.util.stream.Collectors;
+
 @ControllerAdvice
 public class ControllerHandlerException extends ResponseEntityExceptionHandler {
 
@@ -26,6 +30,17 @@ public class ControllerHandlerException extends ResponseEntityExceptionHandler {
     public ResponseEntity<?> productAlreadyExistsException(ProductAlreadyExistsException err){
         return ResponseEntity.status(HttpStatus.CONFLICT).body(err.getMessage());
     }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<?> constraintViolationException(ConstraintViolationException err){
+
+        List<String> messageErrors = err.getConstraintViolations().stream().map(e -> {
+            return e.getMessage();
+        }).collect(Collectors.toList());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messageErrors);
+    }
+
+
 
 
 }

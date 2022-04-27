@@ -1,6 +1,6 @@
 package br.com.meli.fresh.integration;
 
-import br.com.meli.fresh.dto.request.ProductRequest;
+import br.com.meli.fresh.dto.request.productRequest.ProductRequest;
 import br.com.meli.fresh.dto.response.productResponse.ProductResponse;
 import br.com.meli.fresh.model.Product;
 import br.com.meli.fresh.services.impl.ProductServiceImpl;
@@ -23,6 +23,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.junit.jupiter.api.Assertions.*;
 import org.json.*;
 
+import java.math.BigDecimal;
+
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource({ "/application-test.properties" })
@@ -41,6 +43,11 @@ public class ProductControllerTest {
         ProductRequest preq = new ProductRequest();
         preq.setName("Pizza");
         preq.setCategory("RF");
+        preq.setMaxTemperature(3.0F);
+        preq.setMinTemperature(0.5F);
+        preq.setWeight(0.5F);
+        preq.setPrice(new BigDecimal(13.99));
+
         ObjectWriter writer = new ObjectMapper()
                 .configure(SerializationFeature.WRAP_ROOT_VALUE, false)
                 .writer().withDefaultPrettyPrinter();
@@ -164,10 +171,16 @@ public class ProductControllerTest {
         Product p = new Product();
         p.setName("Maionese");
         p.setCategory("RF");
+
         service.create(p);
 
         ProductRequest preq = new ProductRequest();
         preq.setName(p.getName());
+        preq.setCategory("FF");
+        preq.setMaxTemperature(3.0F);
+        preq.setMinTemperature(0.5F);
+        preq.setWeight(0.5F);
+        preq.setPrice(new BigDecimal(13.99));
 
         ObjectWriter writer = new ObjectMapper()
                 .configure(SerializationFeature.WRAP_ROOT_VALUE, false)

@@ -1,7 +1,8 @@
 package br.com.meli.fresh.controller;
 
 import br.com.meli.fresh.assembler.ProductMapper;
-import br.com.meli.fresh.dto.request.ProductRequest;
+import br.com.meli.fresh.dto.request.productRequest.OnCreate;
+import br.com.meli.fresh.dto.request.productRequest.ProductRequest;
 import br.com.meli.fresh.dto.response.productResponse.ProductResponse;
 import br.com.meli.fresh.model.Product;
 import br.com.meli.fresh.model.filter.ProductFilter;
@@ -12,21 +13,25 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("api/v1/fresh-products/products")
 @AllArgsConstructor
+@Validated
 public class ProductController {
 
     private final ProductServiceImpl service;
     private final ProductMapper mapper;
 
     @PostMapping
-    public ResponseEntity<?> create(@RequestBody ProductRequest productRequest){
+    @Validated(OnCreate.class)
+    public ResponseEntity<?> create(@Valid @RequestBody ProductRequest productRequest){
         Product p = service.create(mapper.toDomainObject(productRequest));
         return ResponseEntity.created(ServletUriComponentsBuilder
                 .fromCurrentRequest()

@@ -1,11 +1,8 @@
 package br.com.meli.fresh.assembler;
 
-import br.com.meli.fresh.dto.request.ProductRequest;
-import br.com.meli.fresh.dto.request.SellerRequest;
-import br.com.meli.fresh.dto.response.SellerResponse;
+import br.com.meli.fresh.dto.request.productRequest.ProductRequest;
 import br.com.meli.fresh.dto.response.productResponse.ProductResponse;
 import br.com.meli.fresh.model.Product;
-import br.com.meli.fresh.model.Seller;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

@@ -4,6 +4,7 @@ import br.com.meli.fresh.model.Batch;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Getter
@@ -15,5 +16,6 @@ public class ProductResponse {
     private Float minTemperature;
     private Float maxTemperature;
     private Float weight;
+    private BigDecimal price;
     private List<Batch> batchList;
 }
