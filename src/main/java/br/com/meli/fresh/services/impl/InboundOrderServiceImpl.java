@@ -7,6 +7,7 @@ import br.com.meli.fresh.repository.IBatchRepository;
 import br.com.meli.fresh.repository.IInboundOrderRepository;
 import br.com.meli.fresh.repository.ISectionRepository;
 import br.com.meli.fresh.services.ICrudService;
+import br.com.meli.fresh.services.IInboundOrderService;
 import br.com.meli.fresh.services.exception.EntityNotFoundException;
 import br.com.meli.fresh.services.validator.InboundOrderValidator;
 import lombok.AllArgsConstructor;
@@ -16,7 +17,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
-public class InboundOrderServiceImpl implements ICrudService<InboundOrder> {
+public class InboundOrderServiceImpl implements IInboundOrderService<InboundOrder> {
     private final IInboundOrderRepository orderRepository;
     private final IBatchRepository batchRepository;
     private final ISectionRepository sectionRepository;
@@ -76,9 +77,8 @@ public class InboundOrderServiceImpl implements ICrudService<InboundOrder> {
 
             // Finally, the section volume is updated
             updateSectionActualVolume(inboundOrderToUpdate.getSection(), inboundOrderToUpdate.calculateBatchesTotalVolume());
-            return inboundOrder;
         }
-        return null;
+        return inboundOrder;
     }
 
     private void updateSectionActualVolume(Section section, Double extraVolume){
@@ -93,15 +93,5 @@ public class InboundOrderServiceImpl implements ICrudService<InboundOrder> {
     public InboundOrder getById(String id) {
         return orderRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Invalid inbound order ID: " + id));
-    }
-
-    @Override
-    public Page<InboundOrder> getAll(Pageable pageable) {
-        return null;
-    }
-
-    @Override
-    public void delete(String id) {
-
     }
 }
