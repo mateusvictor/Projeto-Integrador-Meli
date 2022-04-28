@@ -16,4 +16,12 @@ public class SectionFactory {
 
         return section;
     }
+
+    public static Section getFreshSection(){
+        return new Section(null, "fresco", 0F, 30F, null, null);
+    }
+
+    public static Section getFrozenSection(){
+        return new Section(null, "congelado", 10F, 30F, null, null);
+    }
 }
