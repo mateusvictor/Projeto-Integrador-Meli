@@ -8,8 +8,10 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter @Setter
-public class ErrorDTO {
-    private String error;
-    private String description;
+public class SectionResponse {
+    private String id;
+    private String productType;
+    private Float actualVolume;
+    private Float maxVolume;
+    private WarehouseResponse warehouse;
 }
-

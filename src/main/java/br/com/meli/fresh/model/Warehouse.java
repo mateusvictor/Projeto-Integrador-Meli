@@ -24,4 +24,7 @@ public class Warehouse {
 
     @OneToMany(mappedBy = "warehouse")
     private List<Section> sectionList;
+
+    @OneToOne
+    private WarehouseManager warehouseManager;
 }

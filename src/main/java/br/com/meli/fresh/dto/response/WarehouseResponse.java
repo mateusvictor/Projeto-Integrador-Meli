@@ -7,9 +7,9 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
-public class ErrorDTO {
-    private String error;
-    private String description;
+@Getter
+@Setter
+public class WarehouseResponse {
+    private String id;
+    private String name;
 }
-
