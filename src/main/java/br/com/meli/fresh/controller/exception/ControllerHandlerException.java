@@ -37,7 +37,7 @@ public class ControllerHandlerException {
 
     @ExceptionHandler(InvalidWarehouseManagerException.class)
     protected ResponseEntity<?> handleInvalidWarehouseManagerException(InvalidWarehouseManagerException err){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                 .body(new ErrorDTO("InvalidWarehouseManagerException", err.getMessage()));
     }
 
