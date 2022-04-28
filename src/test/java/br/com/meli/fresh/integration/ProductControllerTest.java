@@ -46,7 +46,8 @@ public class ProductControllerTest {
         preq.setMaxTemperature(3.0F);
         preq.setMinTemperature(0.5F);
         preq.setWeight(0.5F);
-        preq.setPrice(new BigDecimal(13.99));
+        BigDecimal price = new BigDecimal(13.99);
+        preq.setPrice(price);
 
         ObjectWriter writer = new ObjectMapper()
                 .configure(SerializationFeature.WRAP_ROOT_VALUE, false)
@@ -180,7 +181,8 @@ public class ProductControllerTest {
         preq.setMaxTemperature(3.0F);
         preq.setMinTemperature(0.5F);
         preq.setWeight(0.5F);
-        preq.setPrice(new BigDecimal(13.99));
+        BigDecimal price = new BigDecimal(13.99);
+        preq.setPrice(price);
 
         ObjectWriter writer = new ObjectMapper()
                 .configure(SerializationFeature.WRAP_ROOT_VALUE, false)
