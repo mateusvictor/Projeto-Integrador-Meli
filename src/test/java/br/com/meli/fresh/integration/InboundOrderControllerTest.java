@@ -241,6 +241,31 @@ public class InboundOrderControllerTest {
     }
 
     @Test
+    public void testMethodArgumentNotValidException() throws Exception {
+        InboundOrderRequest inboundOrder = this.getValidRequestInstance();
+
+        // Setting section ID to null and batch list to empty to throw MethodArgumentNotValidException
+        inboundOrder.setSectionId(null);
+        inboundOrder.setBatchStock(null);
+
+        String payloadRequest = writer.writeValueAsString(inboundOrder);
+
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payloadRequest))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andReturn();
+        String jsonObjectReturned = mvcResult.getResponse().getContentAsString();
+        List<ErrorDTO> errorList = new ObjectMapper().readValue(jsonObjectReturned, new TypeReference<List<ErrorDTO>>() {});
+
+        assertEquals(2, errorList.size());
+        errorList.forEach(
+                e -> assertEquals("MethodArgumentNotValidException", e.getError())
+        );
+    }
+
+    @Test
     public void testInsufficientAvailableSpaceException() throws Exception {
         InboundOrderRequest inboundOrder = this.getInstanceWithInvalidVolume();
 
