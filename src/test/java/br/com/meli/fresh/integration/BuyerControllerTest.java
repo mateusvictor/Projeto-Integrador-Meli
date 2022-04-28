@@ -123,6 +123,7 @@ public class BuyerControllerTest {
 
     @Test
     public void mustGetAllBuyers() throws Exception {
+
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/fresh-products/buyer/"))
                 .andDo(print()).andExpect(status().isOk()).andReturn();
         String jsonObjectReturned = mvcResult.getResponse().getContentAsString();

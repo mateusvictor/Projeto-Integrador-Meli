@@ -9,7 +9,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class WarehouseManagerResponseDTO {
+    private String id;
     private String name;
     private String email;
-    private Warehouse warehouse;
+    private WarehouseManagerNestedResponseDTO warehouseId;
 }

@@ -12,4 +12,5 @@ import java.util.List;
 public class WarehouseRequestDTO {
     private String name;
     private List<SectionRequestDTO> sectionList;
+    private String warehouseManagerId;
 }

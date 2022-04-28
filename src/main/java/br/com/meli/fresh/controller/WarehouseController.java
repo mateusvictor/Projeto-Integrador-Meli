@@ -4,6 +4,8 @@ import br.com.meli.fresh.assembler.WarehouseMapper;
 import br.com.meli.fresh.dto.request.WarehouseRequestDTO;
 import br.com.meli.fresh.dto.response.WarehouseResponseDTO;
 import br.com.meli.fresh.model.Warehouse;
+import br.com.meli.fresh.model.WarehouseManager;
+import br.com.meli.fresh.services.impl.WarehouseManagerServiceImpl;
 import br.com.meli.fresh.services.impl.WarehouseServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -24,6 +26,8 @@ public class WarehouseController {
 
     private final WarehouseServiceImpl service;
 
+    private final WarehouseManagerServiceImpl warehouseManagerService;
+
     private final WarehouseMapper mapper;
 
     @GetMapping("/{id}")
@@ -41,12 +45,23 @@ public class WarehouseController {
 
     @PostMapping()
     public ResponseEntity<WarehouseResponseDTO> createWarehouse(@RequestBody WarehouseRequestDTO requestDTO, UriComponentsBuilder uriBuilder){
-        Warehouse warehouseCreated = this.service.create(this.mapper.toDomainObject(requestDTO));
+        Warehouse entity = this.requestToEntity(requestDTO);
+        Warehouse warehouseCreated = this.service.create(entity);
         URI uri = uriBuilder
                 .path("/{id}")
-                .buildAndExpand(warehouseCreated.getId())
+                .buildAndExpand(entity.getId())
                 .toUri();
         return ResponseEntity.created(uri).body(this.mapper.toResponseObject(warehouseCreated));
+    }
+
+    private Warehouse requestToEntity(WarehouseRequestDTO requestDTO) {
+        if(requestDTO.getWarehouseManagerId()!=null){
+            WarehouseManager manager = this.warehouseManagerService.getById(requestDTO.getWarehouseManagerId());
+            Warehouse entity = this.mapper.toDomainObject(requestDTO);
+            entity.setWarehouseManager(manager);
+            return entity;
+        }
+        return this.mapper.toDomainObject(requestDTO);
     }
 
 

@@ -15,6 +15,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 public class WarehouseManager extends User {
-    @OneToOne
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH})
+    @JoinColumn(name = "warehouse_id", referencedColumnName = "id")
     private Warehouse warehouse;
 }

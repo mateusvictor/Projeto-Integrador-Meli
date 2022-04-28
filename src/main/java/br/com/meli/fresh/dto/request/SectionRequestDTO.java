@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Data
 public class SectionRequestDTO {
+    private String id;
     private String productType;
     private Float actualVolume;
     private Float maxVolume;

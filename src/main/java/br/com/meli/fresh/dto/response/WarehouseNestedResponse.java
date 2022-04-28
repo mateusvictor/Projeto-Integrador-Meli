@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class WarehouseResponse {
+public class WarehouseNestedResponse {
     private String id;
     private String name;
 }

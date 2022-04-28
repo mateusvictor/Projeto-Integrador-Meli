@@ -2,9 +2,7 @@ package br.com.meli.fresh.controller.exception;
 
 import br.com.meli.fresh.dto.response.ErrorDTO;
 
-import br.com.meli.fresh.model.exception.BuyerNotFoundException;
-import br.com.meli.fresh.model.exception.EmailAlreadyExistsException;
-import br.com.meli.fresh.model.exception.WarehouseManagerNotFoundException;
+import br.com.meli.fresh.model.exception.*;
 import br.com.meli.fresh.services.exception.EntityNotFoundException;
 import br.com.meli.fresh.services.exception.InsufficientAvailableSpaceException;
 import br.com.meli.fresh.services.exception.InvalidSectionTypeException;
@@ -33,6 +31,17 @@ public class ControllerHandlerException {
     protected ResponseEntity<?> handleWarehouseManagerNotFoundException(WarehouseManagerNotFoundException e){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("WarehouseManagerNotFoundException", e.getMessage()));
     }
+    @ExceptionHandler(WarehouseNotFoundException.class)
+    protected ResponseEntity<?> handleWarehouseNotFoundException(WarehouseNotFoundException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("WarehouseNotFoundException", e.getMessage()));
+    }
+
+    @ExceptionHandler(WarehouseAlreadyDefinedException.class)
+    protected ResponseEntity<?> handleWarehouseAlreadyDefined(WarehouseAlreadyDefinedException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO("WarehouseAlreadyDefinedException", e.getMessage()));
+    }
+
+
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException err){
         return ResponseEntity.status(HttpStatus.NOT_FOUND)

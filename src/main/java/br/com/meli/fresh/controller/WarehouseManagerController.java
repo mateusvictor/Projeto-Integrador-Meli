@@ -3,8 +3,10 @@ package br.com.meli.fresh.controller;
 import br.com.meli.fresh.assembler.WarehouseManagerMapper;
 import br.com.meli.fresh.dto.request.WarehouseManagerRequestDTO;
 import br.com.meli.fresh.dto.response.WarehouseManagerResponseDTO;
+import br.com.meli.fresh.model.Warehouse;
 import br.com.meli.fresh.model.WarehouseManager;
 import br.com.meli.fresh.services.impl.WarehouseManagerServiceImpl;
+import br.com.meli.fresh.services.impl.WarehouseServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -26,7 +29,7 @@ public class WarehouseManagerController {
     private final WarehouseManagerMapper mapper;
 
     @PostMapping()
-    public ResponseEntity<WarehouseManagerResponseDTO> create(@RequestBody WarehouseManagerRequestDTO request, UriComponentsBuilder uriBuilder){
+    public ResponseEntity<WarehouseManagerResponseDTO> create(@Valid @RequestBody WarehouseManagerRequestDTO request, UriComponentsBuilder uriBuilder){
         WarehouseManager entity = this.mapper.toDomainObject(request);
         entity = this.service.create(entity);
         URI uri = uriBuilder
@@ -56,6 +59,6 @@ public class WarehouseManagerController {
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable String id){
         this.service.delete(id);
-        return ResponseEntity.ok("Buyer deleted!");
+        return ResponseEntity.ok("Warehouse manager deleted!");
     }
 }
