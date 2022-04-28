@@ -4,6 +4,8 @@ import br.com.meli.fresh.dto.request.BuyerRequestDTO;
 import br.com.meli.fresh.dto.request.SellerRequestDTO;
 import br.com.meli.fresh.model.Buyer;
 import br.com.meli.fresh.model.Seller;
+import br.com.meli.fresh.model.Warehouse;
+import br.com.meli.fresh.model.WarehouseManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 
@@ -14,6 +16,7 @@ public class UserFactory {
 
 
     public static Buyer createBuyerA() {
+
         return new Buyer("1", "Joao", "joazinho@email.com", "password");
     }
 
@@ -108,6 +111,18 @@ public class UserFactory {
 
     public static SellerRequestDTO createSellerToUpdateRequestDto() {
         return SellerRequestDTO.builder().name("Peach").email("peach@email.com").password("password").build();
+    }
+
+    public static WarehouseManager createWarehouseManagerDefault(){
+        return new WarehouseManager("1","teste", "teste@teste.com", "password", Warehouse.builder().id("123").build());
+    }
+
+    public static Page<WarehouseManager> createWarehouseManagerPage(){
+        List<WarehouseManager> list = new ArrayList<>();
+        WarehouseManager a = new WarehouseManager("1","teste", "teste@teste.com", "password", Warehouse.builder().id("123").build());
+        WarehouseManager b = new WarehouseManager("2","teste1", "teste1@teste.com", "password", Warehouse.builder().id("345").build());
+        WarehouseManager c = new WarehouseManager("3","teste2", "teste2@teste.com", "password", Warehouse.builder().id("456").build());
+        return new PageImpl<>(list);
     }
 }
 
