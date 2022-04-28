@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.swing.plaf.basic.BasicTableHeaderUI;
+import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
@@ -23,5 +24,5 @@ public class InboundOrderRequest {
     private String sectionId;
 
     @NotEmpty(message = "batchStock must be empty")
-    private List<BatchRequest> batchStock;
+    private List<@Valid BatchRequest> batchStock;
 }
