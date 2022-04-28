@@ -7,10 +7,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class ErrorDTO {
-
-    private String error;
-    private String description;
-
+public class BuyerResponseDTO {
+    private String name;
+    private String email;
 }
-

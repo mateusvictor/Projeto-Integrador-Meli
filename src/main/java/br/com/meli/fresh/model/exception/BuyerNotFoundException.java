@@ -5,3 +5,4 @@ public class BuyerNotFoundException extends RuntimeException{
         super(message);
     }
 }
+

@@ -22,9 +22,9 @@ public class Warehouse {
     private String id;
     private String name;
 
-    @OneToMany(mappedBy = "warehouse")
+    @OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL)
     private List<Section> sectionList;
 
-    @OneToOne
+    @OneToOne(mappedBy = "warehouse")
     private WarehouseManager warehouseManager;
 }

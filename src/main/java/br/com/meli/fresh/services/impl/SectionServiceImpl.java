@@ -16,7 +16,8 @@ public class SectionServiceImpl implements ICrudService<Section> {
 
     @Override
     public Section create(Section section) {
-        return null;
+
+        return this.repository.save(section);
     }
 
     @Override

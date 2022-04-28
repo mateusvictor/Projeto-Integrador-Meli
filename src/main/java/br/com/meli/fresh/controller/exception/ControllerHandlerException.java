@@ -12,6 +12,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+
 import javax.validation.ConstraintViolationException;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +20,29 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ControllerHandlerException {
+    @ExceptionHandler(BuyerNotFoundException.class)
+    protected ResponseEntity<?> handleBuyerNotFoundException(BuyerNotFoundException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("BuyerNotFoundException", e.getMessage()));
+    }
+    @ExceptionHandler(EmailAlreadyExistsException.class)
+    protected ResponseEntity<?> handleEmailAlreadyExistsException(EmailAlreadyExistsException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO("EmailAlreadyExistsException", e.getMessage()));
+    }
+    @ExceptionHandler(WarehouseManagerNotFoundException.class)
+    protected ResponseEntity<?> handleWarehouseManagerNotFoundException(WarehouseManagerNotFoundException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("WarehouseManagerNotFoundException", e.getMessage()));
+    }
+    @ExceptionHandler(WarehouseNotFoundException.class)
+    protected ResponseEntity<?> handleWarehouseNotFoundException(WarehouseNotFoundException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("WarehouseNotFoundException", e.getMessage()));
+    }
+
+    @ExceptionHandler(WarehouseAlreadyDefinedException.class)
+    protected ResponseEntity<?> handleWarehouseAlreadyDefined(WarehouseAlreadyDefinedException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO("WarehouseAlreadyDefinedException", e.getMessage()));
+    }
+
+
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException err){
         return ResponseEntity.status(HttpStatus.NOT_FOUND)
@@ -52,11 +76,6 @@ public class ControllerHandlerException {
                         new ErrorDTO("MethodArgumentNotValidException", objectError.getDefaultMessage()))
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(errorDTOS);
-    }
-
-    @ExceptionHandler(BuyerNotFoundException.class)
-    protected ResponseEntity<?> handleBuyerNotFoundException(BuyerNotFoundException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("BuyerNotFoundException", e.getMessage()));
     }
 
     @ExceptionHandler(InvalidEnumCartStatusException.class)
@@ -98,4 +117,5 @@ public class ControllerHandlerException {
         }).collect(Collectors.toList());
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messageErrors);
     }
+
 }

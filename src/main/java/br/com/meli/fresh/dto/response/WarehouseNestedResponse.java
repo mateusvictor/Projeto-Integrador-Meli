@@ -7,11 +7,9 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
-public class SectionResponse {
+@Getter
+@Setter
+public class WarehouseNestedResponse {
     private String id;
-    private String productType;
-    private Float actualVolume;
-    private Float maxVolume;
-    private WarehouseNestedResponse warehouse;
+    private String name;
 }
