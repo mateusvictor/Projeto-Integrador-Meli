@@ -54,7 +54,7 @@ public class InboundOrderController {
 
     @PutMapping("/{id}")
     public ResponseEntity<InboundOrderResponse> updateOrder(@PathVariable String id,
-                                                            @RequestBody InboundOrderRequest inboundOrderRequest,
+                                                            @Valid @RequestBody InboundOrderRequest inboundOrderRequest,
                                                             UriComponentsBuilder uriBuilder){
         InboundOrder inboundOrder = this.inboundOrderRequestToEntity(inboundOrderRequest);
         inboundOrder = inboundOrderService.update(id, inboundOrder);
