@@ -1,10 +1,11 @@
-package br.com.meli.fresh.unit.factory;
+package br.com.meli.fresh.unit;
 
 import br.com.meli.fresh.model.Seller;
 import br.com.meli.fresh.model.exception.EmailAlreadyExistsException;
 import br.com.meli.fresh.model.exception.SellerNotFoundException;
 import br.com.meli.fresh.repository.ISellerRepository;
 import br.com.meli.fresh.services.impl.SellerServiceImpl;
+import br.com.meli.fresh.unit.factory.UserFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
