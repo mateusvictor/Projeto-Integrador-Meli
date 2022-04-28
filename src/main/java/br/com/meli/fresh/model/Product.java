@@ -30,6 +30,7 @@ public class Product {
     private Float weight;
     private BigDecimal price;
 
+
     @OneToMany(mappedBy = "product")
     private List<Batch> batchList;
 
