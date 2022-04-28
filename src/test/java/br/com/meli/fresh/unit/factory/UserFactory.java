@@ -1,6 +1,7 @@
 package br.com.meli.fresh.unit.factory;
 
 import br.com.meli.fresh.dto.request.BuyerRequestDTO;
+import br.com.meli.fresh.dto.request.SellerRequestDTO;
 import br.com.meli.fresh.model.Buyer;
 import br.com.meli.fresh.model.Seller;
 import org.springframework.data.domain.Page;
@@ -27,6 +28,7 @@ public class UserFactory {
     public static Buyer createBuyerD() {
         return new Buyer("1", "Caio", "caio@email.com", "password");
     }
+
     public static Buyer createBuyerE() {
         return new Buyer("1", "Vinicius", "vinicius@email.com", "password");
     }
@@ -60,6 +62,27 @@ public class UserFactory {
     }
 
 
+    /// Cenario de testes Sellers
+    public static Seller createSellerA() {
+        return new Seller("1", "Tony", "tony@email.com", "password");
+    }
+
+    public static Seller createSellerB() {
+        return new Seller("1", "Bruce", "bruce@email.com", "password");
+    }
+
+    public static Seller createSellerC() {
+        return new Seller("1", "Peter", "peter@email.com", "password");
+    }
+
+    public static Seller createSellerD() {
+        return new Seller("1", "Caio", "caio@email.com", "password");
+    }
+
+    public static Seller createSellerE() {
+        return new Seller("1", "Vinicius", "vinicius@email.com", "password");
+    }
+
     public static Seller createSeller() {
         return new Seller("1", "Cirilo", "cirilo@email.com", "password");
     }
@@ -73,8 +96,20 @@ public class UserFactory {
         list.add(sellerB);
         list.add(sellerC);
         return new PageImpl<>(list);
+    }
 
+    public static SellerRequestDTO createSellerRequestDto() {
+        return SellerRequestDTO.builder().name("Mario").email("mario@email.com").password("password").build();
+    }
+
+    public static SellerRequestDTO createSellerRequestDtoToThrow() {
+        return SellerRequestDTO.builder().name("Luigi").email("luigi@email.com").password("password").build();
+    }
+
+    public static SellerRequestDTO createSellerToUpdateRequestDto() {
+        return SellerRequestDTO.builder().name("Peach").email("peach@email.com").password("password").build();
     }
 }
+
 
 
