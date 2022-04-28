@@ -41,7 +41,7 @@ public class CartMapper {
 
     public CartResponse toResponseObject(Cart entity) {
         CartResponse cartResponse = new CartResponse();
-        cartResponse.setDate(entity.getDate());
+        cartResponse.setDate(entity.getDate().toString());
 
         cartResponse.setItems(new ArrayList<>());
 

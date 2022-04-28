@@ -33,22 +33,22 @@ public class ControllerHandlerException {
 
     @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<?> productNotFoundException(ProductNotFoundException err){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("ProductNotFoundException", err.getMessage()));
     }
 
     @ExceptionHandler(InvalidEnumCartStatusException.class)
     public ResponseEntity<?> invalidEnumCartStatusException(InvalidEnumCartStatusException err){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO("InvalidEnumCartStatusException", err.getMessage()));
     }
 
     @ExceptionHandler(InsufficientQuantityOfProductException.class)
     public ResponseEntity<?> insufficientQuantityOfProductException(InsufficientQuantityOfProductException err){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err.getMessage());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO("InsufficientQuantityOfProductException", err.getMessage()));
     }
 
     @ExceptionHandler(CartNotFoundException.class)
     public ResponseEntity<?> cartNotFoundException(CartNotFoundException err){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("CartNotFoundException", err.getMessage()));
     }
 
 

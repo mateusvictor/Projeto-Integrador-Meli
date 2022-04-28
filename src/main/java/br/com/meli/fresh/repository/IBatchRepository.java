@@ -10,5 +10,6 @@ import java.util.List;
 public interface IBatchRepository extends JpaRepository<Batch, String> {
 
     List<Batch> findAllByProduct_Id(String id);
+    Batch findByProduct_Id(String id);
 
 }

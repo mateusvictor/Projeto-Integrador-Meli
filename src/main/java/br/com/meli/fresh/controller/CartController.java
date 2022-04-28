@@ -20,7 +20,7 @@ import java.net.URI;
 @RequestMapping("api/v1/fresh-products/orders")
 @AllArgsConstructor
 public class CartController {
-    private CartServiceImpl cartService;
+    private final CartServiceImpl cartService;
     private final CartMapper mapper;
 
     @PostMapping

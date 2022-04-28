@@ -9,6 +9,7 @@ import br.com.meli.fresh.repository.*;
 import br.com.meli.fresh.services.ICartService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.time.temporal.WeekFields;
@@ -22,12 +23,13 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class CartServiceImpl implements ICartService {
 
-    private ICartRepository cartRepository;
-    private IProductRepository productRepository;
-    private IBuyerRepository buyerRepository;
-    private IBatchRepository batchRepository;
+    private final ICartRepository cartRepository;
+    private final IProductRepository productRepository;
+    private final IBuyerRepository buyerRepository;
+    private final IBatchRepository batchRepository;
 
     @Override
+    @Transactional()
     public Cart create(Cart cart) {
         cart.setDate(LocalDateTime.now());
 
@@ -54,6 +56,7 @@ public class CartServiceImpl implements ICartService {
     }
 
     @Override
+    @Transactional()
     public Cart update(String id) {
         Cart cart = cartRepository.findById(id)
                 .orElseThrow(() -> new CartNotFoundException("Cart not found."));
@@ -62,20 +65,16 @@ public class CartServiceImpl implements ICartService {
             return cart;
         }
 
-        cart.getItems().stream().forEach(cartItem -> {
-            decrementOfBatchAndProductQuantity(cartItem.getProduct().getId(), cartItem.getQuantity());
-        });
+        cart.getItems().forEach(cartItem -> decrementOfBatchAndProductQuantity(cartItem.getProduct().getId(), cartItem.getQuantity()));
 
         cart.setCartStatus(CartStatus.CLOSE);
         return cartRepository.save(cart);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public Cart getById(String id) {
-        Cart cart = cartRepository.findById(id)
-                .orElseThrow(() -> new CartNotFoundException("Cart not found."));
-
-        return cart;
+        return cartRepository.findById(id).orElseThrow(() -> new CartNotFoundException("Cart not found."));
     }
 
 
@@ -86,10 +85,7 @@ public class CartServiceImpl implements ICartService {
         int weekDueDateNumber = dueDate.get(weekFields.weekOfWeekBasedYear());
         int weekTotal = weekDueDateNumber - weekNumber;
 
-        if (weekTotal >= 3) {
-            return true;
-        }
-        return false;
+        return weekTotal >= 3;
     }
 
     private void isQuantityValid(List<Batch> batches, int quantity) {
@@ -122,7 +118,7 @@ public class CartServiceImpl implements ICartService {
             if (total >= batch.getCurrentQuantity()) {
                 total -= batch.getCurrentQuantity();
                 batch.setCurrentQuantity(0);
-            } else if (total < batch.getCurrentQuantity()) {
+            } else {
                 batch.setCurrentQuantity(batch.getCurrentQuantity() - total);
                 total = 0;
             }
