@@ -5,6 +5,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
@@ -22,9 +24,11 @@ public class BatchRequest {
     private Float currentTemperature;
 
     @NotNull(message = "initialQuantity must not be null")
+    @Min(value = 0, message = "initialQuantity min value is 0")
     private Integer initialQuantity;
 
     @NotNull(message = "currentQuantity must not be null")
+    @Min(value = 1, message = "currentQuantity min value is 1")
     private Integer currentQuantity;
 
     private LocalDateTime manufacturingDateTime;
@@ -33,5 +37,6 @@ public class BatchRequest {
     private LocalDate dueDate;
 
     @NotNull(message = "volume must not be null")
+    @Min(value = 1, message = "volume min value is 1")
     private Float volume;
 }
