@@ -9,6 +9,7 @@ import br.com.meli.fresh.factory.ProductFactory;
 import br.com.meli.fresh.factory.SectionFactory;
 import br.com.meli.fresh.factory.WarehouseFactory;
 import br.com.meli.fresh.model.*;
+import br.com.meli.fresh.repository.IInboundOrderRepository;
 import br.com.meli.fresh.repository.IProductRepository;
 import br.com.meli.fresh.repository.ISectionRepository;
 import br.com.meli.fresh.repository.IWarehouseRepository;
@@ -24,6 +25,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -32,6 +34,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -41,7 +44,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource({ "/application-test.properties" })
-@Transactional
+@Rollback
 public class InboundOrderControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -59,6 +62,9 @@ public class InboundOrderControllerTest {
     private IProductRepository productRepository;
 
     @Autowired
+    private IInboundOrderRepository repository;
+
+    @Autowired
     private AuthFactory auth;
 
     private final String BASE_URL = "/api/v1/fresh-products/inboundorder";
@@ -70,9 +76,14 @@ public class InboundOrderControllerTest {
             .writer().withDefaultPrettyPrinter();
 
     public InboundOrderRequest getValidRequestInstance(){
-        Warehouse warehouse = warehouseRepository.save(WarehouseFactory.getWarehouse());
-        Section sectionFresh = sectionRepository.save(SectionFactory.getFreshSection());
+        Warehouse warehouse = WarehouseFactory.getWarehouse();
+        Section sectionFresh = SectionFactory.getFreshSection();
         sectionFresh.setWarehouse(warehouse);
+
+        warehouse.setSectionList(Collections.singletonList(sectionFresh));
+        warehouse.setWarehouseManager(auth.getAdminUser());
+
+        warehouse = warehouseRepository.save(warehouse);
 
         Product product1 = productRepository.save(ProductFactory.getFreshProductA());
         Product product2 = productRepository.save(ProductFactory.getFreshProductB());
@@ -88,9 +99,14 @@ public class InboundOrderControllerTest {
         // Returns an instance with a product that doesn't match the section product type
         // Section product type: fresco
         // Product type: congelado
-        Warehouse warehouse = warehouseRepository.save(WarehouseFactory.getWarehouse());
-        Section sectionFresh = sectionRepository.save(SectionFactory.getFreshSection());
+        Warehouse warehouse = WarehouseFactory.getWarehouse();
+        Section sectionFresh = SectionFactory.getFreshSection();
         sectionFresh.setWarehouse(warehouse);
+
+        warehouse.setSectionList(Collections.singletonList(sectionFresh));
+        warehouse.setWarehouseManager(auth.getAdminUser());
+
+        warehouse = warehouseRepository.save(warehouse);
 
         Product product1 = productRepository.save(ProductFactory.getFrozenProductA()); // Invalid Product
         Product product2 = productRepository.save(ProductFactory.getFreshProductA());
@@ -106,9 +122,14 @@ public class InboundOrderControllerTest {
         // Returns an instance with a batch list with more volume than the section available volume
         // Section available volume: 20.0
         // Batch total volume: 30.0
-        Warehouse warehouse = warehouseRepository.save(WarehouseFactory.getWarehouse());
-        Section sectionFrozen = sectionRepository.save(SectionFactory.getFrozenSection());
+        Warehouse warehouse = WarehouseFactory.getWarehouse();
+        Section sectionFrozen = SectionFactory.getFrozenSection();
         sectionFrozen.setWarehouse(warehouse);
+
+        warehouse.setSectionList(Collections.singletonList(sectionFrozen));
+        warehouse.setWarehouseManager(auth.getAdminUser());
+
+        warehouse = warehouseRepository.save(warehouse);
 
         Product product1 = productRepository.save(ProductFactory.getFrozenProductA());
         Product product2 = productRepository.save(ProductFactory.getFrozenProductB());
@@ -123,9 +144,15 @@ public class InboundOrderControllerTest {
 
     public InboundOrder getInboundOrderEntity(){
         // Returns a inbound order entity to be used in GET test
-        Warehouse warehouse = warehouseRepository.save(WarehouseFactory.getWarehouse());
-        Section sectionFresh = sectionRepository.save(SectionFactory.getFreshSection());
+        Warehouse warehouse = WarehouseFactory.getWarehouse();
+        Section sectionFresh = SectionFactory.getFreshSection();
         sectionFresh.setWarehouse(warehouse);
+
+        warehouse.setSectionList(Collections.singletonList(sectionFresh));
+        warehouse.setWarehouseManager(auth.getAdminUser());
+
+        warehouse = warehouseRepository.save(warehouse);
+        sectionRepository.save(sectionFresh);
 
         InboundOrder inboundOrder = new InboundOrder(null, null, null, sectionFresh);
 
@@ -160,7 +187,7 @@ public class InboundOrderControllerTest {
     @Test
     public void testGetInboundOrder() throws Exception {
         // First creates an inbound order
-        InboundOrder inboundOrder = service.create(this.getInboundOrderEntity());
+        InboundOrder inboundOrder = repository.save(this.getInboundOrderEntity());
 
         // Perform the GET with the inboundOrder ID
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + inboundOrder.getId())
@@ -180,7 +207,7 @@ public class InboundOrderControllerTest {
     @Test
     public void testUpdateInboundOrder() throws Exception {
         // First creates an inbound order
-        InboundOrder oldInboundOrder = service.create(this.getInboundOrderEntity());
+        InboundOrder oldInboundOrder = repository.save(this.getInboundOrderEntity());
         InboundOrderRequest inboundOrderRequest = new InboundOrderRequest();
         Float oldSectionVolume = oldInboundOrder.getSection().getActualVolume();
 
