@@ -114,14 +114,15 @@ public class UserFactory {
     }
 
     public static WarehouseManager createWarehouseManagerDefault(){
-        return new WarehouseManager("1","teste", "teste@teste.com", "password", Warehouse.builder().id("123").build());
+        //return new WarehouseManager("1","teste", "teste@teste.com", "password", Warehouse.builder().id("123").build());
+        return null;
     }
 
     public static Page<WarehouseManager> createWarehouseManagerPage(){
         List<WarehouseManager> list = new ArrayList<>();
-        WarehouseManager a = new WarehouseManager("1","teste", "teste@teste.com", "password", Warehouse.builder().id("123").build());
-        WarehouseManager b = new WarehouseManager("2","teste1", "teste1@teste.com", "password", Warehouse.builder().id("345").build());
-        WarehouseManager c = new WarehouseManager("3","teste2", "teste2@teste.com", "password", Warehouse.builder().id("456").build());
+//        WarehouseManager a = new WarehouseManager("1","teste", "teste@teste.com", "password", Warehouse.builder().id("123").build());
+//        WarehouseManager b = new WarehouseManager("2","teste1", "teste1@teste.com", "password", Warehouse.builder().id("345").build());
+//        WarehouseManager c = new WarehouseManager("3","teste2", "teste2@teste.com", "password", Warehouse.builder().id("456").build());
         return new PageImpl<>(list);
     }
 }

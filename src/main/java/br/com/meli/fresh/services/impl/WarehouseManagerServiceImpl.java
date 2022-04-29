@@ -26,13 +26,13 @@ public class WarehouseManagerServiceImpl implements ICrudService<WarehouseManage
     public WarehouseManager create(WarehouseManager warehouseManager) {
 
         try {
-           Warehouse w =  this.warehouseRepository.findById(warehouseManager.getWarehouse().getId()).orElseThrow(
-                    () -> new WarehouseNotFoundException("Warehouse not found!"));
-           if(w.getWarehouseManager()!=null){
-               throw new WarehouseAlreadyDefinedException("Warehouse already defined to an warehouse manager!");
-           }
-           w.setWarehouseManager(warehouseManager);
-           warehouseManager.setWarehouse(w);
+//           //Warehouse w =  this.warehouseRepository.findById(warehouseManager.getWarehouse().getId()).orElseThrow(
+//                    () -> new WarehouseNotFoundException("Warehouse not found!"));
+//           if(w.getWarehouseManager()!=null){
+//               throw new WarehouseAlreadyDefinedException("Warehouse already defined to an warehouse manager!");
+//           }
+//           //w.setWarehouseManager(warehouseManager);
+//           warehouseManager.setWarehouse(w);
            return this.repository.save(warehouseManager);
         } catch (DataIntegrityViolationException e) {
             throw new EmailAlreadyExistsException("Email already exists!");

@@ -58,7 +58,7 @@ public class WarehouseController {
         if(requestDTO.getWarehouseManagerId()!=null){
             WarehouseManager manager = this.warehouseManagerService.getById(requestDTO.getWarehouseManagerId());
             Warehouse entity = this.mapper.toDomainObject(requestDTO);
-            entity.setWarehouseManager(manager);
+            //entity.setWarehouseManager(manager);
             return entity;
         }
         return this.mapper.toDomainObject(requestDTO);

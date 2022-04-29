@@ -4,6 +4,7 @@ import br.com.meli.fresh.model.Section;
 import br.com.meli.fresh.model.Warehouse;
 import br.com.meli.fresh.model.exception.WarehouseManagerAlreadyDefined;
 import br.com.meli.fresh.model.exception.WarehouseNotFoundException;
+import br.com.meli.fresh.repository.IGeneralUserRepository;
 import br.com.meli.fresh.repository.IWarehouseManagerRepository;
 import br.com.meli.fresh.repository.IWarehouseRepository;
 import br.com.meli.fresh.services.ICrudService;
@@ -21,6 +22,7 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
 
     private final IWarehouseRepository repository;
     private final IWarehouseManagerRepository warehouseManagerRepository;
+    private final IGeneralUserRepository generalUserRepository;
 
     @Override
     public Warehouse create(Warehouse warehouse) {
@@ -30,7 +32,7 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
             return  section;
         }).collect(Collectors.toList()));
         if(warehouse.getWarehouseManager()!=null){
-            warehouse.getWarehouseManager().setWarehouse(warehouse);
+           // warehouse.getWarehouseManager().setWarehouse(warehouse);
         }
         return this.repository.save(warehouse);
     }
@@ -45,7 +47,7 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
             return  section;
         }).collect(Collectors.toList()));
         if(warehouse.getWarehouseManager()!=null){
-            warehouse.getWarehouseManager().setWarehouse(warehouse);
+           // warehouse.getWarehouseManager().setWarehouse(warehouse);
         }
         return this.repository.save(warehouse);
     }
@@ -63,16 +65,18 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
     @Override
     public void delete(String id) {
         Warehouse warehouse = this.repository.findById(id).orElseThrow(()-> new WarehouseNotFoundException("Warehouse not found!"));
-        warehouse.getWarehouseManager().setWarehouse(null);
+       // warehouse.getWarehouseManager().setWarehouse(null);
         this.repository.delete(warehouse);
     }
 
 
     private void verifyManager(Warehouse warehouse) {
         if(warehouse.getWarehouseManager()!=null){
-            if(this.warehouseManagerRepository.findById(warehouse.getWarehouseManager().getId())!=null){
-                throw new WarehouseManagerAlreadyDefined("Warehouse manager already defined to a warehouse");
-            }
+//            if(this.repository.findByWarehouseManagerId(warehouse.getWarehouseManager().getId())
+//
+//            ){
+//                throw new WarehouseManagerAlreadyDefined("Warehouse manager already defined to a warehouse");
+//            }
         }
     }
 

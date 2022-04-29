@@ -23,6 +23,6 @@ public class Warehouse {
     @OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL)
     private List<Section> sectionList;
 
-    @OneToOne(mappedBy = "warehouse")
-    private WarehouseManager warehouseManager;
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH})
+    private GeneralUser warehouseManager;
 }
