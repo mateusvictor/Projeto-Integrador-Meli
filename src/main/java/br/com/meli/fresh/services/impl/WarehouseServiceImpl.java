@@ -30,9 +30,6 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
             section.setWarehouse(warehouse);
             return  section;
         }).collect(Collectors.toList()));
-        if(warehouse.getWarehouseManager()!=null){
-           // warehouse.getWarehouseManager().setWarehouse(warehouse);
-        }
         return this.repository.save(warehouse);
     }
 
