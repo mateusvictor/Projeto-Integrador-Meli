@@ -1,20 +1,30 @@
 package br.com.meli.fresh.services.validator;
 
-import br.com.meli.fresh.model.Batch;
-import br.com.meli.fresh.model.InboundOrder;
-import br.com.meli.fresh.model.Section;
+import br.com.meli.fresh.model.*;
+import br.com.meli.fresh.security.UserSpringSecurity;
 import br.com.meli.fresh.services.exception.InsufficientAvailableSpaceException;
 import br.com.meli.fresh.services.exception.InvalidSectionTypeException;
+import br.com.meli.fresh.services.exception.InvalidWarehouseManagerException;
 import lombok.AllArgsConstructor;
 
 @AllArgsConstructor
 public class InboundOrderValidator {
     private final InboundOrder inboundOrder;
+    private final UserSpringSecurity user;
 
     public Boolean valid(){
+        validateWarehouseManager();
         validateSectionType();
         validateSectionAvailableSpace();
         return true;
+    }
+
+    private void validateWarehouseManager(){
+        // Checks the client user is the warehouse manager for the inbound order
+        Warehouse orderWarehouse = inboundOrder.getSection().getWarehouse();
+        if (!user.getId().equalsIgnoreCase(orderWarehouse.getWarehouseManager().getId())){
+            throw new InvalidWarehouseManagerException("You are not authorized to insert insert batches in the warehouse with ID: " + orderWarehouse.getId());
+        }
     }
 
     private void validateSectionType(){
