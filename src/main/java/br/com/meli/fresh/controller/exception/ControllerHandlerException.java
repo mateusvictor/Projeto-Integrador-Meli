@@ -29,6 +29,16 @@ public class ControllerHandlerException {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO("UserWithThisEmailAlreadyExists", e.getMessage()));
     }
 
+    @ExceptionHandler(UserNotAllowedException.class)
+    protected ResponseEntity<?> handleUserNotAllowedException(UserNotAllowedException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO("UserNotAllowedException", e.getMessage()));
+    }
+
+    @ExceptionHandler(WarehouseManagerAlreadyDefined.class)
+    protected ResponseEntity<?> handleWarehouseManagerAlreadyDefined(WarehouseManagerAlreadyDefined e){
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorDTO("WarehouseManagerAlreadyDefined", e.getMessage()));
+    }
+
     @ExceptionHandler(WarehouseNotFoundException.class)
     protected ResponseEntity<?> handleWarehouseNotFoundException(WarehouseNotFoundException e){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("WarehouseNotFoundException", e.getMessage()));
@@ -99,6 +109,13 @@ public class ControllerHandlerException {
     public ResponseEntity<?> productAlreadyExistsException(ProductAlreadyExistsException err) {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(err.getMessage());
     }
+
+    @ExceptionHandler(WarehouseManagerCanNotBeDeletedException.class)
+    public ResponseEntity<?> handleWarehouseManagerCanNotBeDeletedException(WarehouseManagerCanNotBeDeletedException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorDTO("WarehouseManagerCanNotBeDeletedException", e.getMessage()));
+    }
+
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<?> constraintViolationException(ConstraintViolationException err) {

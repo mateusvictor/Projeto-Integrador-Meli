@@ -1,9 +1,12 @@
 package br.com.meli.fresh.services.impl;
 
+import br.com.meli.fresh.model.Role;
 import br.com.meli.fresh.model.User;
 import br.com.meli.fresh.model.exception.UserNotFoundException;
 import br.com.meli.fresh.model.exception.UserWithThisEmailAlreadyExists;
+import br.com.meli.fresh.model.exception.WarehouseManagerCanNotBeDeletedException;
 import br.com.meli.fresh.repository.IUserRepository;
+import br.com.meli.fresh.repository.IWarehouseRepository;
 import br.com.meli.fresh.services.ICrudService;
 import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -16,6 +19,7 @@ import org.springframework.stereotype.Service;
 public class UserServiceImpl implements ICrudService<User> {
 
     private final IUserRepository repository;
+    private final IWarehouseRepository warehouseRepository;
 
     @Override
     public User create(User user) {
@@ -49,7 +53,17 @@ public class UserServiceImpl implements ICrudService<User> {
 
     @Override
     public void delete(String id) {
-        this.repository.delete(this.repository.findById(id).orElseThrow(()-> new UserNotFoundException((id))));
+        User user = this.repository.findById(id).orElseThrow(()-> new UserNotFoundException((id)));
+        if(user.getRoles().contains(Role.WAREHOUSEMANAGER)){
+            this.verifyManager(user);
+        }
+        this.repository.delete(user);
 
+    }
+
+    private void verifyManager(User user) {
+        if(this.warehouseRepository.findWarehouseByWarehouseManager(user)!=null){
+            throw new WarehouseManagerCanNotBeDeletedException("User is an allocated warehouse manager and can not be deleted!");
+        }
     }
 }
