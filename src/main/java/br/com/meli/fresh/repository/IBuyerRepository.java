@@ -6,4 +6,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface IBuyerRepository extends JpaRepository<Buyer, String> {
+
+    Buyer findByEmail(String email);
 }

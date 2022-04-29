@@ -1,17 +1,19 @@
 package br.com.meli.fresh.model;
 
 
-import lombok.Data;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
-import javax.persistence.Column;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.MappedSuperclass;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @MappedSuperclass
-@Data
-
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public abstract class User {
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -21,5 +23,4 @@ public abstract class User {
     @Column(unique = true)
     private String email;
     private String password;
-    private String role;
 }

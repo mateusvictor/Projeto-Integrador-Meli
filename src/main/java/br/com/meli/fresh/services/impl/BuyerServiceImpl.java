@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -17,9 +18,12 @@ public class BuyerServiceImpl implements ICrudService<Buyer> {
 
     private final IBuyerRepository repository;
 
+    private final BCryptPasswordEncoder pe;
+
     @Override
     public Buyer create(Buyer buyer) {
         try{
+            buyer.setPassword(pe.encode(buyer.getPassword()));
             return this.repository.save(buyer);
         }catch(DataIntegrityViolationException e){
             throw new EmailAlreadyExistsException("Email already exists!");

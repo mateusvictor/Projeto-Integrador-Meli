@@ -1,29 +1,34 @@
 package br.com.meli.fresh.model;
 
-
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 
 import lombok.*;
-import org.hibernate.annotations.GenericGenerator;
 
 
-import javax.persistence.Entity;
-import javax.persistence.Table;
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "buyers")
-@AllArgsConstructor
 @Getter
 @Setter
-@Builder
+@NoArgsConstructor
 public class Buyer extends User {
 
-    public Buyer(String id, String name, String email, String password) {
-        super.setEmail(email);
-        super.setId(id);
-        super.setName(name);
-        super.setPassword(password);
+    @ElementCollection(fetch = FetchType.EAGER)
+    @CollectionTable(name="roles_buyer")
+    private Set<Integer> roles = new HashSet<>();
+
+
+    public Set<Role> getRoles() {
+        return roles.stream().map(role -> Role.toEnum(role)).collect(Collectors.toSet());
+    }
+
+    public Buyer(String id, String name, String email, String password, Set<Integer> roles) {
+        super(id, name, email, password);
+        this.roles = roles;
     }
 }
