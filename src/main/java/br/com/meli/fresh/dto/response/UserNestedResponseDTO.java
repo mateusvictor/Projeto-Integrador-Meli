@@ -4,14 +4,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.List;
-
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class WarehouseResponseDTO {
+public class UserNestedResponseDTO {
     private String id;
-    private String name;
-    private List<SectionNestedResponseDTO> sectionList;
-    private UserNestedResponseDTO warehouseManagerId;
 }
