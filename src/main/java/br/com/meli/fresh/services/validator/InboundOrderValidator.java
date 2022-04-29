@@ -22,7 +22,9 @@ public class InboundOrderValidator {
     private void validateWarehouseManager(){
         // Checks the client user is the warehouse manager for the inbound order
         Warehouse orderWarehouse = inboundOrder.getSection().getWarehouse();
-        if (!user.getId().equalsIgnoreCase(orderWarehouse.getWarehouseManager().getId())){
+
+        // If the user is not logged in OR the user id doesn't match the warehouse manager for the warehouse specified, throw an error
+        if (user == null || !user.getId().equalsIgnoreCase(orderWarehouse.getWarehouseManager().getId())){
             throw new InvalidWarehouseManagerException("You are not authorized to insert insert batches in the warehouse with ID: " + orderWarehouse.getId());
         }
     }
