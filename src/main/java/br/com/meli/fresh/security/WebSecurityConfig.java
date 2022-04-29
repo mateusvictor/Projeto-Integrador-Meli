@@ -44,7 +44,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             BASE_URL + "/users/**",
             BASE_URL + "/buyer/**",
             BASE_URL + "/seller/**",
-            BASE_URL + "/warehousemanager/**"
+            BASE_URL + "/warehousemanager/**",
+            BASE_URL + "/warehouses/**"
     };
 
     @Override

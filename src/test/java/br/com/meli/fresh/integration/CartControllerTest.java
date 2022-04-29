@@ -6,6 +6,7 @@ import br.com.meli.fresh.dto.request.CartRequest;
 import br.com.meli.fresh.dto.response.CartResponse;
 import br.com.meli.fresh.dto.response.ErrorDTO;
 import br.com.meli.fresh.dto.response.OrderTotalPriceResponse;
+import br.com.meli.fresh.factory.AuthFactory;
 import br.com.meli.fresh.model.Batch;
 import br.com.meli.fresh.model.Cart;
 import br.com.meli.fresh.model.CartStatus;

@@ -1,14 +1,18 @@
 package br.com.meli.fresh.integration;
 
+import br.com.meli.fresh.dto.request.AuthRequest;
 import br.com.meli.fresh.dto.request.productRequest.ProductRequest;
 import br.com.meli.fresh.dto.response.productResponse.ProductResponse;
+import br.com.meli.fresh.factory.AuthFactory;
 import br.com.meli.fresh.model.Product;
+import br.com.meli.fresh.model.User;
 import br.com.meli.fresh.services.impl.ProductServiceImpl;
-import br.com.meli.fresh.utils.JwtUtil;
+import br.com.meli.fresh.services.impl.UserServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.json.JSONObject;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -19,8 +23,10 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,7 +44,37 @@ public class ProductControllerTest {
     @Autowired
     private ProductServiceImpl service;
 
+    @Autowired
+    private UserServiceImpl userService;
+
     private final String BASE_URL = "http://localhost:8080/api/v1/fresh-products/products/";
+
+    public String token() {
+        // Setting payload login's request
+        AuthRequest auth = new AuthRequest();
+        auth.setEmail("admin@admin.com");
+        auth.setPassword("admin");
+
+        try {
+            ObjectWriter writer = new ObjectMapper()
+                    .configure(SerializationFeature.WRAP_ROOT_VALUE, false)
+                    .writer().withDefaultPrettyPrinter();
+
+            String payloadLogin = writer.writeValueAsString(auth);
+
+            // Realizing auth this user.
+            MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(payloadLogin))
+                    .andExpect(status().isOk()).andReturn();
+            return mvcResult.getResponse().getHeader("Authorization");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+
 
     @Test
     public void testCreateProduct() throws Exception {
@@ -59,7 +95,8 @@ public class ProductControllerTest {
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(payloadRequest))
+                        .content(payloadRequest)
+                        .header(HttpHeaders.AUTHORIZATION, token()))
                         .andDo(print()).andExpect(status().isCreated()).andReturn();
 
         String locationUrl = mvcResult.getResponse().getHeader("Location");
@@ -74,7 +111,8 @@ public class ProductControllerTest {
         p.setCategory("RF");
         Product pSaved = service.create(p);
 
-        MvcResult mvcResultGet = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + pSaved.getId())).andReturn();
+        MvcResult mvcResultGet = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + pSaved.getId())
+                .header(HttpHeaders.AUTHORIZATION, token())).andReturn();
 
         String jsonObjectReturned = mvcResultGet.getResponse().getContentAsString();
         ProductResponse pres = new ObjectMapper().readValue(jsonObjectReturned, ProductResponse.class);
@@ -84,6 +122,22 @@ public class ProductControllerTest {
 
     @Test
     public void testGetAllProduct() throws Exception {
+
+        // Creating an admin user with all access.
+        User u = userService.create(new User(
+                null,
+                "admin",
+                "admin@admin.com",
+                "admin",
+                Set.of(0, 1, 2, 3)
+        ));
+
+        // Setting payload login's request
+        AuthRequest auth = new AuthRequest();
+        auth.setEmail(u.getEmail());
+        auth.setPassword("admin");
+
+
         Product p1 = new Product();
         Product p2 = new Product();
         p1.setName("Cheese");
@@ -93,7 +147,8 @@ public class ProductControllerTest {
         service.create(p1);
         service.create(p2);
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL)).andReturn();
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL)
+                .header(HttpHeaders.AUTHORIZATION, token())).andReturn();
         String jsonObjectReturned = mvcResult.getResponse().getContentAsString();
         JSONObject obj = new JSONObject(jsonObjectReturned);
         Integer totalElements = obj.getInt("totalElements");
@@ -106,7 +161,8 @@ public class ProductControllerTest {
         p1.setCategory("FF");
         service.create(p1);
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "?category=FF")).andReturn();
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "?category=FF")
+                .header(HttpHeaders.AUTHORIZATION, token())).andReturn();
         String jsonObjectReturned = mvcResult.getResponse().getContentAsString();
         JSONObject obj = new JSONObject(jsonObjectReturned);
         Integer totalElements = obj.getInt("totalElements");
@@ -124,7 +180,8 @@ public class ProductControllerTest {
         pToUpdate.setName("Popsicle");
         pToUpdate.setCategory("RF");
 
-        MvcResult mvcResultGetWithoutUpdated = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + pSaved.getId())).andReturn();
+        MvcResult mvcResultGetWithoutUpdated = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + pSaved.getId())
+                .header(HttpHeaders.AUTHORIZATION, token())).andReturn();
         String objectReturned = mvcResultGetWithoutUpdated.getResponse().getContentAsString();
         ProductResponse pWithoutUpdated = new ObjectMapper().readValue(objectReturned, ProductResponse.class);
 
@@ -136,7 +193,8 @@ public class ProductControllerTest {
 
         MvcResult mvcUpdated = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + pSaved.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonObjectToBeUpdated))
+                .content(jsonObjectToBeUpdated)
+                .header(HttpHeaders.AUTHORIZATION, token()))
                 .andDo(print()).andExpect(status().isOk()).andReturn();
 
         MvcResult MvcResultGetUpdated = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + pSaved.getId())
@@ -158,10 +216,12 @@ public class ProductControllerTest {
         p.setCategory("RF");
         Product pSaved = service.create(p);
 
-        this.mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL + pSaved.getId()))
+        this.mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL + pSaved.getId())
+                        .header(HttpHeaders.AUTHORIZATION, token()))
                 .andExpect(status().isOk()).andReturn();
 
-        MvcResult mvcResultDelete = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + pSaved.getId()))
+        MvcResult mvcResultDelete = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + pSaved.getId())
+                        .header(HttpHeaders.AUTHORIZATION, token()))
                 .andExpect(status().isNotFound()).andReturn();
 
         String errorMessage = mvcResultDelete.getResponse().getContentAsString();
@@ -194,7 +254,8 @@ public class ProductControllerTest {
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(payloadRequest))
+                        .content(payloadRequest)
+                        .header(HttpHeaders.AUTHORIZATION, token()))
                 .andDo(print()).andExpect(status().isConflict()).andReturn();
 
         String errorMessage = mvcResult.getResponse().getContentAsString();
@@ -205,13 +266,10 @@ public class ProductControllerTest {
 
     @Test
     public void testProductsWereNotFoundException() throws Exception {
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "?category=FS"))
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "?category=FS")
+                .header(HttpHeaders.AUTHORIZATION, token()))
                 .andDo(print()).andExpect(status().isNotFound()).andReturn();
         String errorMessage = mvcResult.getResponse().getContentAsString();
         assertEquals("Products were not found!", errorMessage);
     }
-
-
-
-
 }
