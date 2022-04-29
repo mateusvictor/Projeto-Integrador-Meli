@@ -6,13 +6,10 @@ import br.com.meli.fresh.model.Section;
 import br.com.meli.fresh.repository.IBatchRepository;
 import br.com.meli.fresh.repository.IInboundOrderRepository;
 import br.com.meli.fresh.repository.ISectionRepository;
-import br.com.meli.fresh.services.ICrudService;
 import br.com.meli.fresh.services.IInboundOrderService;
 import br.com.meli.fresh.services.exception.EntityNotFoundException;
 import br.com.meli.fresh.services.validator.InboundOrderValidator;
 import lombok.AllArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Service

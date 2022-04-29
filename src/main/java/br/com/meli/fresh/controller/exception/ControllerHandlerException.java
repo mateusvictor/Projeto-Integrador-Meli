@@ -6,10 +6,6 @@ import br.com.meli.fresh.services.exception.EntityNotFoundException;
 import br.com.meli.fresh.services.exception.InsufficientAvailableSpaceException;
 import br.com.meli.fresh.services.exception.InvalidSectionTypeException;
 import br.com.meli.fresh.services.exception.InvalidWarehouseManagerException;
-import br.com.meli.fresh.model.exception.BuyerNotFoundException;
-import br.com.meli.fresh.model.exception.EmailAlreadyExistsException;
-import br.com.meli.fresh.model.exception.SellerNotFoundException;
-import br.com.meli.fresh.model.exception.WarehouseManagerNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
@@ -24,34 +20,19 @@ import java.util.stream.Collectors;
 
 @ControllerAdvice
 public class ControllerHandlerException {
-    @ExceptionHandler(BuyerNotFoundException.class)
-    protected ResponseEntity<?> handleBuyerNotFoundException(BuyerNotFoundException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("BuyerNotFoundException", e.getMessage()));
+    @ExceptionHandler(UserNotFoundException.class)
+    protected ResponseEntity<?> handleUserNotFoundException(UserNotFoundException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("UserNotFoundException", e.getMessage()));
     }
-    @ExceptionHandler(EmailAlreadyExistsException.class)
-    protected ResponseEntity<?> handleEmailAlreadyExistsException(EmailAlreadyExistsException e){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO("EmailAlreadyExistsException", e.getMessage()));
-    }
-
-    @ExceptionHandler(SellerNotFoundException.class)
-    protected ResponseEntity<?> handleSellerNotFoundException(SellerNotFoundException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("SellerNotFoundException", e.getMessage()));
+    @ExceptionHandler(UserWithThisEmailAlreadyExists.class)
+    protected ResponseEntity<?> handleUserWithThisEmailAlreadyExists(UserWithThisEmailAlreadyExists e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO("UserWithThisEmailAlreadyExists", e.getMessage()));
     }
 
-    @ExceptionHandler(WarehouseManagerNotFoundException.class)
-    protected ResponseEntity<?> handleWarehouseManagerNotFoundException(WarehouseManagerNotFoundException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("WarehouseManagerNotFoundException", e.getMessage()));
-    }
     @ExceptionHandler(WarehouseNotFoundException.class)
     protected ResponseEntity<?> handleWarehouseNotFoundException(WarehouseNotFoundException e){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("WarehouseNotFoundException", e.getMessage()));
     }
-
-    @ExceptionHandler(WarehouseAlreadyDefinedException.class)
-    protected ResponseEntity<?> handleWarehouseAlreadyDefined(WarehouseAlreadyDefinedException e){
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO("WarehouseAlreadyDefinedException", e.getMessage()));
-    }
-
 
     @ExceptionHandler(EntityNotFoundException.class)
     protected ResponseEntity<?> handleEntityNotFoundException(EntityNotFoundException err){

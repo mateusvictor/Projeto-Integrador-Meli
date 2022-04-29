@@ -1,9 +1,6 @@
 package br.com.meli.fresh.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
@@ -15,6 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
+@Builder
 public class Warehouse {
     @Id
     @GeneratedValue(generator = "uuid2")
@@ -25,6 +23,6 @@ public class Warehouse {
     @OneToMany(mappedBy = "warehouse", cascade = CascadeType.ALL)
     private List<Section> sectionList;
 
-    @OneToOne(mappedBy = "warehouse")
-    private WarehouseManager warehouseManager;
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.DETACH, CascadeType.REFRESH})
+    private User warehouseManager;
 }

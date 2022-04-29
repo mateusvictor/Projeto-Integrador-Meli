@@ -1,11 +1,8 @@
 package br.com.meli.fresh.assembler;
 
 import br.com.meli.fresh.dto.request.BatchRequest;
-import br.com.meli.fresh.dto.request.InboundOrderRequest;
 import br.com.meli.fresh.dto.response.BatchResponse;
-import br.com.meli.fresh.dto.response.InboundOrderResponse;
 import br.com.meli.fresh.model.Batch;
-import br.com.meli.fresh.model.InboundOrder;
 import lombok.AllArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Component;

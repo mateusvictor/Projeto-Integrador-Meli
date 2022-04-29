@@ -7,7 +7,6 @@ import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor
@@ -27,7 +26,7 @@ public class Cart {
     private CartStatus cartStatus;
 
     @OneToOne
-    private Buyer buyer;
+    private User buyer;
 
     @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<CartItem> items;

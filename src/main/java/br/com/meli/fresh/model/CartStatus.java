@@ -1,7 +1,5 @@
 package br.com.meli.fresh.model;
 
-import javax.swing.plaf.basic.BasicInternalFrameUI;
-
 public enum CartStatus {
     OPEN("OPEN"),
     CLOSE("CLOSE");

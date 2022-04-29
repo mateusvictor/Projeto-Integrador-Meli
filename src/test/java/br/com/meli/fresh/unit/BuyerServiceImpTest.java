@@ -1,10 +1,10 @@
 package br.com.meli.fresh.unit;
 
-import br.com.meli.fresh.model.Buyer;
-import br.com.meli.fresh.model.exception.BuyerNotFoundException;
-import br.com.meli.fresh.model.exception.EmailAlreadyExistsException;
-import br.com.meli.fresh.repository.IBuyerRepository;
-import br.com.meli.fresh.services.impl.BuyerServiceImpl;
+import br.com.meli.fresh.model.User;
+import br.com.meli.fresh.model.exception.UserNotFoundException;
+import br.com.meli.fresh.model.exception.UserWithThisEmailAlreadyExists;
+import br.com.meli.fresh.repository.IUserRepository;
+import br.com.meli.fresh.services.impl.UserServiceImpl;
 import br.com.meli.fresh.unit.factory.UserFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,41 +22,41 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class BuyerServiceImpTest {
 
     @Mock
-    private static IBuyerRepository repository;
+    private static IUserRepository repository;
 
     @InjectMocks
-    private BuyerServiceImpl service;
+    private UserServiceImpl service;
 
-    private Buyer setupBuyer(){
-        Buyer buyer = UserFactory.createBuyerDefault();
+    private User setupBuyer(){
+        User buyer = UserFactory.createUserBuyerDefault();
         Mockito.when(repository.save(buyer)).thenReturn(buyer);
         return buyer;
     }
 
-    private Page<Buyer> setupGetAll(){
-        Page<Buyer> page = UserFactory.createPageBuyer();
+    private Page<User> setupGetAll(){
+        Page<User> page = UserFactory.createPageUserBuyers();
         Pageable pageable = Pageable.unpaged();
         Mockito.when(repository.findAll(pageable)).thenReturn(page);
         return page;
     }
 
-    private Buyer setupThrowEmailException(){
-        Buyer buyer = UserFactory.createBuyerDefault();
-        Mockito.when(repository.save(buyer)).thenThrow(EmailAlreadyExistsException.class);
+    private User setupThrowEmailException(){
+        User buyer = UserFactory.createUserBuyerDefault();
+        Mockito.when(repository.save(buyer)).thenThrow(UserWithThisEmailAlreadyExists.class);
         return buyer;
     }
 
-    private Buyer setupFindById(){
-        Buyer buyer = UserFactory.createBuyerDefault();
+    private User setupFindById(){
+        User buyer = UserFactory.createUserBuyerDefault();
         Mockito.when(repository.findById(Mockito.any())).thenReturn(java.util.Optional.of(buyer));
         return buyer;
     }
 
     private void setupThrowNotFoundException(){
-        Mockito.when(repository.findById(Mockito.any())).thenThrow(BuyerNotFoundException.class);
+        Mockito.when(repository.findById(Mockito.any())).thenThrow(UserNotFoundException.class);
     }
 
-    private Buyer setupUpdate(){
+    private User setupUpdate(){
         this.setupFindById();
         return this.setupBuyer();
     }
@@ -64,44 +64,44 @@ public class BuyerServiceImpTest {
 
     @Test
     public void mustCreateBuyer(){
-        Buyer buyer = this.setupBuyer();
-        Buyer createdBuyer = this.service.create(buyer);
+        User buyer = this.setupBuyer();
+        User createdBuyer = this.service.create(buyer);
         assertEquals(createdBuyer.getName(), buyer.getName());
     }
     @Test
     public void mustThrowEmailAlreadyExistsException(){
-        Buyer buyer = this.setupThrowEmailException();
-        assertThrows(EmailAlreadyExistsException.class,()->{
+        User buyer = this.setupThrowEmailException();
+        assertThrows(UserWithThisEmailAlreadyExists.class,()->{
             service.create(buyer);
         });
     }
     @Test
     public void mustGetAllBuyers(){
-        Page<Buyer> page = setupGetAll();
+        Page<User> page = setupGetAll();
         Pageable pageable = Pageable.unpaged();
-        Page<Buyer> pageToTest = this.service.getAll(pageable);
+        Page<User> pageToTest = this.service.getAll(pageable);
         assertEquals(pageToTest.getTotalElements(), page.getTotalElements());
 
     }
     @Test
     public void mustGetBuyerById(){
-        Buyer buyer = this.setupFindById();
-        Buyer buyerToTest = this.service.getById(Mockito.any());
+        User buyer = this.setupFindById();
+        User buyerToTest = this.service.getById(Mockito.any());
         assertEquals(buyerToTest.getName(),buyer.getName());
     }
 
     @Test
     public void mustThrowBuyerNotFoundException(){
         this.setupThrowNotFoundException();
-        assertThrows(BuyerNotFoundException.class, ()->{
+        assertThrows(UserNotFoundException.class, ()->{
             this.service.getById(Mockito.any());
         });
     }
 
     @Test
     public void mustUpdateBuyer(){
-        Buyer buyer = this.setupUpdate();
-        Buyer buyerUpdated = this.service.update(Mockito.any(), buyer);
+        User buyer = this.setupUpdate();
+        User buyerUpdated = this.service.update(Mockito.any(), buyer);
         assertEquals(buyerUpdated.getName(), buyer.getName());
     }
     @Test

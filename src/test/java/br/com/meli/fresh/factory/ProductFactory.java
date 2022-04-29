@@ -1,11 +1,6 @@
 package br.com.meli.fresh.factory;
 
-import br.com.meli.fresh.model.Batch;
 import br.com.meli.fresh.model.Product;
-
-import javax.swing.*;
-import java.util.List;
-import java.util.UUID;
 
 public class ProductFactory {
 

@@ -1,14 +1,14 @@
 package br.com.meli.fresh.unit;
 
 import br.com.meli.fresh.model.*;
-import br.com.meli.fresh.model.exception.BuyerNotFoundException;
 import br.com.meli.fresh.model.exception.CartNotFoundException;
 import br.com.meli.fresh.model.exception.InsufficientQuantityOfProductException;
 import br.com.meli.fresh.model.exception.ProductNotFoundException;
+import br.com.meli.fresh.model.exception.UserNotFoundException;
 import br.com.meli.fresh.repository.IBatchRepository;
-import br.com.meli.fresh.repository.IBuyerRepository;
 import br.com.meli.fresh.repository.ICartRepository;
 import br.com.meli.fresh.repository.IProductRepository;
+import br.com.meli.fresh.repository.IUserRepository;
 import br.com.meli.fresh.services.impl.CartServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -17,9 +17,9 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
-import java.time.LocalDate;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -32,7 +32,7 @@ public class CartServiceImplTest {
     @Mock
     private IProductRepository productRepository;
     @Mock
-    private IBuyerRepository buyerRepository;
+    private IUserRepository buyerRepository;
     @Mock
     private IBatchRepository batchRepository;
 
@@ -93,21 +93,21 @@ public class CartServiceImplTest {
         return p;
     }
 
-    public Buyer creationBuyerSetup() {
-        Buyer b = new Buyer();
+    public User creationBuyerSetup() {
+        User b = new User();
         b.setId("1");
         Mockito.when(buyerRepository.findById("1")).thenReturn(Optional.of(b));
         return b;
     }
 
-    public Buyer creationBuyerNotFoundSetup() {
-        Buyer b = new Buyer();
+    public User creationBuyerNotFoundSetup() {
+        User b = new User();
         b.setId("1");
-        Mockito.when(buyerRepository.findById("1")).thenThrow(BuyerNotFoundException.class);
+        Mockito.when(buyerRepository.findById("1")).thenThrow(UserNotFoundException.class);
         return b;
     }
 
-    public Cart creationCartSetup(Buyer b, Product p) {
+    public Cart creationCartSetup(User b, Product p) {
         Cart c = new Cart();
         CartItem i = new CartItem();
         i.setProduct(p);
@@ -123,11 +123,10 @@ public class CartServiceImplTest {
         Mockito.when(batchRepository.saveAll(Mockito.any())).thenReturn(b);
     }
 
-
     @Test
     public void testCreateCart() {
         Product p = this.creationProductSetup();
-        Buyer b = this.creationBuyerSetup();
+        User b = this.creationBuyerSetup();
         Cart c = this.creationCartSetup(b, p);
         Mockito.when(productRepository.findById("1")).thenReturn(Optional.of(p));
         Mockito.when(cartRepository.save(c)).thenReturn(c);
@@ -137,7 +136,7 @@ public class CartServiceImplTest {
     @Test
     public void testProductNotFount() {
         Product p = this.creationProductNotFoundSetup();
-        Buyer b = this.creationBuyerSetup();
+        User b = this.creationBuyerSetup();
         Cart c = this.creationCartSetup(b, p);
         assertThrows(ProductNotFoundException.class, () -> cartService.create(c));
     }
@@ -145,15 +144,15 @@ public class CartServiceImplTest {
     @Test
     public void testBuyerNotFound() {
         Product p = this.creationProductSetup();
-        Buyer b = this.creationBuyerNotFoundSetup();
+        User b = this.creationBuyerNotFoundSetup();
         Cart c = this.creationCartSetup(b, p);
-        assertThrows(BuyerNotFoundException.class, () -> cartService.create(c));
+        assertThrows(UserNotFoundException.class, () -> cartService.create(c));
     }
 
     @Test
     public void testDueDateIsNoLessThanThreeWeeks() {
         Product p = this.creationProductDueDateNotSufficientSetup();
-        Buyer b = this.creationBuyerSetup();
+        User b = this.creationBuyerSetup();
         Cart c = this.creationCartSetup(b, p);
         assertThrows(InsufficientQuantityOfProductException.class, () -> cartService.create(c));
     }
@@ -161,7 +160,7 @@ public class CartServiceImplTest {
     @Test
     public void testQuantityNotValid() {
         Product p = this.creationProductQuantityNotSufficientSetup();
-        Buyer b = this.creationBuyerSetup();
+        User b = this.creationBuyerSetup();
         Cart c = this.creationCartSetup(b, p);
         assertThrows(InsufficientQuantityOfProductException.class, () -> cartService.create(c));
     }
@@ -169,7 +168,7 @@ public class CartServiceImplTest {
     @Test
     public void testUpdateCart() {
         Product p = this.creationProductSetup();
-        Buyer b = new Buyer();
+        User b = new User();
         Cart c = this.creationCartSetup(b, p);
         c.setCartStatus(CartStatus.OPEN);
 
@@ -182,13 +181,12 @@ public class CartServiceImplTest {
         int totalQuantity = p.getBatchList().stream().reduce(0, (acc, sub) ->
                 acc + sub.getCurrentQuantity(), Integer::sum);
         assertEquals(currentQuantity - itemQuantity, totalQuantity);
-
     }
 
     @Test
     public void testUpdateCartNotDecrementProductQuantity() {
         Product p = this.creationProductSetup();
-        Buyer b = new Buyer();
+        User b = new User();
         Cart c = this.creationCartSetup(b, p);
         c.setCartStatus(CartStatus.CLOSE);
 
@@ -199,7 +197,6 @@ public class CartServiceImplTest {
         int totalQuantity = p.getBatchList().stream().reduce(0, (acc, sub) ->
                 acc + sub.getCurrentQuantity(), Integer::sum);
         assertEquals(currentQuantity, totalQuantity);
-
     }
 
     @Test
@@ -223,6 +220,4 @@ public class CartServiceImplTest {
         Mockito.when(cartRepository.findById("1")).thenThrow(CartNotFoundException.class);
         assertThrows(CartNotFoundException.class, () -> cartService.getById("1"));
     }
-
-
 }

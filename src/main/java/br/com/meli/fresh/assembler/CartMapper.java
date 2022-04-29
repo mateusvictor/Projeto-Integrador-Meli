@@ -10,7 +10,6 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Component
@@ -32,7 +31,7 @@ public class CartMapper {
         Cart object = modelMapper.map(dto, Cart.class);
         object.setCartStatus(CartStatus.valueOf(dto.getStatus().toUpperCase()));
 
-        Buyer buyer = new Buyer();
+        User buyer = new User();
         buyer.setId(dto.getBuyerId());
         object.setItems(list);
         object.setBuyer(buyer);

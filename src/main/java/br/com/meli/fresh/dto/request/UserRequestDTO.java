@@ -1,17 +1,19 @@
 package br.com.meli.fresh.dto.request;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.Valid;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
-public class WarehouseManagerRequestDTO {
+@Builder
+public class UserRequestDTO {
     private String name;
     private String email;
     private String password;
-    private @Valid WarehouseNestedRequestDTO warehouse;
+    private Set<Integer> roles;
 }

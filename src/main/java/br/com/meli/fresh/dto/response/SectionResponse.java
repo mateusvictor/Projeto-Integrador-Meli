@@ -1,5 +1,6 @@
 package br.com.meli.fresh.dto.response;
 
+import br.com.meli.fresh.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,5 +14,5 @@ public class SectionResponse {
     private String productType;
     private Float actualVolume;
     private Float maxVolume;
-    private WarehouseNestedResponse warehouse;
+    private User warehouse;
 }

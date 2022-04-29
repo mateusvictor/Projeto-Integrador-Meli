@@ -1,11 +1,11 @@
 package br.com.meli.fresh.integration;
 
-import br.com.meli.fresh.assembler.SellerMapper;
-import br.com.meli.fresh.dto.request.SellerRequestDTO;
+import br.com.meli.fresh.assembler.UserMapper;
+import br.com.meli.fresh.dto.request.UserRequestDTO;
 import br.com.meli.fresh.dto.response.ErrorDTO;
-import br.com.meli.fresh.dto.response.SellerResponseDTO;
-import br.com.meli.fresh.model.Seller;
-import br.com.meli.fresh.services.impl.SellerServiceImpl;
+import br.com.meli.fresh.dto.response.UserResponseDTO;
+import br.com.meli.fresh.model.User;
+import br.com.meli.fresh.services.impl.UserServiceImpl;
 import br.com.meli.fresh.unit.factory.UserFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
@@ -34,28 +34,28 @@ public class SellerControllerTest {
     private MockMvc mockMvc;
 
     @Autowired
-    private SellerServiceImpl service;
+    private UserServiceImpl service;
 
     @Autowired
-    private SellerMapper mapper;
+    private UserMapper mapper;
 
     @Test
     public void mustGetSellerByID() throws Exception {
-        Seller seller = this.service.create(UserFactory.createSellerA());
-        SellerResponseDTO responseDTO  = this.mapper.toResponseObject(seller);
+        User seller = this.service.create(UserFactory.createUserSellerA());
+        UserResponseDTO responseDTO  = this.mapper.toResponseObject(seller);
         MvcResult mvcResult =
-                this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/fresh-products/seller/{id}", seller.getId()))
+                this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/fresh-products/users/{id}", seller.getId()))
                         .andDo(print()).andExpect(status().isOk()).andReturn();
         String jsonReturned = mvcResult.getResponse().getContentAsString();
-        SellerResponseDTO responseDTOresult = new ObjectMapper().readValue(jsonReturned, SellerResponseDTO.class);
+        UserResponseDTO responseDTOresult = new ObjectMapper().readValue(jsonReturned, UserResponseDTO.class);
         assertEquals(responseDTO.getEmail(), responseDTOresult.getEmail());
     }
 
     @Test
     public void mustThrowNotFoundException() throws Exception {
-        ErrorDTO errorDTO = new ErrorDTO("SellerNotFoundException", "Seller not found!");
+        ErrorDTO errorDTO = new ErrorDTO("UserNotFoundException", "User not found in our database by the id:" + "imaginaryID");
         MvcResult mvcResult =
-                this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/fresh-products/seller/{id}", "imaginaryID"))
+                this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/fresh-products/users/{id}", "imaginaryID"))
                         .andDo(print()).andExpect(status().isNotFound()).andReturn();
         String jsonReturned = mvcResult.getResponse().getContentAsString();
         ErrorDTO errorDtoResult = new ObjectMapper().readValue(jsonReturned, ErrorDTO.class);
@@ -64,28 +64,28 @@ public class SellerControllerTest {
 
     @Test
     public void mustPostSeller() throws Exception {
-        SellerRequestDTO requestDto = UserFactory.createSellerRequestDto();
+        UserRequestDTO requestDto = UserFactory.createSellerUserRequestDto();
         ObjectWriter writer  = new ObjectMapper().configure(SerializationFeature.WRAP_ROOT_VALUE, false)
                 .writer().withDefaultPrettyPrinter();
         String payloadRequestJson = writer.writeValueAsString(requestDto);
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/fresh-products/seller/")
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/fresh-products/users/")
                 .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson)).andDo(print()).andExpect(status().isCreated()).andReturn();
         String jsonReturned =  mvcResult.getResponse().getContentAsString();
-        SellerResponseDTO sellerResponseDTO = new ObjectMapper().readValue(jsonReturned, SellerResponseDTO.class);
+        UserResponseDTO sellerResponseDTO = new ObjectMapper().readValue(jsonReturned, UserResponseDTO.class);
         assertEquals(sellerResponseDTO.getEmail(), requestDto.getEmail());
     }
 
     @Test
     public void mustThrowEmailAlreadyExistsException() throws Exception {
-        ErrorDTO errorDTO = new ErrorDTO("EmailAlreadyExistsException", "Email already exists!");
-        SellerRequestDTO requestDto = UserFactory.createSellerRequestDtoToThrow();
+        UserRequestDTO requestDto = UserFactory.createSellerUserRequestDtoToThrow();
+        ErrorDTO errorDTO = new ErrorDTO("UserWithThisEmailAlreadyExists", "This " + requestDto.getEmail() + " is already owned by another user!");
         ObjectWriter writer  = new ObjectMapper().configure(SerializationFeature.WRAP_ROOT_VALUE, false)
                 .writer().withDefaultPrettyPrinter();
         String payloadRequestJson = writer.writeValueAsString(requestDto);
-        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/fresh-products/seller/")
+        this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/fresh-products/users/")
                 .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson)).andDo(print()).andExpect(status().isCreated()).andReturn();
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/fresh-products/seller/")
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/fresh-products/users/")
                 .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson)).andDo(print()).andExpect(status().isBadRequest()).andReturn();
         String jsonReturned =  mvcResult.getResponse().getContentAsString();
         ErrorDTO errorDtoResult = new ObjectMapper().readValue(jsonReturned, ErrorDTO.class);
@@ -95,23 +95,23 @@ public class SellerControllerTest {
 
     @Test
     public void mustUpdateSeller() throws Exception {
-        Seller seller = this.service.create(UserFactory.createSellerB());
-        SellerRequestDTO requestDto = UserFactory.createSellerToUpdateRequestDto();
+        User seller = this.service.create(UserFactory.createUseSellerB());
+        UserRequestDTO requestDto = UserFactory.createSellerUserToUpdateRequestDto();
         ObjectWriter writer  = new ObjectMapper().configure(SerializationFeature.WRAP_ROOT_VALUE, false)
                 .writer().withDefaultPrettyPrinter();
         String payloadRequestJson = writer.writeValueAsString(requestDto);
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/fresh-products/seller/{id}", seller.getId())
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/fresh-products/users/{id}", seller.getId())
                 .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson)).andDo(print()).andExpect(status().isOk()).andReturn();
         String jsonReturned =  mvcResult.getResponse().getContentAsString();
-        SellerResponseDTO sellerResponseDTO = new ObjectMapper().readValue(jsonReturned, SellerResponseDTO.class);
+        UserRequestDTO sellerResponseDTO = new ObjectMapper().readValue(jsonReturned, UserRequestDTO.class);
         assertEquals(sellerResponseDTO.getEmail(), requestDto.getEmail());
 
     }
 
     @Test
     public void mustGetAllSellers() throws Exception {
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/fresh-products/seller/"))
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/fresh-products/users/"))
                 .andDo(print()).andExpect(status().isOk()).andReturn();
         String jsonObjectReturned = mvcResult.getResponse().getContentAsString();
         JSONObject obj = new JSONObject(jsonObjectReturned);
@@ -122,7 +122,7 @@ public class SellerControllerTest {
 
     @Test
     public void mustDeleteSeller() throws Exception {
-        Seller seller = this.service.create(UserFactory.createSellerC());
+        User seller = this.service.create(UserFactory.createUserSellerC());
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/fresh-products/seller/{id}", seller.getId()))
                 .andDo(print()).andExpect(status().isOk()).andReturn();
         String jsonReturned = mvcResult.getResponse().getContentAsString();

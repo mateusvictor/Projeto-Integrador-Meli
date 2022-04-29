@@ -13,5 +13,5 @@ public class WarehouseResponseDTO {
     private String id;
     private String name;
     private List<SectionNestedResponseDTO> sectionList;
-    private WarehouseManagerNestedResponseDTO warehouseManagerId;
+    private UserResponseDTO warehouseManagerId;
 }

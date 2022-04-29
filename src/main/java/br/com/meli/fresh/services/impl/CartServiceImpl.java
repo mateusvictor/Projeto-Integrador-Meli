@@ -1,21 +1,24 @@
 package br.com.meli.fresh.services.impl;
 
 import br.com.meli.fresh.model.*;
-import br.com.meli.fresh.model.exception.BuyerNotFoundException;
 import br.com.meli.fresh.model.exception.CartNotFoundException;
 import br.com.meli.fresh.model.exception.InsufficientQuantityOfProductException;
 import br.com.meli.fresh.model.exception.ProductNotFoundException;
-import br.com.meli.fresh.repository.*;
+import br.com.meli.fresh.model.exception.UserNotFoundException;
+import br.com.meli.fresh.repository.IBatchRepository;
+import br.com.meli.fresh.repository.ICartRepository;
+import br.com.meli.fresh.repository.IProductRepository;
+import br.com.meli.fresh.repository.IUserRepository;
 import br.com.meli.fresh.services.ICartService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.temporal.WeekFields;
 import java.util.ArrayList;
 import java.util.List;
-import java.time.LocalDateTime;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
@@ -25,7 +28,7 @@ public class CartServiceImpl implements ICartService {
 
     private final ICartRepository cartRepository;
     private final IProductRepository productRepository;
-    private final IBuyerRepository buyerRepository;
+    private final IUserRepository buyerRepository;
     private final IBatchRepository batchRepository;
 
     @Override
@@ -33,8 +36,8 @@ public class CartServiceImpl implements ICartService {
     public Cart create(Cart cart) {
         cart.setDate(LocalDateTime.now());
 
-        Buyer opBuyer = buyerRepository.findById(cart.getBuyer().getId())
-                .orElseThrow(() -> new BuyerNotFoundException("Buyer not found."));
+        User opBuyer = buyerRepository.findById(cart.getBuyer().getId())
+                .orElseThrow(() -> new UserNotFoundException(cart.getBuyer().getId()));
 
         cart.setBuyer(opBuyer);
 

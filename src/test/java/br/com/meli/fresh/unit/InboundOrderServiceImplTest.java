@@ -1,7 +1,8 @@
 package br.com.meli.fresh.unit;
 
 import br.com.meli.fresh.factory.InboundOrderFactory;
-import br.com.meli.fresh.model.*;
+import br.com.meli.fresh.model.Batch;
+import br.com.meli.fresh.model.InboundOrder;
 import br.com.meli.fresh.repository.IBatchRepository;
 import br.com.meli.fresh.repository.IInboundOrderRepository;
 import br.com.meli.fresh.repository.ISectionRepository;
@@ -16,9 +17,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 

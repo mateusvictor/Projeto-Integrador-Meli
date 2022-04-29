@@ -1,9 +1,6 @@
 package br.com.meli.fresh.dto.response.productResponse;
 
-import br.com.meli.fresh.model.Warehouse;
-import br.com.meli.fresh.model.WarehouseManager;
-
-import java.util.List;
+import br.com.meli.fresh.model.User;
 
 public class ProductSectionResponse {
     private String id;
@@ -12,5 +9,5 @@ public class ProductSectionResponse {
     private Float maxVolume;
     private ProductWarehouseResponse warehouse;
 
-    private WarehouseManager warehouseManager;
+    private User warehouseManager;
 }

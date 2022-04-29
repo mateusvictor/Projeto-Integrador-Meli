@@ -1,7 +1,6 @@
 package br.com.meli.fresh.dto.response.productResponse;
 
 import br.com.meli.fresh.model.InboundOrder;
-import br.com.meli.fresh.model.Product;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
