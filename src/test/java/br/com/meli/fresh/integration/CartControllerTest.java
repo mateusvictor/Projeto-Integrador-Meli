@@ -97,7 +97,7 @@ public class CartControllerTest {
     }
 
     @Test
-    public void testNotFoundBuyer() throws Exception {
+    public void testNotFoundUserBuyer() throws Exception {
         CartRequest request = setupRequest();
         request.setBuyerId("123");
 
@@ -107,13 +107,15 @@ public class CartControllerTest {
 
         String payloadRequest = writer.writeValueAsString(request);
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-                .contentType(MediaType.APPLICATION_JSON).content(payloadRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payloadRequest)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isNotFound()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
         ErrorDTO errorDTO = new ObjectMapper().readValue(result, ErrorDTO.class);
 
-        assertEquals(errorDTO.getError(), "BuyerNotFoundException");
+        assertEquals("UserNotFoundException",errorDTO.getError());
     }
 
     @Test
@@ -130,7 +132,9 @@ public class CartControllerTest {
 
         String payloadRequest = writer.writeValueAsString(request);
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-                .contentType(MediaType.APPLICATION_JSON).content(payloadRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payloadRequest)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isNotFound()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
@@ -152,13 +156,15 @@ public class CartControllerTest {
 
         String payloadRequest = writer.writeValueAsString(request);
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-                .contentType(MediaType.APPLICATION_JSON).content(payloadRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payloadRequest)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isBadRequest()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
         ErrorDTO errorDTO = new ObjectMapper().readValue(result, ErrorDTO.class);
 
-        assertEquals(errorDTO.getError(), "InsufficientQuantityOfProductException");
+        assertEquals("InsufficientQuantityOfProductException", errorDTO.getError());
     }
 
     @Test
@@ -174,13 +180,15 @@ public class CartControllerTest {
 
         String payloadRequest = writer.writeValueAsString(request);
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-                .contentType(MediaType.APPLICATION_JSON).content(payloadRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payloadRequest)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isBadRequest()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
         ErrorDTO errorDTO = new ObjectMapper().readValue(result, ErrorDTO.class);
 
-        assertEquals(errorDTO.getError(), "InsufficientQuantityOfProductException");
+        assertEquals("InsufficientQuantityOfProductException", errorDTO.getError());
     }
 
     @Test
@@ -194,13 +202,15 @@ public class CartControllerTest {
 
         String payloadRequest = writer.writeValueAsString(request);
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-                .contentType(MediaType.APPLICATION_JSON).content(payloadRequest))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(payloadRequest)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isBadRequest()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
         ErrorDTO errorDTO = new ObjectMapper().readValue(result, ErrorDTO.class);
 
-        assertEquals(errorDTO.getError(), "InvalidEnumCartStatusException");
+        assertEquals("InvalidEnumCartStatusException", errorDTO.getError());
     }
 
     @Test
@@ -209,7 +219,8 @@ public class CartControllerTest {
         Cart cart = cartService.create(cartMapper.toDomainObject(request));
         CartResponse expected = cartMapper.toResponseObject(cart);
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + cart.getId()))
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + cart.getId())
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andExpect(status().isOk()).andReturn();
 
         Batch batch = batchRepository.findByProduct_Id(productId);
@@ -226,13 +237,14 @@ public class CartControllerTest {
         Cart cart = new Cart();
         cart.setId("123");
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + cart.getId()))
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + cart.getId())
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andExpect(status().isNotFound()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
         ErrorDTO errorDTO = new ObjectMapper().readValue(result, ErrorDTO.class);
 
-        assertEquals(errorDTO.getError(), "CartNotFoundException");
+        assertEquals("CartNotFoundException", errorDTO.getError());
     }
 
     @Test
@@ -244,13 +256,14 @@ public class CartControllerTest {
         batch.setCurrentQuantity(0);
         batchRepository.save(batch);
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + cart.getId()))
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + cart.getId())
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andExpect(status().isBadRequest()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
         ErrorDTO errorDTO = new ObjectMapper().readValue(result, ErrorDTO.class);
 
-        assertEquals(errorDTO.getError(), "InsufficientQuantityOfProductException");
+        assertEquals("InsufficientQuantityOfProductException", errorDTO.getError());
     }
 
     @Test
@@ -262,13 +275,14 @@ public class CartControllerTest {
         batch.setDueDate(LocalDate.now());
         batchRepository.save(batch);
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + cart.getId()))
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + cart.getId())
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andExpect(status().isBadRequest()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
         ErrorDTO errorDTO = new ObjectMapper().readValue(result, ErrorDTO.class);
 
-        assertEquals(errorDTO.getError(), "InsufficientQuantityOfProductException");
+        assertEquals("InsufficientQuantityOfProductException",errorDTO.getError());
     }
 
 
@@ -278,7 +292,8 @@ public class CartControllerTest {
         Cart cart = cartService.create(cartMapper.toDomainObject(request));
         CartResponse expected = cartMapper.toResponseObject(cart);
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + cart.getId()))
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + cart.getId())
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andExpect(status().isOk()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
@@ -294,13 +309,14 @@ public class CartControllerTest {
         Cart cart = new Cart();
         cart.setId("123");
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + cart.getId()))
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + cart.getId())
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andExpect(status().isNotFound()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
         ErrorDTO errorDTO = new ObjectMapper().readValue(result, ErrorDTO.class);
 
-        assertEquals(errorDTO.getError(), "CartNotFoundException");
+        assertEquals("CartNotFoundException", errorDTO.getError());
     }
 
 

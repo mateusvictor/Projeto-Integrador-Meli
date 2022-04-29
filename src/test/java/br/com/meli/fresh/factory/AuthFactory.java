@@ -25,9 +25,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AuthFactory {
 
     @Autowired
-    private UserServiceImpl service;
+    private static UserServiceImpl service;
 
-    public String token(MockMvc mockMvc) {
+    public static String token(MockMvc mockMvc) {
         // Creating an admin user with all access.
         User u = service.create(new User(
            null,
