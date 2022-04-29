@@ -39,7 +39,7 @@ public class AuthFactory {
 
         // Setting payload login's request
         AuthRequest auth = new AuthRequest();
-        auth.setEmail(u.getEmail());
+        auth.setEmail("admin@admin.com");
         auth.setPassword("admin");
 
         try {

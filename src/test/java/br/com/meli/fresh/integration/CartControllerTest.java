@@ -19,6 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.jdbc.Sql;
@@ -55,6 +56,9 @@ public class CartControllerTest {
     private IBatchRepository batchRepository;
 
     @Autowired
+    private AuthFactory auth;
+
+    @Autowired
     private CartMapper cartMapper;
 
     public CartRequest setupRequest() {
@@ -82,7 +86,9 @@ public class CartControllerTest {
 
         String payloadRequest = writer.writeValueAsString(request);
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-                .contentType(MediaType.APPLICATION_JSON).content(payloadRequest))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payloadRequest)
+                        .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isCreated()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
