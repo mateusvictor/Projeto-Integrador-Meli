@@ -4,6 +4,7 @@ import br.com.meli.fresh.dto.request.BatchRequest;
 import br.com.meli.fresh.dto.request.InboundOrderRequest;
 import br.com.meli.fresh.dto.response.ErrorDTO;
 import br.com.meli.fresh.dto.response.InboundOrderResponse;
+import br.com.meli.fresh.factory.AuthFactory;
 import br.com.meli.fresh.factory.ProductFactory;
 import br.com.meli.fresh.factory.SectionFactory;
 import br.com.meli.fresh.factory.WarehouseFactory;
@@ -21,6 +22,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -55,6 +57,9 @@ public class InboundOrderControllerTest {
 
     @Autowired
     private IProductRepository productRepository;
+
+    @Autowired
+    private AuthFactory auth;
 
     private final String BASE_URL = "/api/v1/fresh-products/inboundorder";
 
@@ -142,6 +147,7 @@ public class InboundOrderControllerTest {
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .content(payloadRequest))
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -157,7 +163,8 @@ public class InboundOrderControllerTest {
         InboundOrder inboundOrder = service.create(this.getInboundOrderEntity());
 
         // Perform the GET with the inboundOrder ID
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + inboundOrder.getId()))
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + inboundOrder.getId())
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -190,6 +197,7 @@ public class InboundOrderControllerTest {
         // Perform the PUT request
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/" + oldInboundOrder.getId())
                 .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .content(payloadRequest))
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -212,6 +220,7 @@ public class InboundOrderControllerTest {
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .content(payloadRequest))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -234,6 +243,7 @@ public class InboundOrderControllerTest {
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .content(payloadRequest))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -255,6 +265,7 @@ public class InboundOrderControllerTest {
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .content(payloadRequest))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -269,7 +280,8 @@ public class InboundOrderControllerTest {
     public void testInboundOrderNotFound() throws Exception {
         // Perform the GET with a invalid ID
         String invalidId = "INVALID_ID";
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + invalidId))
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + invalidId)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andReturn();
