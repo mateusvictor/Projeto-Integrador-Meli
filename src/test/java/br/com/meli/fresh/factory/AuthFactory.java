@@ -27,15 +27,25 @@ public class AuthFactory {
     @Autowired
     private UserServiceImpl service;
 
+    private User adminUser = null;
+
+    public User getAdminUser(){
+        // Creates only one admin user to be used in the requests
+        if (adminUser == null)
+            adminUser = service.create(new User(
+                null,
+                "admin",
+                "admin@admin.com",
+                "admin",
+                Set.of(0, 1, 2, 3)
+            ));
+        System.out.println(adminUser.getId());
+        return adminUser;
+    }
+
     public String token(MockMvc mockMvc) {
         // Creating an admin user with all access.
-        User u = service.create(new User(
-           null,
-           "admin",
-           "admin@admin.com",
-           "admin",
-                Set.of(0, 1, 2, 3)
-        ));
+        User u = this.getAdminUser();
 
         // Setting payload login's request
         AuthRequest auth = new AuthRequest();
