@@ -20,12 +20,13 @@ public class InboundOrderServiceImpl implements IInboundOrderService<InboundOrde
     private final IInboundOrderRepository orderRepository;
     private final IBatchRepository batchRepository;
     private final ISectionRepository sectionRepository;
+    private final UserAuthenticatedService authService;
 
     @Override
     public InboundOrder create(InboundOrder inboundOrder) {
         // Checks the validations specified in the `validInboundOrder` method and then creates the batches,
         // updates the section volume and saves the inbound order
-        UserSpringSecurity userClient = UserAuthenticatedService.authenticated();
+        UserSpringSecurity userClient = authService.authenticated();
         InboundOrderValidator inboundOrderValidation = new InboundOrderValidator(inboundOrder, userClient);
         InboundOrder inboundOrderCreated = null;
 
@@ -48,7 +49,7 @@ public class InboundOrderServiceImpl implements IInboundOrderService<InboundOrde
 
     @Override
     public InboundOrder update(String id, InboundOrder inboundOrder) {
-        UserSpringSecurity userClient = UserAuthenticatedService.authenticated();
+        UserSpringSecurity userClient = authService.authenticated();
         InboundOrderValidator inboundOrderValidation = new InboundOrderValidator(inboundOrder, userClient);
         InboundOrder inboundOrderToUpdate = this.getById(id);
         Double oldTotalVolume = inboundOrderToUpdate.calculateBatchesTotalVolume();
