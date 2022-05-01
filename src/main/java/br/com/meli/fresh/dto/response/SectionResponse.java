@@ -14,5 +14,5 @@ public class SectionResponse {
     private String productType;
     private Float actualVolume;
     private Float maxVolume;
-    private User warehouse;
+    private UserResponseDTO warehouse;
 }
