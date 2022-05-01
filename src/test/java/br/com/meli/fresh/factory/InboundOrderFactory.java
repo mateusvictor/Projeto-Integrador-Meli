@@ -10,7 +10,7 @@ import java.util.List;
 public class InboundOrderFactory {
     public static InboundOrder getValidInstance(){
         Warehouse warehouse = new Warehouse("warehouse1", "SP - WAREHOUSE", null, null);
-        Section section = new Section("section1", "fresco", 0F, 30F, null, null);
+        Section section = new Section("section1", "fresco", 0F, 30F, null, warehouse);
         InboundOrder inboundOrder = new InboundOrder("order1", null, null, section);
 
         Product product1 = new Product("product1", "Bolacha Trakinas", "fresco", 5F, 30F, 0.25F, null, null, true);
@@ -30,7 +30,7 @@ public class InboundOrderFactory {
         // Section product type: fresco
         // Product type: congelado
         Warehouse warehouse = new Warehouse("warehouse1", "SP - WAREHOUSE", null, null);
-        Section section = new Section("section1", "fresco", 0F, 30F, null, null);
+        Section section = new Section("section1", "fresco", 0F, 30F, null, warehouse);
         InboundOrder inboundOrder = new InboundOrder("order1", null, null, section);
 
         Product product1 = new Product("product1", "Pizza de Calabresa", "congelado", -10F, 15F, 0.75F, null, null, true);
@@ -48,7 +48,7 @@ public class InboundOrderFactory {
         // Section available volume: 20.0
         // Batch total volume: 30
         Warehouse warehouse = new Warehouse("warehouse1", "SP - WAREHOUSE", null, null);
-        Section section = new Section("section1", "fresco", 0F, 20F, null, null);
+        Section section = new Section("section1", "fresco", 0F, 20F, null, warehouse);
         InboundOrder inboundOrder = new InboundOrder("order1", null, null, section);
 
         Product product1 = new Product("product1", "Bolacha Trakinas", "fresco", 5F, 30F, 0.25F, null, null, true);
