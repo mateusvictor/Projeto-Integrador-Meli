@@ -82,7 +82,7 @@ public class InboundOrderControllerTest {
         warehouse.setSectionList(Collections.singletonList(sectionFresh));
         warehouse.setWarehouseManager(auth.getAdminUser());
 
-        warehouse = warehouseRepository.save(warehouse);
+        warehouseRepository.save(warehouse);
 
         Product product1 = productRepository.save(ProductFactory.getFreshProductA());
         Product product2 = productRepository.save(ProductFactory.getFreshProductB());
@@ -95,36 +95,25 @@ public class InboundOrderControllerTest {
     }
 
     public InboundOrderRequest getInstanceWithANonAdminAsManager(){
+        InboundOrderRequest inboundOrder = this.getValidRequestInstance();
         Warehouse warehouse = WarehouseFactory.getWarehouse();
         Section sectionFresh = SectionFactory.getFreshSection();
         sectionFresh.setWarehouse(warehouse);
 
         warehouse.setSectionList(Collections.singletonList(sectionFresh));
         warehouse.setWarehouseManager(auth.getNonAdminUser());
+        warehouseRepository.save(warehouse);
 
-        warehouse = warehouseRepository.save(warehouse);
+        inboundOrder.setSectionId(sectionFresh.getId());
 
-        Product product1 = productRepository.save(ProductFactory.getFreshProductA());
-        Product product2 = productRepository.save(ProductFactory.getFreshProductB());
-
-        List<BatchRequest> batchList = Arrays.asList(
-                new BatchRequest(product1.getId(), 10F, 8, 8, null, LocalDate.now(), 10F),
-                new BatchRequest(product2.getId(), 10F, 5, 5, null, LocalDate.now(), 12F)
-        );
-        return new InboundOrderRequest(null, sectionFresh.getId(), batchList);
+        return inboundOrder;
     }
+
     public InboundOrderRequest getInstanceWithInvalidProductType(){
         // Returns an instance with a product that doesn't match the section product type
         // Section product type: fresco
         // Product type: congelado
-        Warehouse warehouse = WarehouseFactory.getWarehouse();
-        Section sectionFresh = SectionFactory.getFreshSection();
-        sectionFresh.setWarehouse(warehouse);
-
-        warehouse.setSectionList(Collections.singletonList(sectionFresh));
-        warehouse.setWarehouseManager(auth.getAdminUser());
-
-        warehouse = warehouseRepository.save(warehouse);
+        InboundOrderRequest inboundOrder = getValidRequestInstance();
 
         Product product1 = productRepository.save(ProductFactory.getFrozenProductA()); // Invalid Product
         Product product2 = productRepository.save(ProductFactory.getFreshProductA());
@@ -133,31 +122,27 @@ public class InboundOrderControllerTest {
                 new BatchRequest(product1.getId(), 10F, 8, 8, null, LocalDate.now(), 10F),
                 new BatchRequest(product2.getId(), 10F, 5, 5, null, LocalDate.now(), 12F)
         );
-        return new InboundOrderRequest(null, sectionFresh.getId(), batchList);
+
+        inboundOrder.setBatchStock(batchList);
+        return inboundOrder;
     }
 
     public InboundOrderRequest getInstanceWithInvalidVolume(){
         // Returns an instance with a batch list with more volume than the section available volume
-        // Section available volume: 20.0
-        // Batch total volume: 30.0
-        Warehouse warehouse = WarehouseFactory.getWarehouse();
-        Section sectionFrozen = SectionFactory.getFrozenSection();
-        sectionFrozen.setWarehouse(warehouse);
+        // Section available volume: 30.0
+        // Batch total volume: 40.0
+        InboundOrderRequest inboundOrder = getValidRequestInstance();
 
-        warehouse.setSectionList(Collections.singletonList(sectionFrozen));
-        warehouse.setWarehouseManager(auth.getAdminUser());
+        Product product1 = productRepository.save(ProductFactory.getFreshProductA());
+        Product product2 = productRepository.save(ProductFactory.getFreshProductB());
 
-        warehouse = warehouseRepository.save(warehouse);
-
-        Product product1 = productRepository.save(ProductFactory.getFrozenProductA());
-        Product product2 = productRepository.save(ProductFactory.getFrozenProductB());
-
-        // Batch total volume: 17.0 + 13.0 = 30.0
+        // Batch total volume: 27.0 + 13.0 = 40.0
         List<BatchRequest> batchList = Arrays.asList(
-                new BatchRequest(product1.getId(), 10F, 8, 8, null, LocalDate.now(), 17F),
+                new BatchRequest(product1.getId(), 10F, 8, 8, null, LocalDate.now(), 27F),
                 new BatchRequest(product2.getId(), 10F, 5, 5, null, LocalDate.now(), 13F)
         );
-        return new InboundOrderRequest(null, sectionFrozen.getId(), batchList);
+        inboundOrder.setBatchStock(batchList);
+        return inboundOrder;
     }
 
     public InboundOrder getInboundOrderEntity(){
