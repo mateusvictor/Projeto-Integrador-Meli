@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -41,7 +42,7 @@ public class WarehouseController {
 
 
     @PostMapping()
-    public ResponseEntity<WarehouseResponseDTO> createWarehouse(@RequestBody WarehouseRequestDTO requestDTO, UriComponentsBuilder uriBuilder){
+    public ResponseEntity<WarehouseResponseDTO> createWarehouse(@Valid @RequestBody WarehouseRequestDTO requestDTO, UriComponentsBuilder uriBuilder){
         Warehouse entity = this.requestToEntity(requestDTO);
         Warehouse warehouseCreated = this.service.create(entity);
         URI uri = uriBuilder
@@ -57,7 +58,7 @@ public class WarehouseController {
 
 
     @PutMapping("/{id}")
-    public ResponseEntity<WarehouseResponseDTO> updateWarehouse(@RequestBody WarehouseRequestDTO requestDTO, @PathVariable String id){
+    public ResponseEntity<WarehouseResponseDTO> updateWarehouse(@Valid @RequestBody WarehouseRequestDTO requestDTO, @PathVariable String id){
         return ResponseEntity.ok(this.mapper.toResponseObject(this.service.update(id, this.mapper.toDomainObject(requestDTO))));
     }
 
