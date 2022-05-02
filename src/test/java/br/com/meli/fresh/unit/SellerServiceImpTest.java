@@ -14,6 +14,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -23,6 +24,9 @@ public class SellerServiceImpTest {
 
     @Mock
     private static IUserRepository repository;
+
+    @Mock
+    private BCryptPasswordEncoder pe;
 
     @InjectMocks
     private UserServiceImpl service;

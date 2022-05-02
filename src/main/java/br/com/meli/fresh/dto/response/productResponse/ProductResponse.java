@@ -17,5 +17,4 @@ public class ProductResponse {
     private Float weight;
     private BigDecimal price;
     private List<ProductBatchResponse> batchList;
-    private boolean isActive;
 }

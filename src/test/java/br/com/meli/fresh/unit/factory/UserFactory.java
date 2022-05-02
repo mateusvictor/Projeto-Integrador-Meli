@@ -33,7 +33,7 @@ public class UserFactory {
 
 
     public static User createUserBuyerDefault() {
-        return new User("1", "teste", "teste@email.com", "password", Set.of(1));
+        return new User("1", "teste", "teste@email.com", "password", Set.of(0, 1, 2, 3));
     }
 
     public static Page<User> createPageUserBuyers() {

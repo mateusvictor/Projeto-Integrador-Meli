@@ -9,7 +9,7 @@ import lombok.Setter;
 @NoArgsConstructor
 @Getter
 @Setter
-public class ProductResponse {
+public class ProductResponseDTO {
     private String id;
     private String name;
     private String category;

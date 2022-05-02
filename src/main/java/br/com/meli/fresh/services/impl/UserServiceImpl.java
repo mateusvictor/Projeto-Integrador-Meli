@@ -9,6 +9,7 @@ import br.com.meli.fresh.repository.IUserRepository;
 import br.com.meli.fresh.repository.IWarehouseRepository;
 import br.com.meli.fresh.services.ICrudService;
 import lombok.AllArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -21,7 +22,6 @@ public class UserServiceImpl implements ICrudService<User> {
 
     private final IUserRepository repository;
     private final IWarehouseRepository warehouseRepository;
-
     private final BCryptPasswordEncoder pe;
 
     @Override

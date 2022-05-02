@@ -117,23 +117,40 @@ public class ProductControllerTest {
         String jsonObjectReturned = mvcResult.getResponse().getContentAsString();
         JSONObject obj = new JSONObject(jsonObjectReturned);
         Integer totalElements = obj.getInt("totalElements");
-        assertEquals(4, totalElements);
+        assertEquals(20, totalElements);
     }
 
     @Test
     public void testGetAllProductsFiltered() throws Exception {
 
 
-        Product p1 = new Product();
-        p1.setCategory("FF");
-        service.create(p1);
+        ProductRequest preq = new ProductRequest();
+        preq.setName("Sausage");
+        preq.setCategory("RF");
+        preq.setMaxTemperature(3.0F);
+        preq.setMinTemperature(0.5F);
+        preq.setWeight(0.5F);
+        BigDecimal price = BigDecimal.valueOf(13.99);
+        preq.setPrice(price);
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "?category=FF")
+        ObjectWriter writer = new ObjectMapper()
+                .configure(SerializationFeature.WRAP_ROOT_VALUE, false)
+                .writer().withDefaultPrettyPrinter();
+
+        String payloadRequest = writer.writeValueAsString(preq);
+
+        this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payloadRequest)
+                        .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
+                .andDo(print()).andExpect(status().isCreated()).andReturn();
+
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "?category=RF")
                 .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))).andReturn();
         String jsonObjectReturned = mvcResult.getResponse().getContentAsString();
         JSONObject obj = new JSONObject(jsonObjectReturned);
         Integer totalElements = obj.getInt("totalElements");
-        assertEquals(1, totalElements);
+        assertEquals(6, totalElements);
     }
 
     @Test

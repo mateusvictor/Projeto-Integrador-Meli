@@ -4,6 +4,7 @@ import br.com.meli.fresh.model.User;
 import br.com.meli.fresh.model.exception.UserNotFoundException;
 import br.com.meli.fresh.model.exception.UserWithThisEmailAlreadyExists;
 import br.com.meli.fresh.repository.IUserRepository;
+import br.com.meli.fresh.repository.IWarehouseRepository;
 import br.com.meli.fresh.services.impl.UserServiceImpl;
 import br.com.meli.fresh.unit.factory.UserFactory;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -22,7 +24,13 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 public class BuyerServiceImpTest {
 
     @Mock
-    private static IUserRepository repository;
+    private IUserRepository repository;
+
+    @Mock
+    private IWarehouseRepository warehouseRepository;
+
+    @Mock
+    private BCryptPasswordEncoder pe;
 
     @InjectMocks
     private UserServiceImpl service;
@@ -72,7 +80,7 @@ public class BuyerServiceImpTest {
     public void mustThrowEmailAlreadyExistsException(){
         User buyer = this.setupThrowEmailException();
         assertThrows(UserWithThisEmailAlreadyExists.class,()->{
-            service.create(buyer);
+            this.service.create(buyer);
         });
     }
     @Test
