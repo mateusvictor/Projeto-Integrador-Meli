@@ -124,7 +124,7 @@ public class ProductControllerTest {
 
         ProductRequest preq = new ProductRequest();
         preq.setName("Sausage");
-        preq.setCategory("RF");
+        preq.setCategory("FF");
         preq.setMaxTemperature(3.0F);
         preq.setMinTemperature(0.5F);
         preq.setWeight(0.5F);
@@ -143,12 +143,12 @@ public class ProductControllerTest {
                         .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isCreated()).andReturn();
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "?category=RF")
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "?category=FF")
                 .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))).andReturn();
         String jsonObjectReturned = mvcResult.getResponse().getContentAsString();
         JSONObject obj = new JSONObject(jsonObjectReturned);
         Integer totalElements = obj.getInt("totalElements");
-        assertEquals(5, totalElements);
+        assertEquals(1, totalElements);
     }
 
     @Test
