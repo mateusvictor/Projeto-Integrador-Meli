@@ -12,11 +12,14 @@ import br.com.meli.fresh.services.impl.UserServiceImpl;
 import br.com.meli.fresh.services.impl.WarehouseServiceImpl;
 import br.com.meli.fresh.unit.factory.UserFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -96,8 +99,12 @@ public class WarehouseControllerTest {
         User user = this.userService.create(UserFactory.createWarehouseManagerDefault());
         WarehouseRequestDTO warehouseRequestDTO = WarehouseFactory.createWarehouseDTO();
         warehouseRequestDTO.setWarehouseManagerId(user.getId());
+        ObjectWriter writer  = new ObjectMapper().configure(SerializationFeature.WRAP_ROOT_VALUE, false)
+                .writer().withDefaultPrettyPrinter();
+        String payloadRequestJson = writer.writeValueAsString(warehouseRequestDTO);
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL))
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
+                .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
