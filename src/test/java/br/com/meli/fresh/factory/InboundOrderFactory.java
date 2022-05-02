@@ -25,6 +25,7 @@ public class InboundOrderFactory {
         return inboundOrder;
     }
 
+
     public static InboundOrder getInstanceWithInvalidProductType(){
         // Returns an instance with a product that doesn't match the section product type
         // Section product type: fresco

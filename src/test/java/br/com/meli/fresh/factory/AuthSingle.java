@@ -6,11 +6,7 @@ import br.com.meli.fresh.services.impl.UserServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
@@ -19,43 +15,59 @@ import java.util.Set;
 
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@AllArgsConstructor
-@NoArgsConstructor
-@Component
-public class AuthFactory {
+public final class AuthSingle {
 
-    private UserServiceImpl service;
-    private String TOKEN;
+    private UserServiceImpl userService;
+    public static String TOKEN;
+    private final static String PASSWORD = "123";
+    public static String USER_ID;
+    private static AuthSingle INSTANCE;
 
-    public AuthFactory(UserServiceImpl userService) {
-        this.service = userService;
+    public AuthSingle(UserServiceImpl userService, MockMvc mockMvc, User user) {
+        this.userService = userService;
+        this.TOKEN = this.token(user, mockMvc);
     }
 
-
-    public String token(MockMvc mockMvc) {
-        if(TOKEN == null) {
+    public static AuthSingle getInstance(UserServiceImpl userService, MockMvc mockMvc) {
+        if(INSTANCE == null) {
             User user = new User(
                     null,
                     "admin",
                     "admin@admin.com",
-                    "admin",
+                    PASSWORD,
                     Set.of(0, 1, 2, 3)
             );
 
-            User u = service.create(user);
+            INSTANCE = new AuthSingle(userService, mockMvc, user);
+        }
 
+        return INSTANCE;
+    }
+
+    public static AuthSingle getInstance(UserServiceImpl userService, MockMvc mockMvc, User user) {
+        if(INSTANCE == null) {
+            user.setPassword(PASSWORD);
+            INSTANCE = new AuthSingle(userService, mockMvc, user);
+        }
+
+        return INSTANCE;
+    }
+
+    private String token(User user, MockMvc mockMvc) {
+        if(TOKEN == null) {
+            User u = userService.create(user);
+            USER_ID = u.getId();
             String result = login(u, mockMvc);
-            this.TOKEN = result;
             return result;
         }
         return this.TOKEN;
     }
 
-    private String login(User user, MockMvc mockMvc) {
+    private static String login(User user, MockMvc mockMvc) {
         // Setting payload login's request
         AuthRequest auth = new AuthRequest();
         auth.setEmail(user.getEmail());
-        auth.setPassword("admin");
+        auth.setPassword(PASSWORD);
 
         try {
 

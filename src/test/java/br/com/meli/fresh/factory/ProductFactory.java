@@ -2,6 +2,8 @@ package br.com.meli.fresh.factory;
 
 import br.com.meli.fresh.model.Product;
 
+import java.math.BigDecimal;
+
 public class ProductFactory {
 
 
@@ -12,6 +14,7 @@ public class ProductFactory {
         product.setMinTemperature(10f);
         product.setMinTemperature(10f);
         product.setWeight(10f);
+        product.setPrice(BigDecimal.valueOf(10));
 
         return product;
     }
