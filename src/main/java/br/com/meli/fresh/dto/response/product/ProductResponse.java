@@ -1,4 +1,4 @@
-package br.com.meli.fresh.dto.response.productResponse;
+package br.com.meli.fresh.dto.response.product;
 
 import lombok.Getter;
 import lombok.Setter;

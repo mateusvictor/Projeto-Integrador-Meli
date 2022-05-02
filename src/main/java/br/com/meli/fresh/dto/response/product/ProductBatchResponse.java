@@ -1,8 +1,5 @@
-package br.com.meli.fresh.dto.response.productResponse;
+package br.com.meli.fresh.dto.response.product;
 
-import br.com.meli.fresh.model.InboundOrder;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 

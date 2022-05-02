@@ -1,7 +1,7 @@
 package br.com.meli.fresh.integration;
 
 import br.com.meli.fresh.dto.request.productRequest.ProductRequest;
-import br.com.meli.fresh.dto.response.productResponse.ProductResponse;
+import br.com.meli.fresh.dto.response.product.ProductResponse;
 import br.com.meli.fresh.factory.AuthFactory;
 import br.com.meli.fresh.model.Product;
 import br.com.meli.fresh.services.impl.ProductServiceImpl;
