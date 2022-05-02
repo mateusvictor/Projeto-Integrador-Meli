@@ -113,6 +113,11 @@ public class UserFactory {
         return User.builder().name("teste").email("teste@teste.com").password("aaaa").roles(Set.of(2)).build();
     }
 
+    public static User createWarehouseManagerDefault2(){
+        return User.builder().name("teste").email("teste@teste2.com").password("aaaa").roles(Set.of(2)).build();
+    }
+
+
 
 }
 

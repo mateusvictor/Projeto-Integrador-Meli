@@ -1,6 +1,7 @@
 package br.com.meli.fresh.dto.request;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class SectionRequestDTO {
     private String id;
     @NotBlank(message = "productType must not be blank")

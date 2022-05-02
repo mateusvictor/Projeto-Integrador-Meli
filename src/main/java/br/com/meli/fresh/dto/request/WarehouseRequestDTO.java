@@ -1,6 +1,7 @@
 package br.com.meli.fresh.dto.request;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
+@Builder
 public class WarehouseRequestDTO {
     @NotNull(message = "name must not be null")
     @NotBlank(message = "name must not be blank")

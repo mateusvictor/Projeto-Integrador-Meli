@@ -1,5 +1,6 @@
 package br.com.meli.fresh.factory;
 
+import br.com.meli.fresh.dto.request.SectionRequestDTO;
 import br.com.meli.fresh.model.Section;
 
 import java.util.UUID;
@@ -19,6 +20,10 @@ public class SectionFactory {
 
     public static Section createSectionDefault(){
         return Section.builder().productType("fs").actualVolume(0f).maxVolume(30f).build();
+    }
+
+    public static SectionRequestDTO createSectionDefaultDTO(){
+        return SectionRequestDTO.builder().productType("fs").actualVolume(0f).maxVolume(30f).build();
     }
 
     public static Section getFreshSection(){

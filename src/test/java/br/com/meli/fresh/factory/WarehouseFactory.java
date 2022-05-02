@@ -1,5 +1,6 @@
 package br.com.meli.fresh.factory;
 
+import br.com.meli.fresh.dto.request.WarehouseRequestDTO;
 import br.com.meli.fresh.model.Warehouse;
 import br.com.meli.fresh.unit.factory.UserFactory;
 import org.springframework.data.domain.Page;
@@ -37,8 +38,13 @@ public class WarehouseFactory {
         list.add(warehouseB);
         list.add(warehouseC);
         return new PageImpl<>(list);
-
-
     }
+
+    public static WarehouseRequestDTO createWarehouseDTO(){
+        WarehouseRequestDTO warehouseRequestDTO = WarehouseRequestDTO.builder().name("teste")
+                .sectionList(List.of(SectionFactory.createSectionDefaultDTO())).build();
+        return warehouseRequestDTO;
+    }
+
 
 }

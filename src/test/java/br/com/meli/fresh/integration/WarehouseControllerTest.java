@@ -2,6 +2,7 @@ package br.com.meli.fresh.integration;
 
 
 import br.com.meli.fresh.assembler.WarehouseMapper;
+import br.com.meli.fresh.dto.request.WarehouseRequestDTO;
 import br.com.meli.fresh.dto.response.WarehouseResponseDTO;
 import br.com.meli.fresh.factory.WarehouseFactory;
 import br.com.meli.fresh.model.User;
@@ -11,6 +12,7 @@ import br.com.meli.fresh.services.impl.UserServiceImpl;
 import br.com.meli.fresh.services.impl.WarehouseServiceImpl;
 import br.com.meli.fresh.unit.factory.UserFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.json.JSONObject;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -50,7 +52,6 @@ public class WarehouseControllerTest {
 
     @Test
     public void mustGetWarehouseById() throws Exception {
-        //criar warehouse  -
         Warehouse warehouse = WarehouseFactory.createWarehouse();
         User user = this.userService.create(UserFactory.createWarehouseManagerDefault());
 
@@ -66,6 +67,44 @@ public class WarehouseControllerTest {
         WarehouseResponseDTO responseDTO = new ObjectMapper().readValue(jsonObjectReturned, WarehouseResponseDTO.class);
 
         assertEquals(created.getId(), responseDTO.getId());
+    }
+
+    @Test
+    public void mustGetAllWarehouses() throws Exception {
+        Warehouse warehouse = WarehouseFactory.createWarehouse();
+        User user = this.userService.create(UserFactory.createWarehouseManagerDefault());
+        warehouse.setWarehouseManager(user);
+        Warehouse created = this.warehouseService.create(warehouse);
+
+        Warehouse warehouse2 = WarehouseFactory.createWarehouse();
+        User user2 = this.userService.create(UserFactory.createWarehouseManagerDefault2());
+        warehouse2.setWarehouseManager(user2);
+        Warehouse created2 = this.warehouseService.create(warehouse2);
+
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        String jsonObjectReturned = mvcResult.getResponse().getContentAsString();
+        JSONObject object = new JSONObject(jsonObjectReturned);
+        Integer totalElements = object.getInt("totalElements");
+        assertEquals(2, totalElements);
+    }
+
+    @Test
+    public void mustCreateWarehouse() throws Exception {
+        User user = this.userService.create(UserFactory.createWarehouseManagerDefault());
+        WarehouseRequestDTO warehouseRequestDTO = WarehouseFactory.createWarehouseDTO();
+        warehouseRequestDTO.setWarehouseManagerId(user.getId());
+
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL))
+                .andDo(print())
+                .andExpect(status().isCreated())
+                .andReturn();
+        String jsonObjectReturned = mvcResult.getResponse().getContentAsString();
+        WarehouseResponseDTO responseDTO = new ObjectMapper().readValue(jsonObjectReturned, WarehouseResponseDTO.class);
+
+        assertEquals(warehouseRequestDTO.getName(), responseDTO.getName());
 
     }
 
