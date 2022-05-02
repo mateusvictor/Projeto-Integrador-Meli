@@ -112,9 +112,25 @@ public class WarehouseControllerTest {
         WarehouseResponseDTO responseDTO = new ObjectMapper().readValue(jsonObjectReturned, WarehouseResponseDTO.class);
 
         assertEquals(warehouseRequestDTO.getName(), responseDTO.getName());
-
     }
 
+
+
+    @Test
+    public void mustDeleteWarehouse() throws Exception {
+        Warehouse warehouse = WarehouseFactory.createWarehouse();
+        User user = this.userService.create(UserFactory.createWarehouseManagerDefault());
+
+        warehouse.setWarehouseManager(user);
+        Warehouse created = this.warehouseService.create(warehouse);
+
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/{id}", created.getId()))
+                .andDo(print())
+                .andExpect(status().isOk())
+                .andReturn();
+        String jsonObjectReturned = mvcResult.getResponse().getContentAsString();
+        assertEquals(jsonObjectReturned, "Warehouse deleted!");
+    }
 
 }
 
