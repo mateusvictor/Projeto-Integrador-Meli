@@ -131,7 +131,7 @@ public class SellerControllerTest {
         JSONObject obj = new JSONObject(jsonObjectReturned);
         Integer totalElements = obj.getInt("totalElements");
         System.out.println(totalElements);
-        assertEquals(8, totalElements);
+        assertEquals(7, totalElements);
     }
 
     @Test

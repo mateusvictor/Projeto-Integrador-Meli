@@ -148,7 +148,7 @@ public class ProductControllerTest {
         String jsonObjectReturned = mvcResult.getResponse().getContentAsString();
         JSONObject obj = new JSONObject(jsonObjectReturned);
         Integer totalElements = obj.getInt("totalElements");
-        assertEquals(6, totalElements);
+        assertEquals(5, totalElements);
     }
 
     @Test
