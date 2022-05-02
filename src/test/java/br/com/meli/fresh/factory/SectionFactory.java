@@ -17,6 +17,10 @@ public class SectionFactory {
         return section;
     }
 
+    public static Section createSectionDefault(){
+        return Section.builder().productType("fs").actualVolume(0f).maxVolume(30f).build();
+    }
+
     public static Section getFreshSection(){
         return new Section(null, "fresco", 0F, 30F, null, null);
     }

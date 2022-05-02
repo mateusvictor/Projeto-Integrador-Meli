@@ -110,7 +110,7 @@ public class UserFactory {
     }
 
     public static User createWarehouseManagerDefault(){
-        return User.builder().id("1").name("teste").email("teste@teste.com").password("aaaa").roles(Set.of(2)).build();
+        return User.builder().name("teste").email("teste@teste.com").password("aaaa").roles(Set.of(2)).build();
     }
 
 

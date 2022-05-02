@@ -4,7 +4,9 @@ package br.com.meli.fresh.integration;
 import br.com.meli.fresh.assembler.WarehouseMapper;
 import br.com.meli.fresh.dto.response.WarehouseResponseDTO;
 import br.com.meli.fresh.factory.WarehouseFactory;
+import br.com.meli.fresh.model.User;
 import br.com.meli.fresh.model.Warehouse;
+import br.com.meli.fresh.repository.ISectionRepository;
 import br.com.meli.fresh.services.impl.UserServiceImpl;
 import br.com.meli.fresh.services.impl.WarehouseServiceImpl;
 import br.com.meli.fresh.unit.factory.UserFactory;
@@ -40,14 +42,19 @@ public class WarehouseControllerTest {
     @Autowired
     private UserServiceImpl userService;
 
-    private final String BASE_URL = "api/v1/fresh-products/warehouse";
+    @Autowired
+    private ISectionRepository sectionRepository;
+
+    private final String BASE_URL = "http://localhost:8080/api/v1/fresh-products/warehouse";
 
 
     @Test
     public void mustGetWarehouseById() throws Exception {
         //criar warehouse  -
         Warehouse warehouse = WarehouseFactory.createWarehouse();
-        this.userService.create(UserFactory.createWarehouseManagerDefault());
+        User user = this.userService.create(UserFactory.createWarehouseManagerDefault());
+
+        warehouse.setWarehouseManager(user);
         Warehouse created = this.warehouseService.create(warehouse);
 
 

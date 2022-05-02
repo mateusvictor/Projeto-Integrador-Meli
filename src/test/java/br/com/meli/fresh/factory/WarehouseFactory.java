@@ -15,9 +15,11 @@ public class WarehouseFactory {
     }
 
     public static Warehouse createWarehouse(){
-        return Warehouse.builder().name("teste")
-                .sectionList(List.of(SectionFactory.createSection()))
+       Warehouse warehouse =  Warehouse.builder().name("teste")
+                .sectionList(List.of(SectionFactory.createSectionDefault()))
                 .warehouseManager(UserFactory.createWarehouseManagerDefault()).build();
+       warehouse.getSectionList().get(0).setWarehouse(warehouse);
+        return  warehouse;
     }
 
     public static Warehouse createWarehouseDefault(){
