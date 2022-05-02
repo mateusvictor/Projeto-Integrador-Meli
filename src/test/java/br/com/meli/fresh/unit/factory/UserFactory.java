@@ -11,7 +11,6 @@ import java.util.Set;
 
 public class UserFactory {
 
-
     public static User createUserBuyerA() {
         return new User("1", "Joao", "joazinho@email.com", "password", Set.of(1));
     }

@@ -9,6 +9,7 @@ import br.com.meli.fresh.repository.IBatchRepository;
 import br.com.meli.fresh.repository.ICartRepository;
 import br.com.meli.fresh.repository.IProductRepository;
 import br.com.meli.fresh.repository.IUserRepository;
+import br.com.meli.fresh.security.UserSpringSecurity;
 import br.com.meli.fresh.services.ICartService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -30,14 +31,21 @@ public class CartServiceImpl implements ICartService {
     private final IProductRepository productRepository;
     private final IUserRepository buyerRepository;
     private final IBatchRepository batchRepository;
+    private final UserAuthenticatedService userAuthenticatedService;
+
 
     @Override
     @Transactional()
     public Cart create(Cart cart) {
         cart.setDate(LocalDateTime.now());
+        UserSpringSecurity auth = userAuthenticatedService.authenticated();
 
-        User opBuyer = buyerRepository.findById(cart.getBuyer().getId())
-                .orElseThrow(() -> new UserNotFoundException(cart.getBuyer().getId()));
+        if(auth == null || (!auth.hasRole(Role.BUYER) && !auth.hasRole(Role.ADMIN))) {
+            throw new UserNotFoundException(auth.getId());
+        }
+
+        User opBuyer = buyerRepository.findById(auth.getId())
+                .orElseThrow(() -> new UserNotFoundException(auth.getId()));
 
         cart.setBuyer(opBuyer);
 
@@ -47,7 +55,7 @@ public class CartServiceImpl implements ICartService {
             Product opProduct = productRepository.findById(item.getProduct().getId())
                     .orElseThrow(() -> new ProductNotFoundException(item.getProduct().getId()));
 
-            isQuantityValid(opProduct.getBatchList(), item.getQuantity());
+            haveEnoughProducts(opProduct.getBatchList(), item.getQuantity());
             cartItem.setQuantity(item.getQuantity());
             cartItem.setProduct(opProduct);
 
@@ -68,7 +76,7 @@ public class CartServiceImpl implements ICartService {
             return cart;
         }
 
-        cart.getItems().forEach(cartItem -> decrementOfBatchAndProductQuantity(cartItem.getProduct().getId(), cartItem.getQuantity()));
+        cart.getItems().forEach(cartItem -> decreaseTheQuantityOfBatchProducts(cartItem.getProduct().getId(), cartItem.getQuantity()));
 
         cart.setCartStatus(CartStatus.CLOSE);
         return cartRepository.save(cart);
@@ -80,8 +88,8 @@ public class CartServiceImpl implements ICartService {
         return cartRepository.findById(id).orElseThrow(() -> new CartNotFoundException("Cart not found."));
     }
 
-
-    private boolean dueDateIsNoLessThanThreeWeeks(LocalDate dueDate) {
+    // checks if the expiration date of a batch of products is greater than three weeks
+    private boolean dueDateIsGreaterThanThreeWeeks(LocalDate dueDate) {
         LocalDate date = LocalDate.now();
         WeekFields weekFields = WeekFields.of(Locale.getDefault());
         int weekNumber = date.get(weekFields.weekOfWeekBasedYear());
@@ -91,7 +99,8 @@ public class CartServiceImpl implements ICartService {
         return weekTotal >= 3;
     }
 
-    private void isQuantityValid(List<Batch> batches, int quantity) {
+    // checks if the quantity of products is enough for cart
+    private void haveEnoughProducts(List<Batch> batches, int quantity) {
         String productName = null;
         int sum = 0;
 
@@ -99,21 +108,23 @@ public class CartServiceImpl implements ICartService {
             if(productName == null) {
                 productName = batch.getProduct().getName();
             }
-            if (dueDateIsNoLessThanThreeWeeks(batch.getDueDate())) {
+            if (dueDateIsGreaterThanThreeWeeks(batch.getDueDate())) {
                 sum += batch.getCurrentQuantity();
             }
             if (sum >= quantity) {
                 break;
             }
         }
+
         if (sum < quantity) {
             throw new InsufficientQuantityOfProductException("Insufficient quantity of the product " + productName + " for the request.");
         }
     }
 
-    private void decrementOfBatchAndProductQuantity(String productId, int quantity) {
+
+    private void decreaseTheQuantityOfBatchProducts(String productId, int quantity) {
         List<Batch> batches = batchRepository.findAllByProduct_Id(productId);
-        isQuantityValid(batches, quantity);
+        haveEnoughProducts(batches, quantity);
 
         int total = quantity;
         List<Batch> batchesUpdated = new ArrayList<>();

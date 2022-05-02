@@ -33,8 +33,6 @@ public class CartController {
         OrderTotalPriceResponse orderTotalPriceResponse = new OrderTotalPriceResponse();
         Cart cart = cartService.create(mapper.toDomainObject(request));
 
-        // Add product price later
-        // Movie to service
         BigDecimal sum = cart.getItems().stream().reduce(BigDecimal.ZERO, (subtotal, element) -> BigDecimal.valueOf(element.getQuantity()).multiply(element.getProduct().getPrice()), BigDecimal::add);
         orderTotalPriceResponse.setTotalPrice(sum);
 

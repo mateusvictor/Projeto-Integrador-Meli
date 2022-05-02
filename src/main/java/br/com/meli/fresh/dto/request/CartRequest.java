@@ -11,9 +11,6 @@ import java.util.List;
 @Setter
 public class CartRequest {
 
-    @NotNull(message = "buyerId must not be blank")
-    private String buyerId;
-
     @NotNull(message = "status must not be blank")
     private String status;
 
