@@ -8,6 +8,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,8 @@ public class AuthFactory {
     private UserServiceImpl service;
 
     private User adminUser = null;
+    private User userB = null;
+    private final String defaultPassword = "admin";
 
     public User getAdminUser(){
         // Creates only one admin user to be used in the requests
@@ -39,38 +42,52 @@ public class AuthFactory {
                 "admin",
                 Set.of(0, 1, 2, 3)
             ));
-        System.out.println(adminUser.getId());
         return adminUser;
     }
 
-    public String token(MockMvc mockMvc) {
-        // Creating an admin user with all access.
-        User u = this.getAdminUser();
+    public User getNonAdminUser(){
+        if (userB == null)
+            userB = service.create(new User(
+                    null,
+                    "jorge",
+                    "jorge@gmail.com",
+                    "jorge123",
+                    Set.of(2)
+            ));
+        return userB;
+    }
 
-        // Setting payload login's request
+    public String token(MockMvc mockMvc) {
+        return login(mockMvc, this.getAdminUser());
+    }
+
+    public String token(MockMvc mockMvc, User user){
+        return login(mockMvc, user);
+    }
+
+    public String login(MockMvc mockMvc, User user){
         AuthRequest auth = new AuthRequest();
-        auth.setEmail("admin@admin.com");
-        auth.setPassword("admin");
+
+        auth.setEmail(user.getEmail());
+        auth.setPassword(defaultPassword);
 
         try {
+            ObjectWriter writer = new ObjectMapper()
+                    .configure(SerializationFeature.WRAP_ROOT_VALUE, false)
+                    .writer().withDefaultPrettyPrinter();
 
-        ObjectWriter writer = new ObjectMapper()
-                .configure(SerializationFeature.WRAP_ROOT_VALUE, false)
-                .writer().withDefaultPrettyPrinter();
+            String payloadLogin = writer.writeValueAsString(auth);
 
-        String payloadLogin = writer.writeValueAsString(auth);
-
-            // Realizing auth this user.
             MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/login")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(payloadLogin))
                     .andExpect(status().isOk()).andReturn();
-            String result = mvcResult.getResponse().getHeader("Authorization");
-            return result;
+
+            String token = mvcResult.getResponse().getHeader("Authorization");
+            return token;
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-
 }

@@ -11,6 +11,7 @@ import br.com.meli.fresh.security.UserSpringSecurity;
 import br.com.meli.fresh.services.exception.EntityNotFoundException;
 import br.com.meli.fresh.services.exception.InsufficientAvailableSpaceException;
 import br.com.meli.fresh.services.exception.InvalidSectionTypeException;
+import br.com.meli.fresh.services.exception.InvalidWarehouseManagerException;
 import br.com.meli.fresh.services.impl.InboundOrderServiceImpl;
 import br.com.meli.fresh.services.impl.UserAuthenticatedService;
 import org.junit.jupiter.api.Test;
@@ -54,6 +55,7 @@ public class InboundOrderServiceImplTest {
 
         return user;
     }
+
     public UserSpringSecurity getUser(){
         User user = getUserEntity();
         Collection<GrantedAuthority> grantedAuthorities = user
@@ -150,6 +152,20 @@ public class InboundOrderServiceImplTest {
 
         assertThrows(InsufficientAvailableSpaceException.class, () -> {
             orderService.create(invalidInboundOrder);
+        });
+    }
+
+    @Test
+    public void testInvalidWarehouseManager(){
+        InboundOrder inboundOrder = InboundOrderFactory.getValidInstance();
+        User userManager = this.getUserEntity();
+        userManager.setId("userManagerId");
+        inboundOrder.getSection().getWarehouse().setWarehouseManager(userManager);
+
+        Mockito.when(authService.authenticated()).thenReturn(this.getUser()); // The ID of the manager doesn't match the client id
+
+        assertThrows(InvalidWarehouseManagerException.class, () -> {
+            orderService.create(inboundOrder);
         });
     }
 }

@@ -30,7 +30,6 @@ import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Arrays;
@@ -95,6 +94,25 @@ public class InboundOrderControllerTest {
         return new InboundOrderRequest(null, sectionFresh.getId(), batchList);
     }
 
+    public InboundOrderRequest getInstanceWithANonAdminAsManager(){
+        Warehouse warehouse = WarehouseFactory.getWarehouse();
+        Section sectionFresh = SectionFactory.getFreshSection();
+        sectionFresh.setWarehouse(warehouse);
+
+        warehouse.setSectionList(Collections.singletonList(sectionFresh));
+        warehouse.setWarehouseManager(auth.getNonAdminUser());
+
+        warehouse = warehouseRepository.save(warehouse);
+
+        Product product1 = productRepository.save(ProductFactory.getFreshProductA());
+        Product product2 = productRepository.save(ProductFactory.getFreshProductB());
+
+        List<BatchRequest> batchList = Arrays.asList(
+                new BatchRequest(product1.getId(), 10F, 8, 8, null, LocalDate.now(), 10F),
+                new BatchRequest(product2.getId(), 10F, 5, 5, null, LocalDate.now(), 12F)
+        );
+        return new InboundOrderRequest(null, sectionFresh.getId(), batchList);
+    }
     public InboundOrderRequest getInstanceWithInvalidProductType(){
         // Returns an instance with a product that doesn't match the section product type
         // Section product type: fresco
@@ -317,5 +335,24 @@ public class InboundOrderControllerTest {
 
         assertEquals(errorDTO.getError(), "EntityNotFoundException");
         assertEquals(errorDTO.getDescription(), "Invalid inbound order ID: " + invalidId);
+    }
+
+    @Test
+    public void testInvalidWarehouseManager() throws Exception {
+        InboundOrderRequest inboundOrder = this.getInstanceWithANonAdminAsManager();
+
+        String payloadRequest = writer.writeValueAsString(inboundOrder);
+
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
+                .content(payloadRequest))
+                .andDo(print())
+                .andExpect(status().isUnauthorized())
+                .andReturn();
+        String jsonObjectReturned = mvcResult.getResponse().getContentAsString();
+        ErrorDTO errorDTO = new ObjectMapper().readValue(jsonObjectReturned, ErrorDTO.class);
+
+        assertEquals("InvalidWarehouseManagerException", errorDTO.getError());
     }
 }
