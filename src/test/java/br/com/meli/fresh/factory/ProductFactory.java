@@ -20,15 +20,15 @@ public class ProductFactory {
     }
 
     public static Product getFreshProductA(){
-        return new Product(null, "Bolacha Trakinas", "fresco", 5F, 30F, 0.25F, null, null, true);
+        return new Product("product1", "Bolacha Trakinas", "fresco", 5F, 30F, 0.25F, null, null, true);
     }
 
     public static Product getFreshProductB(){
-        return new Product(null, "Batata Doce", "fresco", 10F, 30F, 1F, null, null, true);
+        return new Product("product2", "Batata Doce", "fresco", 10F, 30F, 1F, null, null, true);
     }
 
     public static Product getFrozenProductA(){
-        return new Product(null, "Pizza Quatro Queijos", "congelado", -20F, 30F, 0.25F, null, null, true);
+        return new Product("product3", "Pizza Quatro Queijos", "congelado", -20F, 30F, 0.25F, null, null, true);
     }
 
     public static Product getFrozenProductB(){

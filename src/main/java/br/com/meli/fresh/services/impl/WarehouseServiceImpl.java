@@ -1,6 +1,10 @@
 package br.com.meli.fresh.services.impl;
 
+import br.com.meli.fresh.model.Role;
 import br.com.meli.fresh.model.Warehouse;
+import br.com.meli.fresh.model.exception.UserNotAllowedException;
+import br.com.meli.fresh.model.exception.UserNotFoundException;
+import br.com.meli.fresh.model.exception.WarehouseManagerAlreadyDefined;
 import br.com.meli.fresh.model.exception.WarehouseNotFoundException;
 import br.com.meli.fresh.repository.IUserRepository;
 import br.com.meli.fresh.repository.IWarehouseRepository;
@@ -17,7 +21,7 @@ import java.util.stream.Collectors;
 public class WarehouseServiceImpl implements ICrudService<Warehouse> {
 
     private final IWarehouseRepository repository;
-    private final IUserRepository generalUserRepository;
+    private final IUserRepository userRepository;
 
     @Override
     public Warehouse create(Warehouse warehouse) {
@@ -41,9 +45,7 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
             section.setWarehouse(warehouse);
             return  section;
         }).collect(Collectors.toList()));
-        if(warehouse.getWarehouseManager()!=null){
-           // warehouse.getWarehouseManager().setWarehouse(warehouse);
-        }
+
         return this.repository.save(warehouse);
     }
 
@@ -59,19 +61,25 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
 
     @Override
     public void delete(String id) {
-        Warehouse warehouse = this.repository.findById(id).orElseThrow(()-> new WarehouseNotFoundException("Warehouse not found!"));
-       // warehouse.getWarehouseManager().setWarehouse(null);
-        this.repository.delete(warehouse);
+        this.repository.delete(this.repository.findById(id).orElseThrow(()-> new WarehouseNotFoundException("Warehouse not found!")));
     }
 
 
     private void verifyManager(Warehouse warehouse) {
-        if(warehouse.getWarehouseManager()!=null){
-//            if(this.repository.findByWarehouseManagerId(warehouse.getWarehouseManager().getId())
-//
-//            ){
-//                throw new WarehouseManagerAlreadyDefined("Warehouse manager already defined to a warehouse");
-//            }
+        if(warehouse.getWarehouseManager()!=null) {
+            if(!this.userRepository.findById(warehouse.getWarehouseManager().getId()).orElseThrow(
+                    ()->new UserNotFoundException(warehouse.getWarehouseManager().getId())).getRoles().contains(Role.WAREHOUSEMANAGER)){
+                throw new UserNotAllowedException("User id "+ warehouse.getWarehouseManager().getId()+" not allowed to be warehouse manager");
+            }
+            Warehouse warehouseWithUser = this.repository.findWarehouseByWarehouseManager(warehouse.getWarehouseManager());
+
+            if ( warehouseWithUser!= null) {
+                if(warehouse.getId()!=null && !warehouseWithUser.getId().equals(warehouse.getId())){
+                    throw new WarehouseManagerAlreadyDefined("Warehouse manager already defined in another warehouse");
+                }else if(warehouse.getId()==null){
+                    throw new WarehouseManagerAlreadyDefined("Warehouse manager already defined in another warehouse");
+                }
+            }
         }
     }
 

@@ -3,6 +3,7 @@ package br.com.meli.fresh.controller;
 import br.com.meli.fresh.assembler.ProductMapper;
 import br.com.meli.fresh.dto.request.productRequest.OnCreate;
 import br.com.meli.fresh.dto.request.productRequest.ProductRequest;
+import br.com.meli.fresh.dto.response.productResponse.ProductBatchResponse;
 import br.com.meli.fresh.dto.response.productResponse.ProductResponse;
 import br.com.meli.fresh.model.Batch;
 import br.com.meli.fresh.model.Product;
@@ -50,9 +51,9 @@ public class ProductController {
     }
 
     private void orderingBatch(ProductResponse pRes, String batch_order) {
-        if(batch_order.equalsIgnoreCase("L")) pRes.getBatchList().sort(Comparator.comparing(Batch::getId));
-        if(batch_order.equalsIgnoreCase("C")) pRes.getBatchList().sort(Comparator.comparing(Batch::getCurrentQuantity));
-        if(batch_order.equalsIgnoreCase("F")) pRes.getBatchList().sort(Comparator.comparing(Batch::getDueDate));
+        if(batch_order.equalsIgnoreCase("L")) pRes.getBatchList().sort(Comparator.comparing(ProductBatchResponse::getId));
+        if(batch_order.equalsIgnoreCase("C")) pRes.getBatchList().sort(Comparator.comparing(ProductBatchResponse::getCurrentQuantity));
+        if(batch_order.equalsIgnoreCase("F")) pRes.getBatchList().sort(Comparator.comparing(ProductBatchResponse::getDueDate));
     }
 
     @GetMapping

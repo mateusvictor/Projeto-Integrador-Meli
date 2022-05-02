@@ -1,5 +1,6 @@
 package br.com.meli.fresh.security;
 
+import br.com.meli.fresh.services.impl.UserDetailsServiceImpl;
 import br.com.meli.fresh.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -23,7 +24,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtUtil jwtUtil;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserDetailsServiceImpl userDetailsService;
 
     private final static String BASE_URL = "/api/v1/fresh-products";
 
@@ -46,7 +47,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             BASE_URL + "/buyer/**",
             BASE_URL + "/seller/**",
             BASE_URL + "/warehousemanager/**",
-            BASE_URL + "/warehouses/**"
+            BASE_URL + "/warehouse/**",
     };
 
     @Override

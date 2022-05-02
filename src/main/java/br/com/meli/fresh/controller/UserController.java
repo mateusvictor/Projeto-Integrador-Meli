@@ -57,6 +57,6 @@ public class UserController {
         @DeleteMapping("/{id}")
         public ResponseEntity<String> delete(@PathVariable String id){
             this.service.delete(id);
-            return ResponseEntity.ok("Buyer deleted!");
+            return ResponseEntity.ok("User deleted!");
         }
 }

@@ -24,6 +24,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Component
 public class AuthFactory {
 
+    @Autowired
     private UserServiceImpl service;
     private String TOKEN;
 
@@ -32,30 +33,47 @@ public class AuthFactory {
     }
 
 
-    public String token(MockMvc mockMvc) {
-        if(TOKEN == null) {
-            User user = new User(
-                    null,
-                    "admin",
-                    "admin@admin.com",
-                    "admin",
-                    Set.of(0, 1, 2, 3)
-            );
+    private User adminUser = null;
+    private User userB = null;
+    private final String defaultPassword = "admin";
 
-            User u = service.create(user);
-
-            String result = login(u, mockMvc);
-            this.TOKEN = result;
-            return result;
-        }
-        return this.TOKEN;
+    public User getAdminUser(){
+        // Creates only one admin user to be used in the requests
+        if (adminUser == null)
+            adminUser = service.create(new User(
+                null,
+                "admin",
+                "admin@admin.com",
+                "admin",
+                Set.of(0, 1, 2, 3)
+            ));
+        return adminUser;
     }
 
-    private String login(User user, MockMvc mockMvc) {
-        // Setting payload login's request
+    public User getNonAdminUser(){
+        if (userB == null)
+            userB = service.create(new User(
+                    null,
+                    "jorge",
+                    "jorge@gmail.com",
+                    "jorge123",
+                    Set.of(2)
+            ));
+        return userB;
+    }
+
+    public String token(MockMvc mockMvc) {
+        return login(mockMvc, this.getAdminUser());
+    }
+
+    public String token(MockMvc mockMvc, User user){
+        return login(mockMvc, user);
+    }
+
+    public String login(MockMvc mockMvc, User user){
         AuthRequest auth = new AuthRequest();
         auth.setEmail(user.getEmail());
-        auth.setPassword("admin");
+        auth.setPassword(defaultPassword);
 
         try {
 
@@ -65,13 +83,13 @@ public class AuthFactory {
 
             String payloadLogin = writer.writeValueAsString(auth);
 
-            // Realizing auth this user.
             MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/login")
                     .contentType(MediaType.APPLICATION_JSON)
                     .content(payloadLogin))
                     .andExpect(status().isOk()).andReturn();
-            String result = mvcResult.getResponse().getHeader("Authorization");
-            return result;
+
+            String token = mvcResult.getResponse().getHeader("Authorization");
+            return token;
         } catch (Exception e) {
             e.printStackTrace();
         }

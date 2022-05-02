@@ -1,5 +1,6 @@
 package br.com.meli.fresh.dto.response.productResponse;
 
+import br.com.meli.fresh.dto.response.UserResponseDTO;
 import br.com.meli.fresh.model.User;
 
 public class ProductSectionResponse {
@@ -9,5 +10,5 @@ public class ProductSectionResponse {
     private Float maxVolume;
     private ProductWarehouseResponse warehouse;
 
-    private User warehouseManager;
+    private UserResponseDTO warehouseManager;
 }

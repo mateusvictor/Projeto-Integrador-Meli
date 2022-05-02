@@ -6,6 +6,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class UserAuthenticatedService {
+
     public UserSpringSecurity authenticated() {
         try {
             return (UserSpringSecurity) SecurityContextHolder.getContext().getAuthentication().getPrincipal();

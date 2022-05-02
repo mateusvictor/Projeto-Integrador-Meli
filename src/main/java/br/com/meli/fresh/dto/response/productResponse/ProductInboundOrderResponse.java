@@ -7,5 +7,5 @@ import java.time.LocalDateTime;
 public class ProductInboundOrderResponse {
     private String id;
     private LocalDateTime orderDateTime;
-    private Section section;
+    private ProductSectionResponse section;
 }
