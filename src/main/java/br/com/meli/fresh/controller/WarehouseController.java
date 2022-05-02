@@ -2,6 +2,7 @@ package br.com.meli.fresh.controller;
 
 import br.com.meli.fresh.assembler.WarehouseMapper;
 import br.com.meli.fresh.dto.request.WarehouseRequestDTO;
+import br.com.meli.fresh.dto.response.ProductQuantityResponse;
 import br.com.meli.fresh.dto.response.WarehouseResponseDTO;
 import br.com.meli.fresh.model.Warehouse;
 import br.com.meli.fresh.services.impl.WarehouseServiceImpl;
@@ -72,6 +73,13 @@ public class WarehouseController {
     public ResponseEntity<String> deleteWarehouse(@PathVariable String id){
         this.service.delete(id);
         return ResponseEntity.ok("Warehouse deleted!");
+    }
+
+    @GetMapping("/{productId}")
+    public ResponseEntity<ProductQuantityResponse> getProductQuantity(@PathVariable String productId){
+        return ResponseEntity.ok(
+                this.service.getProductQuantity(productId)
+        );
     }
 
 }

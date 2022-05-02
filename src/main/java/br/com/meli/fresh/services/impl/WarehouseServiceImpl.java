@@ -1,5 +1,6 @@
 package br.com.meli.fresh.services.impl;
 
+import br.com.meli.fresh.dto.response.ProductQuantityResponse;
 import br.com.meli.fresh.model.Role;
 import br.com.meli.fresh.model.Warehouse;
 import br.com.meli.fresh.model.exception.UserNotAllowedException;
@@ -81,6 +82,10 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
                 }
             }
         }
+    }
+
+    public ProductQuantityResponse getProductQuantity(String productId){
+        return null;
     }
 
 }
