@@ -64,6 +64,9 @@ public class CartControllerTest {
     @Autowired
     private UserServiceImpl userService;
 
+    @Autowired
+    private AuthFactory auth;
+
 
     public CartRequest setupRequest() {
         CartRequest request = new CartRequest();
@@ -102,9 +105,6 @@ public class CartControllerTest {
 
     @BeforeEach
     protected void beforeTest() {
-        User user = BuyerFactory.createBuyer();
-        AuthSingle.getInstance(userService, mockMvc, user);
-
         setupData();
     }
 
@@ -122,7 +122,7 @@ public class CartControllerTest {
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(payloadRequest)
-                .header(HttpHeaders.AUTHORIZATION, AuthSingle.TOKEN))
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isCreated()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
@@ -147,7 +147,7 @@ public class CartControllerTest {
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(payloadRequest)
-                .header(HttpHeaders.AUTHORIZATION, AuthSingle.TOKEN))
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isNotFound()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
@@ -172,7 +172,7 @@ public class CartControllerTest {
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(payloadRequest)
-                .header(HttpHeaders.AUTHORIZATION, AuthSingle.TOKEN))
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isBadRequest()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
@@ -199,7 +199,7 @@ public class CartControllerTest {
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(payloadRequest)
-                .header(HttpHeaders.AUTHORIZATION, AuthSingle.TOKEN))
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isBadRequest()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
@@ -222,7 +222,7 @@ public class CartControllerTest {
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(payloadRequest)
-                .header(HttpHeaders.AUTHORIZATION, AuthSingle.TOKEN))
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isBadRequest()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
@@ -242,7 +242,7 @@ public class CartControllerTest {
         String payloadRequest = writer.writeValueAsString(request);
 
         MvcResult mvcResultPost = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-                .header(HttpHeaders.AUTHORIZATION, AuthSingle.TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(payloadRequest))
                 .andExpect(status().isCreated()).andReturn();
@@ -250,7 +250,7 @@ public class CartControllerTest {
         String url = mvcResultPost.getResponse().getHeader("Location");
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put(url)
-                .header(HttpHeaders.AUTHORIZATION, AuthSingle.TOKEN))
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andExpect(status().isOk()).andReturn();
 
         Batch batch = batchRepository.findByProduct_Id(productId);
@@ -269,7 +269,7 @@ public class CartControllerTest {
         cart.setId("123");
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + cart.getId())
-                .header(HttpHeaders.AUTHORIZATION, AuthSingle.TOKEN))
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andExpect(status().isNotFound()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
@@ -289,7 +289,7 @@ public class CartControllerTest {
         String payloadRequest = writer.writeValueAsString(request);
 
         MvcResult mvcResultPost = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-                .header(HttpHeaders.AUTHORIZATION, AuthSingle.TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(payloadRequest))
                 .andExpect(status().isCreated()).andReturn();
@@ -301,7 +301,7 @@ public class CartControllerTest {
         batchRepository.save(batch);
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put(url)
-                .header(HttpHeaders.AUTHORIZATION, AuthSingle.TOKEN))
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andExpect(status().isBadRequest()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
@@ -321,7 +321,7 @@ public class CartControllerTest {
         String payloadRequest = writer.writeValueAsString(request);
 
         MvcResult mvcResultPost = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-                .header(HttpHeaders.AUTHORIZATION, AuthSingle.TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(payloadRequest))
                 .andExpect(status().isCreated()).andReturn();
@@ -333,7 +333,7 @@ public class CartControllerTest {
         batchRepository.save(batch);
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put(url)
-                .header(HttpHeaders.AUTHORIZATION, AuthSingle.TOKEN))
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andExpect(status().isBadRequest()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
@@ -354,7 +354,7 @@ public class CartControllerTest {
         String payloadRequest = writer.writeValueAsString(request);
 
         MvcResult mvcResultPost = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-                .header(HttpHeaders.AUTHORIZATION, AuthSingle.TOKEN)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(payloadRequest))
                 .andExpect(status().isCreated()).andReturn();
@@ -362,7 +362,7 @@ public class CartControllerTest {
         String url = mvcResultPost.getResponse().getHeader("Location");
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(url)
-                .header(HttpHeaders.AUTHORIZATION, AuthSingle.TOKEN))
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andExpect(status().isOk()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
@@ -379,7 +379,7 @@ public class CartControllerTest {
         cart.setId("123");
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + cart.getId())
-                .header(HttpHeaders.AUTHORIZATION, AuthSingle.TOKEN))
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andExpect(status().isNotFound()).andReturn();
 
         String result = mvcResult.getResponse().getContentAsString();
