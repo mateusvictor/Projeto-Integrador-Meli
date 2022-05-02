@@ -108,6 +108,12 @@ public class UserFactory {
     public static UserRequestDTO createSellerUserToUpdateRequestDto() {
         return UserRequestDTO.builder().name("Peach").email("peach@email.com").password("password").roles(Set.of(0)).build();
     }
+
+    public static User createWarehouseManagerDefault(){
+        return User.builder().id("1").name("teste").email("teste@teste.com").password("aaaa").roles(Set.of(2)).build();
+    }
+
+
 }
 
 

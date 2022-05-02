@@ -24,7 +24,6 @@ public class WarehouseController {
 
     private final WarehouseServiceImpl service;
 
-//    private final WarehouseManagerServiceImpl warehouseManagerService;
 
     private final WarehouseMapper mapper;
 
@@ -53,12 +52,6 @@ public class WarehouseController {
     }
 
     private Warehouse requestToEntity(WarehouseRequestDTO requestDTO) {
-        if(requestDTO.getWarehouseManagerId()!=null){
-//            WarehouseManager manager = this.warehouseManagerService.getById(requestDTO.getWarehouseManagerId());
-            Warehouse entity = this.mapper.toDomainObject(requestDTO);
-            //entity.setWarehouseManager(manager);
-            return entity;
-        }
         return this.mapper.toDomainObject(requestDTO);
     }
 
