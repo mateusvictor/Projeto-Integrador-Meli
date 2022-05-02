@@ -41,7 +41,7 @@ public class WarehouseFactory {
     }
 
     public static WarehouseRequestDTO createWarehouseDTO(){
-        WarehouseRequestDTO warehouseRequestDTO = WarehouseRequestDTO.builder().name("teste")
+        WarehouseRequestDTO warehouseRequestDTO = WarehouseRequestDTO.builder().name("testeDTO")
                 .sectionList(List.of(SectionFactory.createSectionDefaultDTO())).build();
         return warehouseRequestDTO;
     }
