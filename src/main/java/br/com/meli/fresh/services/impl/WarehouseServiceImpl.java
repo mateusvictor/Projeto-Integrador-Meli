@@ -26,23 +26,17 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
     @Override
     public Warehouse create(Warehouse warehouse) {
         this.verifyManager(warehouse);
-        warehouse.setSectionList(warehouse.getSectionList().stream().map(section-> {
-            section.setWarehouse(warehouse);
-            return  section;
-        }).collect(Collectors.toList()));
+        this.setWarehouseToSection(warehouse);
         return this.repository.save(warehouse);
     }
+
 
     @Override
     public Warehouse update(String id, Warehouse warehouse) {
         this.repository.findById(id).orElseThrow(()-> new WarehouseNotFoundException("Warehouse not found!"));
         warehouse.setId(id);
         this.verifyManager(warehouse);
-        warehouse.setSectionList(warehouse.getSectionList().stream().map(section-> {
-            section.setWarehouse(warehouse);
-            return  section;
-        }).collect(Collectors.toList()));
-
+        this.setWarehouseToSection(warehouse);
         return this.repository.save(warehouse);
     }
 
@@ -61,23 +55,33 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
         this.repository.delete(this.repository.findById(id).orElseThrow(()-> new WarehouseNotFoundException("Warehouse not found!")));
     }
 
-
+    //Verify current conditions of the manager set on create or update
     private void verifyManager(Warehouse warehouse) {
         if(warehouse.getWarehouseManager()!=null) {
             if(!this.userRepository.findById(warehouse.getWarehouseManager().getId()).orElseThrow(
                     ()->new UserNotFoundException(warehouse.getWarehouseManager().getId())).getRoles().contains(Role.WAREHOUSEMANAGER)){
                 throw new UserNotAllowedException("User id "+ warehouse.getWarehouseManager().getId()+" not allowed to be warehouse manager");
             }
+            //Find a warehouse that with the manager specified on the request
             Warehouse warehouseWithUser = this.repository.findWarehouseByWarehouseManager(warehouse.getWarehouseManager());
-
             if ( warehouseWithUser!= null) {
+                //verify if is an update of an existing warehouse on db and throws an exception
                 if(warehouse.getId()!=null && !warehouseWithUser.getId().equals(warehouse.getId())){
                     throw new WarehouseManagerAlreadyDefined("Warehouse manager already defined in another warehouse");
+                //verify if is a create of a warehouse and throws exception;
                 }else if(warehouse.getId()==null){
                     throw new WarehouseManagerAlreadyDefined("Warehouse manager already defined in another warehouse");
                 }
             }
         }
+    }
+
+    //se a warehouse to each section on the section list
+    private void setWarehouseToSection(Warehouse warehouse) {
+        warehouse.setSectionList(warehouse.getSectionList().stream().map(section-> {
+            section.setWarehouse(warehouse);
+            return  section;
+        }).collect(Collectors.toList()));
     }
 
 }
