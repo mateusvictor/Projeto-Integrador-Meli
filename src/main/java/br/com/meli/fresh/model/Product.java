@@ -31,7 +31,7 @@ public class Product {
     private BigDecimal price;
 
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<Batch> batchList;
 
     private Boolean isActive = true;

@@ -1,5 +1,6 @@
 package br.com.meli.fresh.dto.request.productRequest;
 
+import br.com.meli.fresh.dto.request.BatchRequest;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -7,6 +8,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -30,5 +33,7 @@ public class ProductRequest {
 
     @NotNull(groups = OnCreate.class, message = "Price can not be null.")
     private BigDecimal price;
+
+    private List<BatchRequest> batchList = new ArrayList<>();
 
 }
