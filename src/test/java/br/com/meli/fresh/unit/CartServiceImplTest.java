@@ -12,6 +12,7 @@ import br.com.meli.fresh.repository.IUserRepository;
 import br.com.meli.fresh.security.UserSpringSecurity;
 import br.com.meli.fresh.services.impl.CartServiceImpl;
 import br.com.meli.fresh.services.impl.UserAuthenticatedService;
+import br.com.meli.fresh.unit.factory.UserFactory;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -169,7 +170,7 @@ public class CartServiceImplTest {
         Product p = this.creationProductSetup();
         User b = this.creationBuyerNotFoundSetup();
         Cart c = this.creationCartSetup(b, p);
-        Mockito.when(authService.authenticated()).thenReturn(this.getAuthenticated(b));
+        Mockito.when(authService.authenticated()).thenReturn(this.getAuthenticated(UserFactory.createUserBuyerA()));
         assertThrows(UserNotFoundException.class, () -> cartService.create(c));
     }
 
@@ -198,6 +199,8 @@ public class CartServiceImplTest {
         Cart c = this.creationCartSetup(b, p);
         c.setCartStatus(CartStatus.OPEN);
 
+        Mockito.when(authService.authenticated()).thenReturn(this.getAuthenticated(UserFactory.createUserBuyerA()));
+
         Mockito.when(cartRepository.findById("1")).thenReturn(Optional.of(c));
         Mockito.when(cartRepository.save(c)).thenReturn(c);
         decrementOfBatchProductQuantitySetup(p.getBatchList());
@@ -212,7 +215,8 @@ public class CartServiceImplTest {
     @Test
     public void testUpdateCartNotDecrementProductQuantity() {
         Product p = this.creationProductSetup();
-        User b = new User();
+        User b = UserFactory.createUserBuyerA();
+        Mockito.when(authService.authenticated()).thenReturn(this.getAuthenticated(b));
         Cart c = this.creationCartSetup(b, p);
         c.setCartStatus(CartStatus.CLOSE);
 
@@ -228,6 +232,7 @@ public class CartServiceImplTest {
     @Test
     public void testCartNotFoundThrowsCartNotFoundException() {
         Mockito.when(cartRepository.findById("1")).thenThrow(CartNotFoundException.class);
+        Mockito.when(authService.authenticated()).thenReturn(this.getAuthenticated(UserFactory.createUserBuyerA()));
         assertThrows(CartNotFoundException.class, () -> cartService.update("1"));
     }
 
@@ -235,6 +240,7 @@ public class CartServiceImplTest {
     public void testGetByIdReturnCart() {
         Cart c = new Cart();
         c.setId("1");
+        Mockito.when(authService.authenticated()).thenReturn(this.getAuthenticated(UserFactory.createUserBuyerA()));
         Mockito.when(cartRepository.findById("1")).thenReturn(Optional.of(c));
         cartService.getById("1");
         assertNotNull(c);
@@ -243,6 +249,7 @@ public class CartServiceImplTest {
 
     @Test
     public void testGetByIdThrowsCartNotFoundException() {
+        Mockito.when(authService.authenticated()).thenReturn(this.getAuthenticated(UserFactory.createUserBuyerA()));
         Mockito.when(cartRepository.findById("1")).thenThrow(CartNotFoundException.class);
         assertThrows(CartNotFoundException.class, () -> cartService.getById("1"));
     }
