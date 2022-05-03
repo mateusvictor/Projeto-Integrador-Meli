@@ -87,6 +87,7 @@ O objetivo deste projeto final é implementar uma API REST no âmbito do slogan 
 ### Banco de Dados
 
 * [Database Schema - V1.0](./screenshots/db-schema-v1.png)
+* Diagrama de entidade de relacionamento (DER)
 
 ![Diagrama de entidade de relacionamento (DER)](./screenshots/der.png)
 
