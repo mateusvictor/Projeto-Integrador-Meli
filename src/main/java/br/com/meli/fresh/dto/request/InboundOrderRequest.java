@@ -20,6 +20,6 @@ public class InboundOrderRequest {
     @NotBlank(message = "sectionId must not be blank")
     private String sectionId;
 
-    @NotEmpty(message = "batchStock must be empty")
+    @NotEmpty(message = "batchStock must not be empty")
     private List<@Valid BatchRequest> batchStock;
 }

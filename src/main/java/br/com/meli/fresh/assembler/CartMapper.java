@@ -32,7 +32,6 @@ public class CartMapper {
         object.setCartStatus(CartStatus.valueOf(dto.getStatus().toUpperCase()));
 
         User buyer = new User();
-        buyer.setId(dto.getBuyerId());
         object.setItems(list);
         object.setBuyer(buyer);
         return object;

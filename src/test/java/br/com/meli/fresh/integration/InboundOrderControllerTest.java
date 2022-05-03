@@ -4,10 +4,12 @@ import br.com.meli.fresh.dto.request.BatchRequest;
 import br.com.meli.fresh.dto.request.InboundOrderRequest;
 import br.com.meli.fresh.dto.response.ErrorDTO;
 import br.com.meli.fresh.dto.response.InboundOrderResponse;
+import br.com.meli.fresh.factory.AuthFactory;
 import br.com.meli.fresh.factory.ProductFactory;
 import br.com.meli.fresh.factory.SectionFactory;
 import br.com.meli.fresh.factory.WarehouseFactory;
 import br.com.meli.fresh.model.*;
+import br.com.meli.fresh.repository.IInboundOrderRepository;
 import br.com.meli.fresh.repository.IProductRepository;
 import br.com.meli.fresh.repository.ISectionRepository;
 import br.com.meli.fresh.repository.IWarehouseRepository;
@@ -21,15 +23,17 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -39,7 +43,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource({ "/application-test.properties" })
-@Transactional
+@Rollback
 public class InboundOrderControllerTest {
     @Autowired
     private MockMvc mockMvc;
@@ -56,6 +60,12 @@ public class InboundOrderControllerTest {
     @Autowired
     private IProductRepository productRepository;
 
+    @Autowired
+    private IInboundOrderRepository repository;
+
+    @Autowired
+    private AuthFactory auth;
+
     private final String BASE_URL = "/api/v1/fresh-products/inboundorder";
 
     // Used to make POST and
@@ -65,9 +75,14 @@ public class InboundOrderControllerTest {
             .writer().withDefaultPrettyPrinter();
 
     public InboundOrderRequest getValidRequestInstance(){
-        Warehouse warehouse = warehouseRepository.save(WarehouseFactory.getWarehouse());
-        Section sectionFresh = sectionRepository.save(SectionFactory.getFreshSection());
+        Warehouse warehouse = WarehouseFactory.getWarehouse();
+        Section sectionFresh = SectionFactory.getFreshSection();
         sectionFresh.setWarehouse(warehouse);
+
+        warehouse.setSectionList(Collections.singletonList(sectionFresh));
+        warehouse.setWarehouseManager(auth.getAdminUser());
+
+        warehouseRepository.save(warehouse);
 
         Product product1 = productRepository.save(ProductFactory.getFreshProductA());
         Product product2 = productRepository.save(ProductFactory.getFreshProductB());
@@ -79,13 +94,26 @@ public class InboundOrderControllerTest {
         return new InboundOrderRequest(null, sectionFresh.getId(), batchList);
     }
 
+    public InboundOrderRequest getInstanceWithANonAdminAsManager(){
+        InboundOrderRequest inboundOrder = this.getValidRequestInstance();
+        Warehouse warehouse = WarehouseFactory.getWarehouse();
+        Section sectionFresh = SectionFactory.getFreshSection();
+        sectionFresh.setWarehouse(warehouse);
+
+        warehouse.setSectionList(Collections.singletonList(sectionFresh));
+        warehouse.setWarehouseManager(auth.getNonAdminUser());
+        warehouseRepository.save(warehouse);
+
+        inboundOrder.setSectionId(sectionFresh.getId());
+
+        return inboundOrder;
+    }
+
     public InboundOrderRequest getInstanceWithInvalidProductType(){
         // Returns an instance with a product that doesn't match the section product type
         // Section product type: fresco
         // Product type: congelado
-        Warehouse warehouse = warehouseRepository.save(WarehouseFactory.getWarehouse());
-        Section sectionFresh = sectionRepository.save(SectionFactory.getFreshSection());
-        sectionFresh.setWarehouse(warehouse);
+        InboundOrderRequest inboundOrder = getValidRequestInstance();
 
         Product product1 = productRepository.save(ProductFactory.getFrozenProductA()); // Invalid Product
         Product product2 = productRepository.save(ProductFactory.getFreshProductA());
@@ -94,33 +122,40 @@ public class InboundOrderControllerTest {
                 new BatchRequest(product1.getId(), 10F, 8, 8, null, LocalDate.now(), 10F),
                 new BatchRequest(product2.getId(), 10F, 5, 5, null, LocalDate.now(), 12F)
         );
-        return new InboundOrderRequest(null, sectionFresh.getId(), batchList);
+
+        inboundOrder.setBatchStock(batchList);
+        return inboundOrder;
     }
 
     public InboundOrderRequest getInstanceWithInvalidVolume(){
         // Returns an instance with a batch list with more volume than the section available volume
-        // Section available volume: 20.0
-        // Batch total volume: 30.0
-        Warehouse warehouse = warehouseRepository.save(WarehouseFactory.getWarehouse());
-        Section sectionFrozen = sectionRepository.save(SectionFactory.getFrozenSection());
-        sectionFrozen.setWarehouse(warehouse);
+        // Section available volume: 30.0
+        // Batch total volume: 40.0
+        InboundOrderRequest inboundOrder = getValidRequestInstance();
 
-        Product product1 = productRepository.save(ProductFactory.getFrozenProductA());
-        Product product2 = productRepository.save(ProductFactory.getFrozenProductB());
+        Product product1 = productRepository.save(ProductFactory.getFreshProductA());
+        Product product2 = productRepository.save(ProductFactory.getFreshProductB());
 
-        // Batch total volume: 17.0 + 13.0 = 30.0
+        // Batch total volume: 27.0 + 13.0 = 40.0
         List<BatchRequest> batchList = Arrays.asList(
-                new BatchRequest(product1.getId(), 10F, 8, 8, null, LocalDate.now(), 17F),
+                new BatchRequest(product1.getId(), 10F, 8, 8, null, LocalDate.now(), 27F),
                 new BatchRequest(product2.getId(), 10F, 5, 5, null, LocalDate.now(), 13F)
         );
-        return new InboundOrderRequest(null, sectionFrozen.getId(), batchList);
+        inboundOrder.setBatchStock(batchList);
+        return inboundOrder;
     }
 
     public InboundOrder getInboundOrderEntity(){
         // Returns a inbound order entity to be used in GET test
-        Warehouse warehouse = warehouseRepository.save(WarehouseFactory.getWarehouse());
-        Section sectionFresh = sectionRepository.save(SectionFactory.getFreshSection());
+        Warehouse warehouse = WarehouseFactory.getWarehouse();
+        Section sectionFresh = SectionFactory.getFreshSection();
         sectionFresh.setWarehouse(warehouse);
+
+        warehouse.setSectionList(Collections.singletonList(sectionFresh));
+        warehouse.setWarehouseManager(auth.getAdminUser());
+
+        warehouse = warehouseRepository.save(warehouse);
+        sectionRepository.save(sectionFresh);
 
         InboundOrder inboundOrder = new InboundOrder(null, null, null, sectionFresh);
 
@@ -142,6 +177,7 @@ public class InboundOrderControllerTest {
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .content(payloadRequest))
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -154,10 +190,11 @@ public class InboundOrderControllerTest {
     @Test
     public void testGetInboundOrder() throws Exception {
         // First creates an inbound order
-        InboundOrder inboundOrder = service.create(this.getInboundOrderEntity());
+        InboundOrder inboundOrder = repository.save(this.getInboundOrderEntity());
 
         // Perform the GET with the inboundOrder ID
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + inboundOrder.getId()))
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + inboundOrder.getId())
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -173,7 +210,7 @@ public class InboundOrderControllerTest {
     @Test
     public void testUpdateInboundOrder() throws Exception {
         // First creates an inbound order
-        InboundOrder oldInboundOrder = service.create(this.getInboundOrderEntity());
+        InboundOrder oldInboundOrder = repository.save(this.getInboundOrderEntity());
         InboundOrderRequest inboundOrderRequest = new InboundOrderRequest();
         Float oldSectionVolume = oldInboundOrder.getSection().getActualVolume();
 
@@ -190,6 +227,7 @@ public class InboundOrderControllerTest {
         // Perform the PUT request
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + "/" + oldInboundOrder.getId())
                 .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .content(payloadRequest))
                 .andDo(print())
                 .andExpect(status().isCreated())
@@ -212,6 +250,7 @@ public class InboundOrderControllerTest {
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .content(payloadRequest))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -234,6 +273,7 @@ public class InboundOrderControllerTest {
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .content(payloadRequest))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -255,6 +295,7 @@ public class InboundOrderControllerTest {
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                 .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .content(payloadRequest))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
@@ -269,7 +310,8 @@ public class InboundOrderControllerTest {
     public void testInboundOrderNotFound() throws Exception {
         // Perform the GET with a invalid ID
         String invalidId = "INVALID_ID";
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + invalidId))
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/" + invalidId)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print())
                 .andExpect(status().isNotFound())
                 .andReturn();
@@ -278,5 +320,24 @@ public class InboundOrderControllerTest {
 
         assertEquals(errorDTO.getError(), "EntityNotFoundException");
         assertEquals(errorDTO.getDescription(), "Invalid inbound order ID: " + invalidId);
+    }
+
+    @Test
+    public void testInvalidWarehouseManager() throws Exception {
+        InboundOrderRequest inboundOrder = this.getInstanceWithANonAdminAsManager();
+
+        String payloadRequest = writer.writeValueAsString(inboundOrder);
+
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
+                .content(payloadRequest))
+                .andDo(print())
+                .andExpect(status().isUnauthorized())
+                .andReturn();
+        String jsonObjectReturned = mvcResult.getResponse().getContentAsString();
+        ErrorDTO errorDTO = new ObjectMapper().readValue(jsonObjectReturned, ErrorDTO.class);
+
+        assertEquals("InvalidWarehouseManagerException", errorDTO.getError());
     }
 }

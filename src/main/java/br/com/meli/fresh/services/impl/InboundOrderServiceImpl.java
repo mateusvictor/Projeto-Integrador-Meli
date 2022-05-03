@@ -3,9 +3,11 @@ package br.com.meli.fresh.services.impl;
 import br.com.meli.fresh.model.Batch;
 import br.com.meli.fresh.model.InboundOrder;
 import br.com.meli.fresh.model.Section;
+import br.com.meli.fresh.model.User;
 import br.com.meli.fresh.repository.IBatchRepository;
 import br.com.meli.fresh.repository.IInboundOrderRepository;
 import br.com.meli.fresh.repository.ISectionRepository;
+import br.com.meli.fresh.security.UserSpringSecurity;
 import br.com.meli.fresh.services.IInboundOrderService;
 import br.com.meli.fresh.services.exception.EntityNotFoundException;
 import br.com.meli.fresh.services.validator.InboundOrderValidator;
@@ -18,12 +20,14 @@ public class InboundOrderServiceImpl implements IInboundOrderService<InboundOrde
     private final IInboundOrderRepository orderRepository;
     private final IBatchRepository batchRepository;
     private final ISectionRepository sectionRepository;
+    private final UserAuthenticatedService authService;
 
     @Override
     public InboundOrder create(InboundOrder inboundOrder) {
         // Checks the validations specified in the `validInboundOrder` method and then creates the batches,
         // updates the section volume and saves the inbound order
-        InboundOrderValidator inboundOrderValidation = new InboundOrderValidator(inboundOrder);
+        UserSpringSecurity userClient = authService.authenticated();
+        InboundOrderValidator inboundOrderValidation = new InboundOrderValidator(inboundOrder, userClient);
         InboundOrder inboundOrderCreated = null;
 
         if (inboundOrderValidation.valid()){
@@ -45,7 +49,8 @@ public class InboundOrderServiceImpl implements IInboundOrderService<InboundOrde
 
     @Override
     public InboundOrder update(String id, InboundOrder inboundOrder) {
-        InboundOrderValidator inboundOrderValidation = new InboundOrderValidator(inboundOrder);
+        UserSpringSecurity userClient = authService.authenticated();
+        InboundOrderValidator inboundOrderValidation = new InboundOrderValidator(inboundOrder, userClient);
         InboundOrder inboundOrderToUpdate = this.getById(id);
         Double oldTotalVolume = inboundOrderToUpdate.calculateBatchesTotalVolume();
         Section section = inboundOrderToUpdate.getSection();

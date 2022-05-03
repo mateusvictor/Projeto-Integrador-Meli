@@ -1,10 +1,11 @@
 package br.com.meli.fresh.integration;
 
 import br.com.meli.fresh.dto.request.productRequest.ProductRequest;
-import br.com.meli.fresh.dto.response.productResponse.ProductResponse;
+import br.com.meli.fresh.dto.response.product.ProductResponse;
+import br.com.meli.fresh.factory.AuthFactory;
 import br.com.meli.fresh.model.Product;
 import br.com.meli.fresh.services.impl.ProductServiceImpl;
-import br.com.meli.fresh.utils.JwtUtil;
+import br.com.meli.fresh.services.impl.UserServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -30,6 +32,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @SpringBootTest
 @AutoConfigureMockMvc
 @TestPropertySource({ "/application-test.properties" })
+@Rollback
 public class ProductControllerTest {
 
     @Autowired
@@ -38,17 +41,25 @@ public class ProductControllerTest {
     @Autowired
     private ProductServiceImpl service;
 
+    @Autowired
+    private UserServiceImpl userService;
+
+    @Autowired
+    private AuthFactory auth;
+
     private final String BASE_URL = "http://localhost:8080/api/v1/fresh-products/products/";
+
 
     @Test
     public void testCreateProduct() throws Exception {
+
         ProductRequest preq = new ProductRequest();
         preq.setName("Pizza");
         preq.setCategory("RF");
         preq.setMaxTemperature(3.0F);
         preq.setMinTemperature(0.5F);
         preq.setWeight(0.5F);
-        BigDecimal price = new BigDecimal(13.99);
+        BigDecimal price = BigDecimal.valueOf(13.99);
         preq.setPrice(price);
 
         ObjectWriter writer = new ObjectMapper()
@@ -59,7 +70,8 @@ public class ProductControllerTest {
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(payloadRequest))
+                        .content(payloadRequest)
+                        .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                         .andDo(print()).andExpect(status().isCreated()).andReturn();
 
         String locationUrl = mvcResult.getResponse().getHeader("Location");
@@ -69,12 +81,15 @@ public class ProductControllerTest {
 
     @Test
     public void testGetProduct() throws Exception {
+
+
         Product p = new Product();
         p.setName("Ice cream");
         p.setCategory("RF");
         Product pSaved = service.create(p);
 
-        MvcResult mvcResultGet = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + pSaved.getId())).andReturn();
+        MvcResult mvcResultGet = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + pSaved.getId())
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))).andReturn();
 
         String jsonObjectReturned = mvcResultGet.getResponse().getContentAsString();
         ProductResponse pres = new ObjectMapper().readValue(jsonObjectReturned, ProductResponse.class);
@@ -84,6 +99,8 @@ public class ProductControllerTest {
 
     @Test
     public void testGetAllProduct() throws Exception {
+
+
         Product p1 = new Product();
         Product p2 = new Product();
         p1.setName("Cheese");
@@ -93,20 +110,41 @@ public class ProductControllerTest {
         service.create(p1);
         service.create(p2);
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL)).andReturn();
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))).andReturn();
         String jsonObjectReturned = mvcResult.getResponse().getContentAsString();
         JSONObject obj = new JSONObject(jsonObjectReturned);
         Integer totalElements = obj.getInt("totalElements");
-        assertEquals(2, totalElements);
+        assertEquals(20, totalElements);
     }
 
     @Test
     public void testGetAllProductsFiltered() throws Exception {
-        Product p1 = new Product();
-        p1.setCategory("FF");
-        service.create(p1);
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "?category=FF")).andReturn();
+
+        ProductRequest preq = new ProductRequest();
+        preq.setName("Sausage");
+        preq.setCategory("FF");
+        preq.setMaxTemperature(3.0F);
+        preq.setMinTemperature(0.5F);
+        preq.setWeight(0.5F);
+        BigDecimal price = BigDecimal.valueOf(13.99);
+        preq.setPrice(price);
+
+        ObjectWriter writer = new ObjectMapper()
+                .configure(SerializationFeature.WRAP_ROOT_VALUE, false)
+                .writer().withDefaultPrettyPrinter();
+
+        String payloadRequest = writer.writeValueAsString(preq);
+
+        this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(payloadRequest)
+                        .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
+                .andDo(print()).andExpect(status().isCreated()).andReturn();
+
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "?category=FF")
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))).andReturn();
         String jsonObjectReturned = mvcResult.getResponse().getContentAsString();
         JSONObject obj = new JSONObject(jsonObjectReturned);
         Integer totalElements = obj.getInt("totalElements");
@@ -115,6 +153,8 @@ public class ProductControllerTest {
 
     @Test
     public void testUpdateProduct() throws Exception {
+
+
         Product p = new Product();
         p.setName("Lasagna");
         p.setCategory("RF");
@@ -124,7 +164,8 @@ public class ProductControllerTest {
         pToUpdate.setName("Popsicle");
         pToUpdate.setCategory("RF");
 
-        MvcResult mvcResultGetWithoutUpdated = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + pSaved.getId())).andReturn();
+        MvcResult mvcResultGetWithoutUpdated = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + pSaved.getId())
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))).andReturn();
         String objectReturned = mvcResultGetWithoutUpdated.getResponse().getContentAsString();
         ProductResponse pWithoutUpdated = new ObjectMapper().readValue(objectReturned, ProductResponse.class);
 
@@ -134,14 +175,16 @@ public class ProductControllerTest {
 
         String jsonObjectToBeUpdated = writer.writeValueAsString(pToUpdate);
 
-        MvcResult mvcUpdated = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + pSaved.getId())
+        this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL + pSaved.getId())
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(jsonObjectToBeUpdated))
+                .content(jsonObjectToBeUpdated)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isOk()).andReturn();
 
         MvcResult MvcResultGetUpdated = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + pSaved.getId())
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(jsonObjectToBeUpdated))
+                        .content(jsonObjectToBeUpdated)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isOk()).andReturn();
 
         String objectUpdatedReturned = MvcResultGetUpdated.getResponse().getContentAsString();
@@ -153,15 +196,19 @@ public class ProductControllerTest {
 
     @Test
     public void testDeleteProduct() throws Exception {
+
+
         Product p = new Product();
         p.setName("Cheddar");
         p.setCategory("RF");
         Product pSaved = service.create(p);
 
-        this.mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL + pSaved.getId()))
+        this.mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL + pSaved.getId())
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andExpect(status().isOk()).andReturn();
 
-        MvcResult mvcResultDelete = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + pSaved.getId()))
+        MvcResult mvcResultDelete = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + pSaved.getId())
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andExpect(status().isNotFound()).andReturn();
 
         String errorMessage = mvcResultDelete.getResponse().getContentAsString();
@@ -171,6 +218,8 @@ public class ProductControllerTest {
 
     @Test
     public void testSaveAlreadyExistsProduct() throws Exception {
+
+
         Product p = new Product();
         p.setName("Maionese");
         p.setCategory("RF");
@@ -183,7 +232,7 @@ public class ProductControllerTest {
         preq.setMaxTemperature(3.0F);
         preq.setMinTemperature(0.5F);
         preq.setWeight(0.5F);
-        BigDecimal price = new BigDecimal(13.99);
+        BigDecimal price = BigDecimal.valueOf(13.99);
         preq.setPrice(price);
 
         ObjectWriter writer = new ObjectMapper()
@@ -194,7 +243,8 @@ public class ProductControllerTest {
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(payloadRequest))
+                        .content(payloadRequest)
+                        .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isConflict()).andReturn();
 
         String errorMessage = mvcResult.getResponse().getContentAsString();
@@ -205,13 +255,12 @@ public class ProductControllerTest {
 
     @Test
     public void testProductsWereNotFoundException() throws Exception {
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "?category=FS"))
+
+
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "?category=FS")
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isNotFound()).andReturn();
         String errorMessage = mvcResult.getResponse().getContentAsString();
         assertEquals("Products were not found!", errorMessage);
     }
-
-
-
-
 }

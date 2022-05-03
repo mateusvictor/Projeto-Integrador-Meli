@@ -49,6 +49,7 @@ public class ProductServiceImpl implements ICrudService<Product> {
     public Page<Product> getAll(ProductFilter filter, Pageable pageable) {
         Page<Product> pages = repository.findAll(pageable);
         if(filter.getCategory() != null) pages = new PageImpl<Product>(pages.stream().filter(p -> p.getCategory().equals(filter.getCategory())).collect(Collectors.toList()));
+
         if(pages.getTotalElements() == 0) throw new ProductsNotFoundException();
         return pages;
     }

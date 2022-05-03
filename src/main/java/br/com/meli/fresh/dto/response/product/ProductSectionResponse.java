@@ -1,13 +1,14 @@
-package br.com.meli.fresh.dto.response.productResponse;
+package br.com.meli.fresh.dto.response.product;
 
-import br.com.meli.fresh.model.User;
+import lombok.Getter;
+import lombok.Setter;
 
+@Getter
+@Setter
 public class ProductSectionResponse {
     private String id;
     private String productType;
     private Float actualVolume;
     private Float maxVolume;
     private ProductWarehouseResponse warehouse;
-
-    private User warehouseManager;
 }

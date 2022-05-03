@@ -19,5 +19,5 @@ public class BatchResponse {
     private LocalDateTime manufacturingDateTime;
     private LocalDate dueDate;
     private Float volume;
-    private ProductResponse product;
+    private ProductResponseDTO product;
 }

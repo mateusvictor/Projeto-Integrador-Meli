@@ -1,6 +1,5 @@
 package br.com.meli.fresh.dto.response;
 
-import br.com.meli.fresh.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -8,11 +7,13 @@ import lombok.Setter;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter @Setter
-public class SectionResponse {
+@Getter
+@Setter
+public class ProductResponseDTO {
     private String id;
-    private String productType;
-    private Float actualVolume;
-    private Float maxVolume;
-    private UserResponseDTO warehouse;
+    private String name;
+    private String category;
+    private Float minTemperature;
+    private Float maxTemperature;
+    private Float weight;
 }

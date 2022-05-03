@@ -1,12 +1,11 @@
-package br.com.meli.fresh.dto.response;
+package br.com.meli.fresh.dto.response.product;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-@AllArgsConstructor
-@NoArgsConstructor
+import java.math.BigDecimal;
+import java.util.List;
+
 @Getter
 @Setter
 public class ProductResponse {
@@ -16,4 +15,6 @@ public class ProductResponse {
     private Float minTemperature;
     private Float maxTemperature;
     private Float weight;
+    private BigDecimal price;
+    private List<ProductBatchResponse> batchList;
 }

@@ -25,7 +25,7 @@ public class BatchFactory {
         Batch batch = createBatch(product, inboundOrder);
         batch.setCurrentQuantity(currentQuantity);
         batch.setDueDate(dueDate);
-        return  batch;
+        return batch;
     }
 
 }

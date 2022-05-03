@@ -3,7 +3,8 @@ package br.com.meli.fresh.controller;
 import br.com.meli.fresh.assembler.ProductMapper;
 import br.com.meli.fresh.dto.request.productRequest.OnCreate;
 import br.com.meli.fresh.dto.request.productRequest.ProductRequest;
-import br.com.meli.fresh.dto.response.productResponse.ProductResponse;
+import br.com.meli.fresh.dto.response.product.ProductBatchResponse;
+import br.com.meli.fresh.dto.response.product.ProductResponse;
 import br.com.meli.fresh.model.Product;
 import br.com.meli.fresh.model.filter.ProductFilter;
 import br.com.meli.fresh.services.impl.ProductServiceImpl;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.util.Comparator;
 import java.util.stream.Collectors;
 @RestController
 @RequestMapping("api/v1/fresh-products/products")
@@ -41,10 +43,16 @@ public class ProductController {
     }
 
     @GetMapping("{id}")
-    public ResponseEntity<ProductResponse> getProductById(@PathVariable String id){
-        return ResponseEntity.ok(
-                mapper.toResponseObject(service.getById(id))
-        );
+    public ResponseEntity<ProductResponse> getProductById(@PathVariable String id, @RequestParam(required = false) String batch_order) {
+        ProductResponse pRes = mapper.toResponseObject(service.getById(id));
+        if(batch_order != null) orderingBatch(pRes, batch_order);
+        return ResponseEntity.ok(pRes);
+    }
+
+    private void orderingBatch(ProductResponse pRes, String batch_order) {
+        if(batch_order.equalsIgnoreCase("L")) pRes.getBatchList().sort(Comparator.comparing(ProductBatchResponse::getId));
+        if(batch_order.equalsIgnoreCase("C")) pRes.getBatchList().sort(Comparator.comparing(ProductBatchResponse::getCurrentQuantity));
+        if(batch_order.equalsIgnoreCase("F")) pRes.getBatchList().sort(Comparator.comparing(ProductBatchResponse::getDueDate));
     }
 
     @GetMapping

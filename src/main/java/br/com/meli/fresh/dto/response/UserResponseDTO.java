@@ -8,10 +8,8 @@ import lombok.NoArgsConstructor;
 
 import java.util.Set;
 
-@AllArgsConstructor
 @NoArgsConstructor
 @Data
-@Builder
 public class UserResponseDTO {
     private String id;
     private String name;

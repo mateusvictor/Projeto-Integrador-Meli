@@ -1,7 +1,9 @@
 package br.com.meli.fresh.security;
 
+import br.com.meli.fresh.services.impl.UserDetailsServiceImpl;
 import br.com.meli.fresh.utils.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -22,7 +24,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private JwtUtil jwtUtil;
 
     @Autowired
-    private UserDetailsService userDetailsService;
+    private UserDetailsServiceImpl userDetailsService;
 
     private final static String BASE_URL = "/api/v1/fresh-products";
 
@@ -33,8 +35,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/swagger-resources/**",
             "/swagger-ui/**",
             "/webjars/**",
-            "/swagger-ui.html/**",
-            BASE_URL+"/**"
+            "/swagger-ui.html/**"
     };
 
     public final static String[] PUBLIC_GET_URLS = {
@@ -45,7 +46,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             BASE_URL + "/users/**",
             BASE_URL + "/buyer/**",
             BASE_URL + "/seller/**",
-            BASE_URL + "/warehouse/**"
+            BASE_URL + "/warehousemanager/**",
+            BASE_URL + "/warehouse/**",
     };
 
     @Override

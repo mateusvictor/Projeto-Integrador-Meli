@@ -4,6 +4,7 @@ import br.com.meli.fresh.assembler.UserMapper;
 import br.com.meli.fresh.dto.request.UserRequestDTO;
 import br.com.meli.fresh.dto.response.ErrorDTO;
 import br.com.meli.fresh.dto.response.UserResponseDTO;
+import br.com.meli.fresh.factory.AuthFactory;
 import br.com.meli.fresh.model.User;
 import br.com.meli.fresh.services.impl.UserServiceImpl;
 import br.com.meli.fresh.unit.factory.UserFactory;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -37,15 +39,21 @@ public class SellerControllerTest {
     private UserServiceImpl service;
 
     @Autowired
+    private AuthFactory auth;
+
+    @Autowired
     private UserMapper mapper;
+
+    private final String BASE_URL = "http://localhost:8080/api/v1/fresh-products/users/";
 
     @Test
     public void mustGetSellerByID() throws Exception {
         User seller = this.service.create(UserFactory.createUserSellerA());
         UserResponseDTO responseDTO  = this.mapper.toResponseObject(seller);
         MvcResult mvcResult =
-                this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/fresh-products/users/{id}", seller.getId()))
-                        .andDo(print()).andExpect(status().isOk()).andReturn();
+                this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/fresh-products/users/{id}", seller.getId())
+                                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
+                                .andDo(print()).andExpect(status().isOk()).andReturn();
         String jsonReturned = mvcResult.getResponse().getContentAsString();
         UserResponseDTO responseDTOresult = new ObjectMapper().readValue(jsonReturned, UserResponseDTO.class);
         assertEquals(responseDTO.getEmail(), responseDTOresult.getEmail());
@@ -55,8 +63,9 @@ public class SellerControllerTest {
     public void mustThrowNotFoundException() throws Exception {
         ErrorDTO errorDTO = new ErrorDTO("UserNotFoundException", "User not found in our database by the id:" + "imaginaryID");
         MvcResult mvcResult =
-                this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/fresh-products/users/{id}", "imaginaryID"))
-                        .andDo(print()).andExpect(status().isNotFound()).andReturn();
+                this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/fresh-products/users/{id}", "imaginaryID")
+                                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
+                                .andDo(print()).andExpect(status().isNotFound()).andReturn();
         String jsonReturned = mvcResult.getResponse().getContentAsString();
         ErrorDTO errorDtoResult = new ObjectMapper().readValue(jsonReturned, ErrorDTO.class);
         assertEquals(errorDtoResult.getError(), errorDTO.getError());
@@ -70,6 +79,7 @@ public class SellerControllerTest {
         String payloadRequestJson = writer.writeValueAsString(requestDto);
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/fresh-products/users/")
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson)).andDo(print()).andExpect(status().isCreated()).andReturn();
         String jsonReturned =  mvcResult.getResponse().getContentAsString();
         UserResponseDTO sellerResponseDTO = new ObjectMapper().readValue(jsonReturned, UserResponseDTO.class);
@@ -84,8 +94,10 @@ public class SellerControllerTest {
                 .writer().withDefaultPrettyPrinter();
         String payloadRequestJson = writer.writeValueAsString(requestDto);
         this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/fresh-products/users/")
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson)).andDo(print()).andExpect(status().isCreated()).andReturn();
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/fresh-products/users/")
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson)).andDo(print()).andExpect(status().isBadRequest()).andReturn();
         String jsonReturned =  mvcResult.getResponse().getContentAsString();
         ErrorDTO errorDtoResult = new ObjectMapper().readValue(jsonReturned, ErrorDTO.class);
@@ -102,31 +114,39 @@ public class SellerControllerTest {
         String payloadRequestJson = writer.writeValueAsString(requestDto);
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/fresh-products/users/{id}", seller.getId())
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson)).andDo(print()).andExpect(status().isOk()).andReturn();
         String jsonReturned =  mvcResult.getResponse().getContentAsString();
-        UserRequestDTO sellerResponseDTO = new ObjectMapper().readValue(jsonReturned, UserRequestDTO.class);
+        UserResponseDTO sellerResponseDTO = new ObjectMapper().readValue(jsonReturned, UserResponseDTO.class);
         assertEquals(sellerResponseDTO.getEmail(), requestDto.getEmail());
 
     }
 
     @Test
     public void mustGetAllSellers() throws Exception {
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/fresh-products/users/"))
-                .andDo(print()).andExpect(status().isOk()).andReturn();
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/fresh-products/users/")
+                        .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
+                        .andDo(print()).andExpect(status().isOk()).andReturn();
         String jsonObjectReturned = mvcResult.getResponse().getContentAsString();
         JSONObject obj = new JSONObject(jsonObjectReturned);
         Integer totalElements = obj.getInt("totalElements");
         System.out.println(totalElements);
-        assertEquals(1, totalElements);
+        assertEquals(7, totalElements);
     }
 
     @Test
     public void mustDeleteSeller() throws Exception {
         User seller = this.service.create(UserFactory.createUserSellerC());
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.delete("/api/v1/fresh-products/seller/{id}", seller.getId()))
-                .andDo(print()).andExpect(status().isOk()).andReturn();
+        this.mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL + seller.getId())
+                        .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
+                        .andDo(print()).andExpect(status().isOk()).andExpect(status().isOk()).andReturn();
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + seller.getId())
+                        .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
+                .andDo(print()).andExpect(status().isNotFound()).andReturn();
+
         String jsonReturned = mvcResult.getResponse().getContentAsString();
-        assertEquals("Seller deleted!", jsonReturned);
+        ErrorDTO error = new ObjectMapper().readValue(jsonReturned, ErrorDTO.class);
+        assertEquals("UserNotFoundException", error.getError());
     }
 
 }
