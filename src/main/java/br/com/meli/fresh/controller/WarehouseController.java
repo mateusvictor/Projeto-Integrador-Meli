@@ -75,7 +75,7 @@ public class WarehouseController {
         return ResponseEntity.ok("Warehouse deleted!");
     }
 
-    @GetMapping("/{productId}")
+    @GetMapping("/productQuantity/{productId}")
     public ResponseEntity<ProductQuantityResponse> getProductQuantity(@PathVariable String productId){
         return ResponseEntity.ok(
                 this.service.getProductQuantity(productId)
