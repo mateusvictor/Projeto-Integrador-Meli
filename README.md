@@ -84,7 +84,7 @@ O objetivo deste projeto final é implementar uma API REST no âmbito do slogan 
 
 
 ---
-### Data Base
+### Banco de Dados
 
 * [Database Schema - V1.0](./screenshots/db-schema-v1.png)
 
