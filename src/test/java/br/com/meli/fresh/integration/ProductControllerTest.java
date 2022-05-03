@@ -175,8 +175,6 @@ public class ProductControllerTest {
 
     @Test
     public void testGetAllProductsFiltered() throws Exception {
-
-
         ProductRequest preq = new ProductRequest();
         preq.setName("Sausage");
         preq.setCategory("FF");
@@ -208,8 +206,6 @@ public class ProductControllerTest {
 
     @Test
     public void testUpdateProduct() throws Exception {
-
-
         Product p = new Product();
         p.setName("Lasagna");
         p.setCategory("RF");
@@ -251,8 +247,6 @@ public class ProductControllerTest {
 
     @Test
     public void testDeleteProduct() throws Exception {
-
-
         Product p = new Product();
         p.setName("Cheddar");
         p.setCategory("RF");
@@ -273,8 +267,6 @@ public class ProductControllerTest {
 
     @Test
     public void testSaveAlreadyExistsProduct() throws Exception {
-
-
         Product p = new Product();
         p.setName("Maionese");
         p.setCategory("RF");
@@ -283,7 +275,7 @@ public class ProductControllerTest {
 
         ProductRequest preq = new ProductRequest();
         preq.setName(p.getName());
-        preq.setCategory("FF");
+        preq.setCategory("RF");
         preq.setMaxTemperature(3.0F);
         preq.setMinTemperature(0.5F);
         preq.setWeight(0.5F);
@@ -310,7 +302,6 @@ public class ProductControllerTest {
 
     @Test
     public void testProductsWereNotFoundException() throws Exception {
-
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "?category=FS")
                 .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isNotFound()).andReturn();
