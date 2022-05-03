@@ -1,5 +1,3 @@
-# Projeto-Integrador-Meli
-
 <div id="top"></div>
 <!--
 *** Thanks for checking out the Best-README-Template. If you have a suggestion
@@ -23,7 +21,7 @@
 <!-- PROJECT LOGO -->
 <br />
 <div align="center">
-  <h2 align="center">Desafio Spring 2 | Testes - Wave 5 - Grupo 5</h2>
+  <h2 align="center">Projeto Integrador Meli - Wave 5 - Grupo 5</h2>
 </div>
 
 
