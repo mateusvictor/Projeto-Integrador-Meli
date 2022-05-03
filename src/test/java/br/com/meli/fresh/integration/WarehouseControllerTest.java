@@ -2,9 +2,11 @@ package br.com.meli.fresh.integration;
 
 
 import br.com.meli.fresh.assembler.WarehouseMapper;
+import br.com.meli.fresh.dto.request.AuthRequest;
 import br.com.meli.fresh.dto.request.WarehouseRequestDTO;
 import br.com.meli.fresh.dto.response.ErrorDTO;
 import br.com.meli.fresh.dto.response.WarehouseResponseDTO;
+import br.com.meli.fresh.factory.AuthFactory;
 import br.com.meli.fresh.factory.WarehouseFactory;
 import br.com.meli.fresh.model.Role;
 import br.com.meli.fresh.model.User;
@@ -22,6 +24,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.test.context.TestPropertySource;
@@ -45,16 +48,40 @@ public class WarehouseControllerTest {
     @Autowired
     private WarehouseServiceImpl warehouseService;
 
-    @Autowired
-    private WarehouseMapper warehouseMapper;
 
     @Autowired
     private UserServiceImpl userService;
 
+
     @Autowired
-    private ISectionRepository sectionRepository;
+    private AuthFactory auth;
 
     private final String BASE_URL = "http://localhost:8080/api/v1/fresh-products/warehouse";
+
+    public String token() {
+        // Setting payload login's request
+        AuthRequest auth = new AuthRequest();
+        auth.setEmail("admin@admin.com");
+        auth.setPassword("admin");
+
+        try {
+            ObjectWriter writer = new ObjectMapper()
+                    .configure(SerializationFeature.WRAP_ROOT_VALUE, false)
+                    .writer().withDefaultPrettyPrinter();
+
+            String payloadLogin = writer.writeValueAsString(auth);
+
+            // Realizing auth this user.
+            MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders.post("http://localhost:8080/login")
+                    .contentType(MediaType.APPLICATION_JSON)
+                    .content(payloadLogin))
+                    .andExpect(status().isOk()).andReturn();
+            return mvcResult.getResponse().getHeader("Authorization");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 
     @Test
@@ -66,7 +93,8 @@ public class WarehouseControllerTest {
         Warehouse created = this.warehouseService.create(warehouse);
 
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/{id}", created.getId()))
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "/{id}", created.getId())
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -88,7 +116,8 @@ public class WarehouseControllerTest {
         warehouse2.setWarehouseManager(user2);
         Warehouse created2 = this.warehouseService.create(warehouse2);
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL))
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL)
+                .header(HttpHeaders.AUTHORIZATION, token()))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -108,7 +137,8 @@ public class WarehouseControllerTest {
         String payloadRequestJson = writer.writeValueAsString(warehouseRequestDTO);
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-                .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson))
+                .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson)
+                .header(HttpHeaders.AUTHORIZATION, token()))
                 .andDo(print())
                 .andExpect(status().isCreated())
                 .andReturn();
@@ -130,7 +160,8 @@ public class WarehouseControllerTest {
                 .writer().withDefaultPrettyPrinter();
         String payloadRequestJson = writer.writeValueAsString(warehouseRequestDTO);
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL+ "/{id}", created.getId())
-                .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson))
+                .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -147,7 +178,8 @@ public class WarehouseControllerTest {
         warehouse.setWarehouseManager(user);
         Warehouse created = this.warehouseService.create(warehouse);
 
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/{id}", created.getId()))
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.delete(BASE_URL + "/{id}", created.getId())
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andReturn();
@@ -158,7 +190,8 @@ public class WarehouseControllerTest {
     @Test
     public void mustThrowWareHouseNotFoundException() throws Exception {
         ErrorDTO errorDTO = new ErrorDTO("WarehouseNotFoundException", "Warehouse not found!");
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL+"/{id}", "imaginaryID"))
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL+"/{id}", "imaginaryID")
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print()).andExpect(status().isNotFound()).andReturn();
         String jsonReturned = mvcResult.getResponse().getContentAsString();
         ErrorDTO errorDTOResult = new ObjectMapper().readValue(jsonReturned, ErrorDTO.class);
@@ -177,6 +210,7 @@ public class WarehouseControllerTest {
         String payloadRequestJson = writer.writeValueAsString(warehouseRequestDTO);
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc))
                 .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson))
                 .andDo(print())
                 .andExpect(status().isNotFound())
@@ -197,7 +231,8 @@ public class WarehouseControllerTest {
         String payloadRequestJson = writer.writeValueAsString(warehouseRequestDTO);
 
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-                .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson))
+                .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andReturn();
@@ -223,7 +258,8 @@ public class WarehouseControllerTest {
                 .writer().withDefaultPrettyPrinter();
         String payloadRequestJson = writer.writeValueAsString(warehouseRequestDTO);
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.put(BASE_URL+ "/{id}", created.getId())
-                .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson))
+                .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson)
+                .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
                 .andDo(print())
                 .andExpect(status().isConflict())
                 .andReturn();
@@ -234,4 +270,3 @@ public class WarehouseControllerTest {
 
 
 }
-
