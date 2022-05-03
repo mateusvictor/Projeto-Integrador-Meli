@@ -6,6 +6,7 @@ import br.com.meli.fresh.dto.request.WarehouseRequestDTO;
 import br.com.meli.fresh.dto.response.ErrorDTO;
 import br.com.meli.fresh.dto.response.WarehouseResponseDTO;
 import br.com.meli.fresh.factory.WarehouseFactory;
+import br.com.meli.fresh.model.Role;
 import br.com.meli.fresh.model.User;
 import br.com.meli.fresh.model.Warehouse;
 import br.com.meli.fresh.repository.ISectionRepository;
@@ -138,9 +139,6 @@ public class WarehouseControllerTest {
         assertEquals(responseDTO.getName(),warehouseRequestDTO.getName());
     }
 
-
-
-
     @Test
     public void mustDeleteWarehouse() throws Exception {
         Warehouse warehouse = WarehouseFactory.createWarehouse();
@@ -168,6 +166,27 @@ public class WarehouseControllerTest {
     }
 
     @Test
+    public void mustThrowUserNotFoundException() throws Exception {
+        ErrorDTO errorDTO = new ErrorDTO("UserNotFoundException", "");
+        User user = this.userService.create(UserFactory.createWarehouseManagerDefault());
+        user.setId("123");
+        WarehouseRequestDTO warehouseRequestDTO = WarehouseFactory.createWarehouseDTO();
+        warehouseRequestDTO.setWarehouseManagerId(user.getId());
+        ObjectWriter writer  = new ObjectMapper().configure(SerializationFeature.WRAP_ROOT_VALUE, false)
+                .writer().withDefaultPrettyPrinter();
+        String payloadRequestJson = writer.writeValueAsString(warehouseRequestDTO);
+
+        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
+                .contentType((MediaType.APPLICATION_JSON)).content(payloadRequestJson))
+                .andDo(print())
+                .andExpect(status().isNotFound())
+                .andReturn();
+        String jsonReturned = mvcResult.getResponse().getContentAsString();
+        ErrorDTO errorDTOResult = new ObjectMapper().readValue(jsonReturned, ErrorDTO.class);
+        assertEquals(errorDTOResult.getError(), errorDTO.getError());
+    }
+
+    @Test
     public void mustThrowUserNotAllowedException() throws Exception {
         ErrorDTO errorDTO = new ErrorDTO("UserNotAllowedException", "UserNotFoundException");
         User user = this.userService.create(UserFactory.createUserBuyerDefault());
@@ -185,7 +204,6 @@ public class WarehouseControllerTest {
         String jsonReturned = mvcResult.getResponse().getContentAsString();
         ErrorDTO errorDTOResult = new ObjectMapper().readValue(jsonReturned, ErrorDTO.class);
         assertEquals(errorDTOResult.getError(), errorDTO.getError());
-
     }
 
     @Test
