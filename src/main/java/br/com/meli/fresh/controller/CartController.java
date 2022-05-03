@@ -7,7 +7,7 @@ import br.com.meli.fresh.dto.response.OrderTotalPriceResponse;
 import br.com.meli.fresh.model.Cart;
 import br.com.meli.fresh.model.CartStatus;
 import br.com.meli.fresh.model.exception.InvalidEnumCartStatusException;
-import br.com.meli.fresh.services.impl.CartServiceImpl;
+import br.com.meli.fresh.services.ICartService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,7 +21,7 @@ import java.net.URI;
 @RequestMapping("api/v1/fresh-products/orders")
 @AllArgsConstructor
 public class CartController {
-    private final CartServiceImpl cartService;
+    private final ICartService cartService;
     private final CartMapper mapper;
 
     @PostMapping
