@@ -35,7 +35,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/swagger-resources/**",
             "/swagger-ui/**",
             "/webjars/**",
-            "/swagger-ui.html/**"
+            "/swagger-ui.html/**",
+            BASE_URL+"/**"
     };
 
     public final static String[] PUBLIC_GET_URLS = {
