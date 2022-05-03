@@ -89,7 +89,7 @@ O objetivo deste projeto final é implementar uma API REST no âmbito do slogan 
 
 * [Database Schema - V1.0](./screenshots/db-schema-v1.png)
 
-![Diagrama de entidade de relacionamento (DER)](./screenshots/db-schema-v1.png)
+![Diagrama de entidade de relacionamento (DER)](./screenshots/der.png)
 
 
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>
