@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @Data
 @Entity
 @Table(name="users")
+@Builder
 public class User {
     @Id
     @GeneratedValue(generator = "uuid2")
