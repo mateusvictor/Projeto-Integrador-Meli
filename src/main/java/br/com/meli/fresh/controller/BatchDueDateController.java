@@ -5,7 +5,6 @@ import br.com.meli.fresh.assembler.BatchDueDateMapper;
 import br.com.meli.fresh.dto.response.BatchProductResponse;
 import br.com.meli.fresh.model.Batch;
 import br.com.meli.fresh.model.Section;
-import br.com.meli.fresh.services.IBatchDueDateService;
 import br.com.meli.fresh.services.ISectionService;
 import br.com.meli.fresh.services.impl.BatchDueDateServiceImpl;
 import lombok.AllArgsConstructor;

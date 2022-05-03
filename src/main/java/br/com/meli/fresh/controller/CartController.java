@@ -8,7 +8,6 @@ import br.com.meli.fresh.model.Cart;
 import br.com.meli.fresh.model.CartStatus;
 import br.com.meli.fresh.model.exception.InvalidEnumCartStatusException;
 import br.com.meli.fresh.services.ICartService;
-import br.com.meli.fresh.services.impl.CartServiceImpl;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

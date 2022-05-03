@@ -1,6 +1,9 @@
 package br.com.meli.fresh.services.validator;
 
-import br.com.meli.fresh.model.*;
+import br.com.meli.fresh.model.Batch;
+import br.com.meli.fresh.model.InboundOrder;
+import br.com.meli.fresh.model.Section;
+import br.com.meli.fresh.model.Warehouse;
 import br.com.meli.fresh.security.UserSpringSecurity;
 import br.com.meli.fresh.services.exception.InsufficientAvailableSpaceException;
 import br.com.meli.fresh.services.exception.InvalidSectionTypeException;

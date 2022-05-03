@@ -3,7 +3,6 @@ package br.com.meli.fresh.services.impl;
 import br.com.meli.fresh.model.Batch;
 import br.com.meli.fresh.model.InboundOrder;
 import br.com.meli.fresh.model.Section;
-import br.com.meli.fresh.model.User;
 import br.com.meli.fresh.repository.IBatchRepository;
 import br.com.meli.fresh.repository.IInboundOrderRepository;
 import br.com.meli.fresh.repository.ISectionRepository;

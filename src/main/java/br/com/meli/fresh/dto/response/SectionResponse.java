@@ -1,6 +1,5 @@
 package br.com.meli.fresh.dto.response;
 
-import br.com.meli.fresh.model.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
