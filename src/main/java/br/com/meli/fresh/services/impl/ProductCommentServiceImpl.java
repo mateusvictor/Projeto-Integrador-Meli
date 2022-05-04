@@ -2,10 +2,12 @@ package br.com.meli.fresh.services.impl;
 
 import br.com.meli.fresh.model.Product;
 import br.com.meli.fresh.model.ProductComment;
+import br.com.meli.fresh.model.Role;
 import br.com.meli.fresh.model.exception.ProductNotFoundException;
+import br.com.meli.fresh.model.exception.UserNotAllowedException;
 import br.com.meli.fresh.repository.IProductCommentRepository;
 import br.com.meli.fresh.repository.IProductRepository;
-import br.com.meli.fresh.services.ICrudService;
+import br.com.meli.fresh.security.UserSpringSecurity;
 import br.com.meli.fresh.services.IProductCommentService;
 import br.com.meli.fresh.services.exception.CommentNotFoundException;
 import lombok.AllArgsConstructor;
@@ -14,8 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.stream.Collector;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @Service
@@ -23,9 +23,11 @@ public class ProductCommentServiceImpl implements IProductCommentService<Product
 
     private final IProductCommentRepository commentRepository;
     private final IProductRepository productRepository;
+    private final UserAuthenticatedService authService;
 
     @Override
     public ProductComment create(ProductComment productComment, String idProduto) {
+        this.validateUser();
         Product product = this.findProduct(idProduto);
         productComment.setProduct(product);
         productComment.setCommentDateTime(LocalDateTime.now());
@@ -33,15 +35,11 @@ public class ProductCommentServiceImpl implements IProductCommentService<Product
         return this.commentRepository.save(productComment);
     }
 
-    private Product findProduct(String idProduto) {
-        return this.productRepository.findById(idProduto).orElseThrow(()-> new ProductNotFoundException(idProduto));
-    }
 
     @Override
     public ProductComment getById(String idProduto, String idComment) {
         Product product = this.findProduct(idProduto);
         return product.getComments().stream().filter((c)-> c.getId().equals(idComment)).findFirst().orElseThrow(()-> new CommentNotFoundException("Comment not found!"));
-//        return this.commentRepository.findById(idComment).orElseThrow(()-> new ProductNotFoundException(idProduto));4
     }
 
     @Override
@@ -53,10 +51,28 @@ public class ProductCommentServiceImpl implements IProductCommentService<Product
 
     @Override
     public void delete(String idProduto, String idComment) {
-        this.findProduct(idProduto);
         ProductComment comment = this.commentRepository.findById(idComment).orElseThrow(()-> new CommentNotFoundException("Comment not found!"));
-
+        this.validateUser(comment.getBuyer().getId());
+        this.findProduct(idProduto);
         this.commentRepository.delete(comment);
+    }
+
+    private void validateUser(String idBuyer) {
+        UserSpringSecurity userClient = authService.authenticated();
+        if(userClient == null || (!userClient.hasRole(Role.ADMIN) && !userClient.hasRole(Role.BUYER))||!userClient.getId().equals(idBuyer)){
+            throw new UserNotAllowedException("User not allowed!");
+        }
+    }
+
+    private void validateUser() {
+        UserSpringSecurity userClient = authService.authenticated();
+        if(userClient == null || (!userClient.hasRole(Role.ADMIN) && !userClient.hasRole(Role.BUYER))){
+            throw new UserNotAllowedException("User not allowed!");
+        }
+    }
+
+    private Product findProduct(String idProduto) {
+        return this.productRepository.findById(idProduto).orElseThrow(()-> new ProductNotFoundException(idProduto));
     }
 }
 
