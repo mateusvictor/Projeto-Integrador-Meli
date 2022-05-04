@@ -39,7 +39,6 @@ public class ProductController {
                 .buildAndExpand(p.getId())
                 .toUri())
                 .build();
-
     }
 
     @GetMapping("{id}")

@@ -9,10 +9,8 @@ import br.com.meli.fresh.repository.ISectionRepository;
 import br.com.meli.fresh.services.IBatchDueDateService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 @Service

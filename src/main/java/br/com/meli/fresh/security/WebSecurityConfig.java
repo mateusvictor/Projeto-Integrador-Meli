@@ -37,6 +37,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/webjars/**",
             "/swagger-ui.html/**",
             BASE_URL+"/**"
+
     };
 
     public final static String[] PUBLIC_GET_URLS = {
@@ -48,7 +49,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             BASE_URL + "/buyer/**",
             BASE_URL + "/seller/**",
             BASE_URL + "/warehousemanager/**",
-            BASE_URL + "/warehouse/**",
+            BASE_URL + "/warehouse/**"
     };
 
     @Override
@@ -62,7 +63,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtUtil));
         http.addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));
         http.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-
     }
 
     @Bean

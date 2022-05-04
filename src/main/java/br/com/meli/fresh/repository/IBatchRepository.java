@@ -16,4 +16,6 @@ public interface IBatchRepository extends JpaRepository<Batch, String> {
     List<Batch> findAllByInboundOrder_SectionOrderByDueDateDesc(Section section);
     List<Batch> findAllByDueDateBefore(LocalDate numberDays);
     List<Batch> findAllByInboundOrder_SectionAndDueDateBeforeOrderByDueDate(Section section, LocalDate numberDays);
+
+    List<Batch> findAllByDueDateBetweenOrderByDueDateAsc(LocalDate now, LocalDate endDate);
 }
