@@ -91,5 +91,9 @@ O objetivo deste projeto final é implementar uma API REST no âmbito do slogan 
 
 ![Diagrama de entidade de relacionamento (DER)](./screenshots/db-schema-v2.png)
 
+## Documentação
+
+_Você pode utilizar a API pela documentação [Swagger](http://localhost:8080/swagger-ui.html)._
+
 
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>
