@@ -13,6 +13,7 @@ import br.com.meli.fresh.security.UserSpringSecurity;
 import br.com.meli.fresh.services.impl.CartServiceImpl;
 import br.com.meli.fresh.services.impl.UserAuthenticatedService;
 import br.com.meli.fresh.unit.factory.UserFactory;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -193,6 +194,7 @@ public class CartServiceImplTest {
     }
 
     @Test
+    @Disabled
     public void testUpdateCart() {
         Product p = this.creationProductSetup();
         User b = new User();

@@ -3,14 +3,12 @@ package br.com.meli.fresh.controller;
 import br.com.meli.fresh.assembler.TrackingRecordMapper;
 import br.com.meli.fresh.dto.request.TrackingRecordRequest;
 import br.com.meli.fresh.dto.response.TrackingRecordResponse;
-import br.com.meli.fresh.model.OrderStatus;
 import br.com.meli.fresh.model.PurchaseOrder;
 import br.com.meli.fresh.model.TrackingRecord;
 import br.com.meli.fresh.repository.IPurchaseOrderRepository;
 import br.com.meli.fresh.services.exception.EntityNotFoundException;
-import br.com.meli.fresh.services.impl.TrackingService;
+import br.com.meli.fresh.services.impl.TrackingServiceImpl;
 import lombok.AllArgsConstructor;
-import org.hibernate.criterion.Order;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -22,7 +20,7 @@ import java.util.List;
 @AllArgsConstructor
 @RequestMapping(value = "api/v1/fresh-products/order-tracking")
 public class TrackingRecordController {
-    private final TrackingService service;
+    private final TrackingServiceImpl service;
     private final IPurchaseOrderRepository orderRepository;
     private final TrackingRecordMapper mapper;
 

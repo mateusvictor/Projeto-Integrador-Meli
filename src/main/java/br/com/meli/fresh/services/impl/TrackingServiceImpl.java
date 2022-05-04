@@ -18,7 +18,7 @@ import java.util.List;
 
 @Service
 @AllArgsConstructor
-public class TrackingService {
+public class TrackingServiceImpl {
     private final ITrackingRecordRepository trackingRepository;
     private final IPurchaseOrderRepository purchaseOrderRepository;
     private final UserAuthenticatedService auth;

@@ -26,7 +26,7 @@ public class CartServiceImpl implements ICartService {
     private final IUserRepository buyerRepository;
     private final IBatchRepository batchRepository;
     private final UserAuthenticatedService userAuthenticatedService;
-    private final TrackingService trackingService;
+    private final TrackingServiceImpl trackingServiceImpl;
     private final IPurchaseOrderRepository purchaseOrderRepository;
 
 
@@ -81,7 +81,7 @@ public class CartServiceImpl implements ICartService {
                 new PurchaseOrder(null, LocalDateTime.now(), cart, null));
 
         // Creating the first tracking record
-        trackingService.createInitialTrackingRecord(purchaseOrder);
+        trackingServiceImpl.createInitialTrackingRecord(purchaseOrder);
         cart.setPurchaseOrder(purchaseOrder);
 
         return cartRepository.save(cart);
