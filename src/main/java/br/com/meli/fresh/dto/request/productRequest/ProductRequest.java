@@ -1,6 +1,7 @@
 package br.com.meli.fresh.dto.request.productRequest;
 
 import br.com.meli.fresh.dto.request.BatchRequest;
+import br.com.meli.fresh.dto.request.UserRequestDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -33,6 +34,9 @@ public class ProductRequest {
 
     @NotNull(groups = OnCreate.class, message = "Price can not be null.")
     private BigDecimal price;
+
+    @NotNull(groups = OnCreate.class, message = "Seller can not be null")
+    private UserRequestDTO seller;
 
     private List<BatchRequest> batchList = new ArrayList<>();
 
