@@ -8,11 +8,12 @@ import org.springframework.data.domain.PageImpl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 public class WarehouseFactory {
     public static Warehouse getWarehouse(){
 
-        return new Warehouse(null, "SP - WAREHOUSE", null, null);
+        return new Warehouse(null, UUID.randomUUID().toString(), null, null);
     }
 
     public static Warehouse createWarehouse(){
@@ -41,10 +42,12 @@ public class WarehouseFactory {
     }
 
     public static WarehouseRequestDTO createWarehouseDTO(){
-        WarehouseRequestDTO warehouseRequestDTO = WarehouseRequestDTO.builder().name("testeDTO")
+        WarehouseRequestDTO warehouseRequestDTO = WarehouseRequestDTO.builder().name(UUID.randomUUID().toString())
                 .sectionList(List.of(SectionFactory.createSectionDefaultDTO())).build();
         return warehouseRequestDTO;
     }
 
-
+    public static Warehouse getWarehouseB(){
+        return new Warehouse(null, "FLORIPA - WAREHOUSE", null, null);
+    }
 }

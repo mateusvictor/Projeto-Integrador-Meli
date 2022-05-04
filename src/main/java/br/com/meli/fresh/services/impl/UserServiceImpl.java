@@ -65,7 +65,7 @@ public class UserServiceImpl implements ICrudService<User> {
     }
 
     private void verifyManager(User user) {
-        if(this.warehouseRepository.findWarehouseByWarehouseManager(user)!=null){
+        if(this.warehouseRepository.findByWarehouseManager(user)!=null){
             throw new WarehouseManagerCanNotBeDeletedException("User is an allocated warehouse manager and can not be deleted!");
         }
     }

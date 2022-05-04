@@ -340,4 +340,9 @@ public class InboundOrderControllerTest {
 
         assertEquals("InvalidWarehouseManagerException", errorDTO.getError());
     }
+
+//    @AfterTestClass()
+//    protected void deleteAll() {
+//        warehouseRepository.deleteAll();
+//    }
 }

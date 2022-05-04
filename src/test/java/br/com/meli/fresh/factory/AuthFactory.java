@@ -41,7 +41,7 @@ public class AuthFactory {
         // Creates only one admin user to be used in the requests
         if (adminUser == null)
             adminUser = service.create(new User(
-                null,
+                "1",
                 "admin",
                 "admin@admin.com",
                 "admin",

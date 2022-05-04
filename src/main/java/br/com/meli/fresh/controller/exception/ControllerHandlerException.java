@@ -105,11 +105,6 @@ public class ControllerHandlerException {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err.getMessage());
     }
 
-    @ExceptionHandler(ProductAlreadyExistsException.class)
-    public ResponseEntity<?> productAlreadyExistsException(ProductAlreadyExistsException err) {
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(err.getMessage());
-    }
-
     @ExceptionHandler(WarehouseManagerCanNotBeDeletedException.class)
     public ResponseEntity<?> handleWarehouseManagerCanNotBeDeletedException(WarehouseManagerCanNotBeDeletedException e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)

@@ -8,6 +8,7 @@ import br.com.meli.fresh.model.Cart;
 import br.com.meli.fresh.model.CartStatus;
 import br.com.meli.fresh.model.exception.InvalidEnumCartStatusException;
 import br.com.meli.fresh.services.ICartService;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -24,6 +25,7 @@ public class CartController {
     private final ICartService cartService;
     private final CartMapper mapper;
 
+    @ApiOperation(value = "This endpoint creates a cart shopping to buy products from this storage app.")
     @PostMapping
     public ResponseEntity<OrderTotalPriceResponse> creteCart(@Valid @RequestBody CartRequest request, UriComponentsBuilder uriBuilder){
 
@@ -44,11 +46,13 @@ public class CartController {
         return ResponseEntity.created(uri).body(orderTotalPriceResponse);
     }
 
+    @ApiOperation(value = "This endpoint provides a possibility to update the cart shopping.")
     @PutMapping("{id}")
     public ResponseEntity<CartResponse> updateCart(@PathVariable String id) {
         return ResponseEntity.ok(mapper.toResponseObject(cartService.update(id)));
     }
 
+    @ApiOperation(value = "This endpoint provides a possibility to check one cart shopping.")
     @GetMapping("{id}")
     public ResponseEntity<CartResponse> getCart(@PathVariable String id) {
         return ResponseEntity.ok(mapper.toResponseObject(cartService.getById(id)));

@@ -1,11 +1,13 @@
 package br.com.meli.fresh.services.impl;
 
+import br.com.meli.fresh.dto.response.ProductQuantityResponse;
+import br.com.meli.fresh.dto.response.WarehouseProductQuantity;
+import br.com.meli.fresh.model.Batch;
+import br.com.meli.fresh.model.Product;
 import br.com.meli.fresh.model.Role;
 import br.com.meli.fresh.model.Warehouse;
-import br.com.meli.fresh.model.exception.UserNotAllowedException;
-import br.com.meli.fresh.model.exception.UserNotFoundException;
-import br.com.meli.fresh.model.exception.WarehouseManagerAlreadyDefined;
-import br.com.meli.fresh.model.exception.WarehouseNotFoundException;
+import br.com.meli.fresh.model.exception.*;
+import br.com.meli.fresh.repository.IProductRepository;
 import br.com.meli.fresh.repository.IUserRepository;
 import br.com.meli.fresh.repository.IWarehouseRepository;
 import br.com.meli.fresh.security.UserSpringSecurity;
@@ -15,6 +17,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -24,6 +28,8 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
     private final IWarehouseRepository repository;
     private final IUserRepository userRepository;
     private final UserAuthenticatedService authService;
+    private final IProductRepository productRepository;
+    private final UserAuthenticatedService auth;
 
     @Override
     public Warehouse create(Warehouse warehouse) {
@@ -32,7 +38,6 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
         this.setWarehouseToSection(warehouse);
         return this.repository.save(warehouse);
     }
-
 
     @Override
     public Warehouse update(String id, Warehouse warehouse) {
@@ -74,13 +79,12 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
     private void verifyManagerCreate(Warehouse warehouse) {
         verifyRole(warehouse);
 
+
+
         //Find a warehouse that with the manager specified on the request
-        Warehouse warehouseWithUser = this.repository.findWarehouseByWarehouseManager(warehouse.getWarehouseManager());
-        if (warehouseWithUser != null) {
-            //verify if is a create of a warehouse and throws exception;
-            if (warehouse.getId() == null) {
-                throw new WarehouseManagerAlreadyDefined("Warehouse manager already defined in another warehouse");
-            }
+        Warehouse warehouseWithUser = this.repository.findByWarehouseManager(warehouse.getWarehouseManager());
+        if (warehouseWithUser != null) { //verify if is a create of a warehouse and throws exception;
+           throw new WarehouseManagerAlreadyDefined("Warehouse manager already defined in another warehouse");
         }
     }
 
@@ -89,7 +93,7 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
         verifyRole(warehouse);
 
         //Find a warehouse that with the manager specified on the request
-        Warehouse warehouseWithUser = this.repository.findWarehouseByWarehouseManager(warehouse.getWarehouseManager());
+        Warehouse warehouseWithUser = this.repository.findByWarehouseManager(warehouse.getWarehouseManager());
         if (warehouseWithUser != null) {
             //verify if is an update of an existing warehouse on db and throws an exception
             if (warehouse.getId() != null && !warehouseWithUser.getId().equals(warehouse.getId())) {
@@ -114,11 +118,31 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
     }
 
 
-    private void validateUser(String id){
+    private void validateUser(String id) {
         UserSpringSecurity userClient = authService.authenticated();
-        if(userClient == null || (!userClient.hasRole(Role.ADMIN) && !userClient.getId().equals(id))){
+        if (userClient == null || (!userClient.hasRole(Role.ADMIN) && !userClient.getId().equals(id))) {
             throw new UserNotAllowedException("User not allowed!");
         }
+    }
+
+    public ProductQuantityResponse getProductQuantity(String productId){
+        UserSpringSecurity user = auth.authenticated();
+
+        if (user == null || (!user.hasRole(Role.WAREHOUSEMANAGER) && !user.hasRole(Role.ADMIN)))
+            throw new UserNotAllowedException("You don't have permission to access this endpoint");
+
+        Product product = productRepository.findById(productId)
+                .orElseThrow(() -> new ProductNotFoundException(productId));
+
+        List<WarehouseProductQuantity> warehouseList = new ArrayList<>();
+
+        for (Batch batch : product.getBatchList()){
+            // Each batch is in one order, each order has one section and one section has a warehouse
+            Warehouse warehouse = batch.getInboundOrder().getSection().getWarehouse();
+            warehouseList.add(new WarehouseProductQuantity(warehouse.getId(), batch.getCurrentQuantity()));
+        }
+
+        return new ProductQuantityResponse(productId, warehouseList);
     }
 
 }

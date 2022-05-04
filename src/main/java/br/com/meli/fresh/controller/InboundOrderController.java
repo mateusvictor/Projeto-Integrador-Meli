@@ -13,6 +13,7 @@ import br.com.meli.fresh.repository.IProductRepository;
 import br.com.meli.fresh.repository.ISectionRepository;
 import br.com.meli.fresh.services.exception.EntityNotFoundException;
 import br.com.meli.fresh.services.impl.InboundOrderServiceImpl;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,7 @@ public class InboundOrderController {
     private final InboundOrderMapper orderMapper;
     private final BatchMapper batchMapper;
 
+    @ApiOperation(value = "This endpoint creates an inbound order thats supply all warehouse of the storage app.")
     @PostMapping()
     public ResponseEntity<InboundOrderResponse> createOrder(@Valid @RequestBody InboundOrderRequest inboundOrderRequest,
                                                             UriComponentsBuilder uriBuilder){
@@ -49,6 +51,7 @@ public class InboundOrderController {
                 .body(orderMapper.toResponseObject(inboundOrder));
     }
 
+    @ApiOperation(value = "This endpoint update an inbound order.")
     @PutMapping("/{id}")
     public ResponseEntity<InboundOrderResponse> updateOrder(@PathVariable String id,
                                                             @Valid @RequestBody InboundOrderRequest inboundOrderRequest,
@@ -65,6 +68,7 @@ public class InboundOrderController {
                 .body(orderMapper.toResponseObject(inboundOrder));
     }
 
+    @ApiOperation(value = "This endpoint can get an inbound ordered.")
     @GetMapping("/{id}")
     public ResponseEntity<InboundOrderResponse> getOrder(@PathVariable String id){
         return ResponseEntity.ok(
