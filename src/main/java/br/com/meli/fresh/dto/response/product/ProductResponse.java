@@ -19,4 +19,5 @@ public class ProductResponse {
     private BigDecimal price;
     private UserResponseDTO seller;
     private List<ProductBatchResponse> batchList;
+    private List<ProductCommentResponseDTO> comments;
 }

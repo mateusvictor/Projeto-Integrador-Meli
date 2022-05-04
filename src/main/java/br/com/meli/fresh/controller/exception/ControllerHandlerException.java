@@ -2,10 +2,7 @@ package br.com.meli.fresh.controller.exception;
 
 import br.com.meli.fresh.dto.response.ErrorDTO;
 import br.com.meli.fresh.model.exception.*;
-import br.com.meli.fresh.services.exception.EntityNotFoundException;
-import br.com.meli.fresh.services.exception.InsufficientAvailableSpaceException;
-import br.com.meli.fresh.services.exception.InvalidSectionTypeException;
-import br.com.meli.fresh.services.exception.InvalidWarehouseManagerException;
+import br.com.meli.fresh.services.exception.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.ObjectError;
@@ -24,6 +21,12 @@ public class ControllerHandlerException {
     protected ResponseEntity<?> handleUserNotFoundException(UserNotFoundException e){
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("UserNotFoundException", e.getMessage()));
     }
+
+    @ExceptionHandler(CommentNotFoundException.class)
+    protected ResponseEntity<?> handleCommentNotFoundException(CommentNotFoundException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ErrorDTO("CommentNotFoundException", e.getMessage()));
+    }
+
     @ExceptionHandler(UserWithThisEmailAlreadyExists.class)
     protected ResponseEntity<?> handleUserWithThisEmailAlreadyExists(UserWithThisEmailAlreadyExists e){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO("UserWithThisEmailAlreadyExists", e.getMessage()));

@@ -36,5 +36,8 @@ public class Product {
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<Batch> batchList;
 
+    @OneToMany(mappedBy = "product")
+    private List<ProductComment> comments;
+
     private Boolean isActive = true;
 }
