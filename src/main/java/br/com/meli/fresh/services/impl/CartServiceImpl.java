@@ -2,10 +2,7 @@ package br.com.meli.fresh.services.impl;
 
 import br.com.meli.fresh.model.*;
 import br.com.meli.fresh.model.exception.*;
-import br.com.meli.fresh.repository.IBatchRepository;
-import br.com.meli.fresh.repository.ICartRepository;
-import br.com.meli.fresh.repository.IProductRepository;
-import br.com.meli.fresh.repository.IUserRepository;
+import br.com.meli.fresh.repository.*;
 import br.com.meli.fresh.security.UserSpringSecurity;
 import br.com.meli.fresh.services.ICartService;
 import lombok.AllArgsConstructor;
@@ -29,6 +26,8 @@ public class CartServiceImpl implements ICartService {
     private final IUserRepository buyerRepository;
     private final IBatchRepository batchRepository;
     private final UserAuthenticatedService userAuthenticatedService;
+    private final TrackingService trackingService;
+    private final IPurchaseOrderRepository purchaseOrderRepository;
 
 
     @Override
@@ -75,6 +74,16 @@ public class CartServiceImpl implements ICartService {
         cart.getItems().forEach(cartItem -> decreaseTheQuantityOfBatchProducts(cartItem.getProduct().getId(), cartItem.getQuantity()));
 
         cart.setCartStatus(CartStatus.CLOSE);
+        cart = cartRepository.save(cart);
+
+        // When the checkout is made, a purchaseOrder is created
+        PurchaseOrder purchaseOrder = purchaseOrderRepository.save(
+                new PurchaseOrder(null, LocalDateTime.now(), cart, null));
+
+        // Creating the first tracking record
+        trackingService.createInitialTrackingRecord(purchaseOrder);
+        cart.setPurchaseOrder(purchaseOrder);
+
         return cartRepository.save(cart);
     }
 
