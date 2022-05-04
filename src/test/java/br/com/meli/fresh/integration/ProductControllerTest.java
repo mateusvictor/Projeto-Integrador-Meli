@@ -263,41 +263,6 @@ public class ProductControllerTest {
     }
 
     @Test
-    public void testSaveAlreadyExistsProduct() throws Exception {
-        Product p = new Product();
-        p.setName("Maionese");
-        p.setCategory("RF");
-
-        service.create(p);
-
-        ProductRequest preq = new ProductRequest();
-        preq.setName(p.getName());
-        preq.setCategory("RF");
-        preq.setMaxTemperature(3.0F);
-        preq.setMinTemperature(0.5F);
-        preq.setWeight(0.5F);
-        BigDecimal price = BigDecimal.valueOf(13.99);
-        preq.setPrice(price);
-
-        ObjectWriter writer = new ObjectMapper()
-                .configure(SerializationFeature.WRAP_ROOT_VALUE, false)
-                .writer().withDefaultPrettyPrinter();
-
-        String payloadRequest = writer.writeValueAsString(preq);
-
-        MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.post(BASE_URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(payloadRequest)
-                        .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))
-                .andDo(print()).andExpect(status().isConflict()).andReturn();
-
-        String errorMessage = mvcResult.getResponse().getContentAsString();
-
-        assertEquals("This product already exists in our database", errorMessage);
-
-    }
-
-    @Test
     public void testProductsWereNotFoundException() throws Exception {
         MvcResult mvcResult = this.mockMvc.perform(MockMvcRequestBuilders.get(BASE_URL + "?category=FS")
                 .header(HttpHeaders.AUTHORIZATION, auth.token(mockMvc)))

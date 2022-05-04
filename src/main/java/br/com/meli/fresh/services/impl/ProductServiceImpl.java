@@ -1,7 +1,6 @@
 package br.com.meli.fresh.services.impl;
 
 import br.com.meli.fresh.model.Product;
-import br.com.meli.fresh.model.exception.ProductAlreadyExistsException;
 import br.com.meli.fresh.model.exception.ProductNotFoundException;
 import br.com.meli.fresh.model.exception.ProductsNotFoundException;
 import br.com.meli.fresh.model.filter.ProductFilter;
@@ -24,11 +23,7 @@ public class ProductServiceImpl implements ICrudService<Product> {
 
     @Override
     public Product create(Product product) {
-        Product p = repository.findByName(product.getName());
-        // This if statement will check if a given product already exists in our database.ß If so, we will raise an error, and if not, we will create the product
-        if(p != null) throw new ProductAlreadyExistsException();
-
-        // Vinculating the batches with the product
+       // Vinculating the batches with the product
         if(product.getBatchList() != null && product.getBatchList().size()  != 0) {
             product.setBatchList(product.getBatchList().stream().map(batch -> {
                  batch.setProduct(product);

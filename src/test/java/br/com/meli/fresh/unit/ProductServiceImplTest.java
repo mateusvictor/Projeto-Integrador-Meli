@@ -1,7 +1,6 @@
 package br.com.meli.fresh.unit;
 
 import br.com.meli.fresh.model.Product;
-import br.com.meli.fresh.model.exception.ProductAlreadyExistsException;
 import br.com.meli.fresh.model.exception.ProductNotFoundException;
 import br.com.meli.fresh.model.exception.ProductsNotFoundException;
 import br.com.meli.fresh.model.filter.ProductFilter;
@@ -43,13 +42,6 @@ public class ProductServiceImplTest {
         p.setName("ProductTeste");
         p.setId("1");
         Mockito.when(productRepository.findById("1")).thenReturn(Optional.of(p));
-        return p;
-    }
-
-    public Product productAlreadyExistsSetup() {
-        Product p = new Product();
-        p.setName("Product Test");
-        Mockito.when(productRepository.save(p)).thenThrow(ProductAlreadyExistsException.class);
         return p;
     }
 
@@ -112,14 +104,6 @@ public class ProductServiceImplTest {
         Mockito.when(productRepository.findById("2")).thenThrow(ProductNotFoundException.class);
         assertThrows(ProductNotFoundException.class, () -> {
             productService.getById("2");
-        });
-    }
-
-    @Test
-    public void testProductAlreadyExists() {
-        Product p = this.productAlreadyExistsSetup();
-        assertThrows(ProductAlreadyExistsException.class, () -> {
-            productService.create(p);
         });
     }
 
