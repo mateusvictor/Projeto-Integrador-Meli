@@ -3,7 +3,6 @@ package br.com.meli.fresh.controller;
 import br.com.meli.fresh.assembler.ProductMapper;
 import br.com.meli.fresh.dto.request.productRequest.OnCreate;
 import br.com.meli.fresh.dto.request.productRequest.ProductRequest;
-import br.com.meli.fresh.dto.response.product.ProductBatchResponse;
 import br.com.meli.fresh.dto.response.product.ProductResponse;
 import br.com.meli.fresh.model.Product;
 import br.com.meli.fresh.model.filter.ProductFilter;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
-import java.util.Comparator;
 import java.util.stream.Collectors;
 @RestController
 @RequestMapping("api/v1/fresh-products/products")

@@ -47,5 +47,7 @@ public class WarehouseFactory {
         return warehouseRequestDTO;
     }
 
-
+    public static Warehouse getWarehouseB(){
+        return new Warehouse(null, "FLORIPA - WAREHOUSE", null, null);
+    }
 }

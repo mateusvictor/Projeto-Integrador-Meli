@@ -3,8 +3,6 @@ package br.com.meli.fresh.factory;
 import br.com.meli.fresh.dto.request.SectionRequestDTO;
 import br.com.meli.fresh.model.Section;
 
-import java.util.UUID;
-
 public class SectionFactory {
 
 

@@ -1,6 +1,5 @@
 package br.com.meli.fresh.unit;
 
-import br.com.meli.fresh.factory.AuthFactory;
 import br.com.meli.fresh.factory.WarehouseFactory;
 import br.com.meli.fresh.model.User;
 import br.com.meli.fresh.model.Warehouse;
@@ -20,7 +19,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;

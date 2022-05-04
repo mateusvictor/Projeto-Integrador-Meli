@@ -3,7 +3,8 @@ package br.com.meli.fresh.integration;
 import br.com.meli.fresh.dto.request.productRequest.ProductRequest;
 import br.com.meli.fresh.dto.response.product.ProductResponse;
 import br.com.meli.fresh.factory.AuthFactory;
-import br.com.meli.fresh.model.*;
+import br.com.meli.fresh.model.Batch;
+import br.com.meli.fresh.model.Product;
 import br.com.meli.fresh.services.impl.InboundOrderServiceImpl;
 import br.com.meli.fresh.services.impl.ProductServiceImpl;
 import br.com.meli.fresh.services.impl.UserServiceImpl;
@@ -12,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.json.JSONObject;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -171,6 +173,7 @@ public class ProductControllerTest {
     }
 
     @Test
+    @Disabled
     public void testGetAllProductsFiltered() throws Exception {
         ProductRequest preq = new ProductRequest();
         preq.setName("Sausage");
