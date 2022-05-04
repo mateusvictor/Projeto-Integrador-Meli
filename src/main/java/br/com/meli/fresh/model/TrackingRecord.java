@@ -4,33 +4,29 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
+import org.hibernate.mapping.ToOne;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.List;
 
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Entity
-@Table(name="carts")
-public class Cart {
-
+@Table(name = "tracking_registers")
+public class TrackingRecord {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
     private LocalDateTime date;
+    private String location;
+    private String detailMessage;
 
     @Enumerated(EnumType.STRING)
-    private CartStatus cartStatus;
+    private OrderStatus orderStatus;
 
-    @OneToOne
-    private User buyer;
-
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<CartItem> items;
-
-    @OneToOne
+    @ManyToOne
+    @JoinColumn(name = "purchase_order_id")
     private PurchaseOrder purchaseOrder;
 }

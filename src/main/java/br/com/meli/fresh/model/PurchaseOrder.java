@@ -9,28 +9,21 @@ import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Entity
-@Table(name="carts")
-public class Cart {
-
+@Table(name = "purchase_orders")
+public class PurchaseOrder {
     @Id
     @GeneratedValue(generator = "uuid2")
     @GenericGenerator(name = "uuid2", strategy = "org.hibernate.id.UUIDGenerator")
     private String id;
     private LocalDateTime date;
 
-    @Enumerated(EnumType.STRING)
-    private CartStatus cartStatus;
-
     @OneToOne
-    private User buyer;
+    private Cart cart;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<CartItem> items;
-
-    @OneToOne
-    private PurchaseOrder purchaseOrder;
+    @OneToMany(mappedBy = "purchaseOrder")
+    private List<TrackingRecord> trackingRecordList;
 }
