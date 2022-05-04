@@ -6,6 +6,7 @@ import br.com.meli.fresh.model.User;
 import br.com.meli.fresh.model.exception.ProductNotFoundException;
 import br.com.meli.fresh.model.exception.ProductsNotFoundException;
 import br.com.meli.fresh.model.exception.UserNotAllowedException;
+import br.com.meli.fresh.model.exception.UserNotFoundException;
 import br.com.meli.fresh.model.filter.ProductFilter;
 import br.com.meli.fresh.repository.IProductRepository;
 import br.com.meli.fresh.repository.IUserRepository;
@@ -37,6 +38,8 @@ public class ProductServiceImpl implements ICrudService<Product> {
             throw new UserNotAllowedException("This user authenticated has not authorization to create a product!");
         }
 
+        userRepository.findById(product.getSeller().getId()).orElseThrow(() -> new UserNotFoundException(product.getSeller().getId()));
+
         if(!userRepository.findById(product.getSeller().getId()).get().getRoles().contains(Role.SELLER)) {
             throw new UserNotAllowedException("This user is not a seller!");
         }
@@ -62,6 +65,7 @@ public class ProductServiceImpl implements ICrudService<Product> {
 
         Product productToBeUpdated = repository.findById(id).orElseThrow(()-> new ProductNotFoundException(id));
         if(product.getSeller() != null) {
+            userRepository.findById(product.getSeller().getId()).orElseThrow(() -> new UserNotFoundException(product.getSeller().getId()));
             if(!userRepository.findById(product.getSeller().getId()).get().getRoles().contains(Role.SELLER)) {
                 throw new UserNotAllowedException("This user is not a seller!");
             }
