@@ -2,7 +2,6 @@ package br.com.meli.fresh.dto.response;
 
 import lombok.Builder;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 

@@ -13,6 +13,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
@@ -26,6 +27,15 @@ public class ProductServiceImpl implements ICrudService<Product> {
         Product p = repository.findByName(product.getName());
         // This if statement will check if a given product already exists in our database.ß If so, we will raise an error, and if not, we will create the product
         if(p != null) throw new ProductAlreadyExistsException();
+
+        // Vinculating the batches with the product
+        if(product.getBatchList() != null && product.getBatchList().size()  != 0) {
+            product.setBatchList(product.getBatchList().stream().map(batch -> {
+                 batch.setProduct(product);
+                 return batch;
+            }).collect(Collectors.toList()));
+        }
+
         return repository.save(product);
 
     }
@@ -48,7 +58,13 @@ public class ProductServiceImpl implements ICrudService<Product> {
 
     public Page<Product> getAll(ProductFilter filter, Pageable pageable) {
         Page<Product> pages = repository.findAll(pageable);
-        if(filter.getCategory() != null) pages = new PageImpl<Product>(pages.stream().filter(p -> p.getCategory().equals(filter.getCategory())).collect(Collectors.toList()));
+        if(filter.getCategory() != null) {
+            List<Product> list = pages.stream().filter(p -> {
+                if(p.getCategory() != null) return p.getCategory().equals(filter.getCategory());
+                return false;
+            }).collect(Collectors.toList());
+            pages = new PageImpl<Product>(list);
+        }
 
         if(pages.getTotalElements() == 0) throw new ProductsNotFoundException();
         return pages;

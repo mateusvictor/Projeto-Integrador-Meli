@@ -12,10 +12,15 @@ import java.util.List;
 public interface IBatchRepository extends JpaRepository<Batch, String> {
     List<Batch> findAllByProduct_Id(String id);
     Batch findByProduct_Id(String id);
-
     List<Batch> findAllByInboundOrder_SectionOrderByDueDateDesc(Section section);
     List<Batch> findAllByDueDateBefore(LocalDate numberDays);
     List<Batch> findAllByInboundOrder_SectionAndDueDateBeforeOrderByDueDate(Section section, LocalDate numberDays);
 
-    List<Batch> findAllByDueDateBetweenOrderByDueDateAsc(LocalDate now, LocalDate endDate);
+    List<Batch> findAllByInboundOrder_SectionOrderByDueDateAsc(Section section);
+    List<Batch> findAllByDueDateBetweenOrderByDueDateAsc(LocalDate startDate, LocalDate endDate);
+    List<Batch> findAllByInboundOrder_SectionAndDueDateBetweenOrderByDueDateAsc(Section section, LocalDate startDate, LocalDate endDate);
+
+    List<Batch> findAllByProduct_CategoryOrderByDueDateAsc(String category);
+    List<Batch> findAllByProduct_CategoryAndDueDateBetweenOrderByDueDateAsc(String category, LocalDate startDate, LocalDate endDate);
+
 }

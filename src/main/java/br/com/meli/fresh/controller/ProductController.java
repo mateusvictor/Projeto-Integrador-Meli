@@ -48,10 +48,21 @@ public class ProductController {
         return ResponseEntity.ok(pRes);
     }
 
+    /**
+     * This method realize the ordered batches inside the BatchList of the product.
+     * You can order the batches of the product using the query param batch_order.
+     * The options are: L to orderer by batch number id, C to orderer by current
+     * quantity and F to orderer by due date validation.
+     * Put the product response and the batch_order param in the params of the
+     * method to realize the ordenation.
+     * @param pRes receive the product response to be ordered by the batch_order query params.
+     * @param batch_order the info order required by the client in the batch_order query params.
+     *
+     */
     private void orderingBatch(ProductResponse pRes, String batch_order) {
-        if(batch_order.equalsIgnoreCase("L")) pRes.getBatchList().sort(Comparator.comparing(ProductBatchResponse::getId));
-        if(batch_order.equalsIgnoreCase("C")) pRes.getBatchList().sort(Comparator.comparing(ProductBatchResponse::getCurrentQuantity));
-        if(batch_order.equalsIgnoreCase("F")) pRes.getBatchList().sort(Comparator.comparing(ProductBatchResponse::getDueDate));
+        if(batch_order.equalsIgnoreCase("L")) pRes.getBatchList().sort((b, a) -> a.getId().compareTo(b.getId()));
+        if(batch_order.equalsIgnoreCase("C")) pRes.getBatchList().sort((b, a) -> a.getCurrentQuantity().compareTo(b.getCurrentQuantity()));
+        if(batch_order.equalsIgnoreCase("F")) pRes.getBatchList().sort((a, b) -> a.getDueDate().compareTo(b.getDueDate()));
     }
 
     @GetMapping

@@ -257,7 +257,6 @@ public class CartControllerTest {
 
         String result = mvcResult.getResponse().getContentAsString();
         CartResponse response = new ObjectMapper().readValue(result, CartResponse.class);
-//        assertEquals(expected.getItems().get(0).getProductId(), response.getItems().get(0).getProductId());
         assertEquals(batch.getCurrentQuantity(), currentQuantity - 1);
         assertEquals(CartStatus.CLOSE, CartStatus.valueOf(response.getStatus()));
     }
@@ -369,7 +368,6 @@ public class CartControllerTest {
         CartResponse response = new ObjectMapper().readValue(result, CartResponse.class);
 
         assertEquals(request.getStatus(), response.getStatus());
-        // todo
     }
 
     @Test
