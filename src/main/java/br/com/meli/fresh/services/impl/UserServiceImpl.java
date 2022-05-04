@@ -9,7 +9,6 @@ import br.com.meli.fresh.repository.IUserRepository;
 import br.com.meli.fresh.repository.IWarehouseRepository;
 import br.com.meli.fresh.services.ICrudService;
 import lombok.AllArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -66,7 +65,7 @@ public class UserServiceImpl implements ICrudService<User> {
     }
 
     private void verifyManager(User user) {
-        if(this.warehouseRepository.findWarehouseByWarehouseManager(user)!=null){
+        if(this.warehouseRepository.findByWarehouseManager(user)!=null){
             throw new WarehouseManagerCanNotBeDeletedException("User is an allocated warehouse manager and can not be deleted!");
         }
     }

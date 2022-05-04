@@ -33,7 +33,6 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
         return this.repository.save(warehouse);
     }
 
-
     @Override
     public Warehouse update(String id, Warehouse warehouse) {
         this.validateUser(warehouse.getWarehouseManager().getId());
@@ -74,13 +73,12 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
     private void verifyManagerCreate(Warehouse warehouse) {
         verifyRole(warehouse);
 
+
+
         //Find a warehouse that with the manager specified on the request
-        Warehouse warehouseWithUser = this.repository.findWarehouseByWarehouseManager(warehouse.getWarehouseManager());
-        if (warehouseWithUser != null) {
-            //verify if is a create of a warehouse and throws exception;
-            if (warehouse.getId() == null) {
-                throw new WarehouseManagerAlreadyDefined("Warehouse manager already defined in another warehouse");
-            }
+        Warehouse warehouseWithUser = this.repository.findByWarehouseManager(warehouse.getWarehouseManager());
+        if (warehouseWithUser != null) { //verify if is a create of a warehouse and throws exception;
+           throw new WarehouseManagerAlreadyDefined("Warehouse manager already defined in another warehouse");
         }
     }
 
@@ -89,7 +87,7 @@ public class WarehouseServiceImpl implements ICrudService<Warehouse> {
         verifyRole(warehouse);
 
         //Find a warehouse that with the manager specified on the request
-        Warehouse warehouseWithUser = this.repository.findWarehouseByWarehouseManager(warehouse.getWarehouseManager());
+        Warehouse warehouseWithUser = this.repository.findByWarehouseManager(warehouse.getWarehouseManager());
         if (warehouseWithUser != null) {
             //verify if is an update of an existing warehouse on db and throws an exception
             if (warehouse.getId() != null && !warehouseWithUser.getId().equals(warehouse.getId())) {
