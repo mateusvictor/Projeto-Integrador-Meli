@@ -40,7 +40,7 @@ public class CartMapper {
     public CartResponse toResponseObject(Cart entity) {
         CartResponse cartResponse = new CartResponse();
         cartResponse.setDate(entity.getDate().toString());
-
+        cartResponse.setPurchaseOrderId(entity.getPurchaseOrder() != null ? entity.getPurchaseOrder().getId() : null);
         cartResponse.setItems(new ArrayList<>());
 
         cartResponse.setStatus(entity.getCartStatus().cartStatus);

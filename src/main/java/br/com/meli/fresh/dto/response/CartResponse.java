@@ -15,4 +15,5 @@ public class CartResponse {
     private String date;
     private String status;
     private List<CartItemResponse> items;
+    private String purchaseOrderId;
 }
