@@ -84,6 +84,12 @@ public class ControllerHandlerException {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO("InvalidEnumCartStatusException", err.getMessage()));
     }
 
+    @ExceptionHandler(InvalidEnumOrderStatusException.class)
+    public ResponseEntity<?> invalidEnumOrderStatusException(InvalidEnumOrderStatusException err){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO("InvalidEnumOrderStatusException", err.getMessage()));
+    }
+
+
     @ExceptionHandler(InsufficientQuantityOfProductException.class)
     public ResponseEntity<?> insufficientQuantityOfProductException(InsufficientQuantityOfProductException err){
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new ErrorDTO("InsufficientQuantityOfProductException", err.getMessage()));
