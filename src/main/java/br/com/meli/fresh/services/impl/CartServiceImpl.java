@@ -1,10 +1,7 @@
 package br.com.meli.fresh.services.impl;
 
 import br.com.meli.fresh.model.*;
-import br.com.meli.fresh.model.exception.CartNotFoundException;
-import br.com.meli.fresh.model.exception.InsufficientQuantityOfProductException;
-import br.com.meli.fresh.model.exception.ProductNotFoundException;
-import br.com.meli.fresh.model.exception.UserNotFoundException;
+import br.com.meli.fresh.model.exception.*;
 import br.com.meli.fresh.repository.IBatchRepository;
 import br.com.meli.fresh.repository.ICartRepository;
 import br.com.meli.fresh.repository.IProductRepository;
@@ -38,11 +35,8 @@ public class CartServiceImpl implements ICartService {
     @Transactional()
     public Cart create(Cart cart) {
         cart.setDate(LocalDateTime.now());
-        UserSpringSecurity auth = userAuthenticatedService.authenticated();
 
-        if(auth == null || (!auth.hasRole(Role.BUYER) && !auth.hasRole(Role.ADMIN))) {
-            throw new UserNotFoundException(auth.getId());
-        }
+        UserSpringSecurity auth = validationUser();
 
         User opBuyer = buyerRepository.findById(auth.getId())
                 .orElseThrow(() -> new UserNotFoundException(auth.getId()));
@@ -69,6 +63,8 @@ public class CartServiceImpl implements ICartService {
     @Override
     @Transactional()
     public Cart update(String id) {
+       validationUser();
+
         Cart cart = cartRepository.findById(id)
                 .orElseThrow(() -> new CartNotFoundException("Cart not found."));
 
@@ -85,6 +81,7 @@ public class CartServiceImpl implements ICartService {
     @Override
     @Transactional(readOnly = true)
     public Cart getById(String id) {
+        validationUser();
         return cartRepository.findById(id).orElseThrow(() -> new CartNotFoundException("Cart not found."));
     }
 
@@ -142,5 +139,15 @@ public class CartServiceImpl implements ICartService {
             }
         }
         batchRepository.saveAll(batchesUpdated);
+    }
+
+    private UserSpringSecurity validationUser() {
+        UserSpringSecurity auth = userAuthenticatedService.authenticated();
+
+        if(auth == null || (!auth.hasRole(Role.BUYER) && !auth.hasRole(Role.ADMIN))) {
+            throw new UserNotAllowedException("User not allowed.");
+        }
+
+        return auth;
     }
 }
