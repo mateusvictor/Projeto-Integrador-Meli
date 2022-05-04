@@ -1,11 +1,16 @@
 package br.com.meli.fresh.unit;
 
 import br.com.meli.fresh.model.Product;
+import br.com.meli.fresh.model.Role;
+import br.com.meli.fresh.model.User;
 import br.com.meli.fresh.model.exception.ProductNotFoundException;
 import br.com.meli.fresh.model.exception.ProductsNotFoundException;
 import br.com.meli.fresh.model.filter.ProductFilter;
 import br.com.meli.fresh.repository.IProductRepository;
+import br.com.meli.fresh.repository.IUserRepository;
+import br.com.meli.fresh.security.UserSpringSecurity;
 import br.com.meli.fresh.services.impl.ProductServiceImpl;
+import br.com.meli.fresh.services.impl.UserAuthenticatedService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,9 +20,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -27,12 +36,44 @@ public class ProductServiceImplTest {
     @Mock
     private static IProductRepository productRepository;
 
+    @Mock
+    private static UserAuthenticatedService authService;
+
+    @Mock
+    private static IUserRepository userRepository;
+
     @InjectMocks
     private ProductServiceImpl productService;
+
+    private UserSpringSecurity fakeAuthenticatedUSer() {
+        // Simulation of a authenticated user by Mockito
+        GrantedAuthority admUser = new SimpleGrantedAuthority("ROLE_ADMIN");
+        GrantedAuthority warehouseUser = new SimpleGrantedAuthority("ROLE_WAREHOUSEMANAGER");
+        GrantedAuthority buyerUser = new SimpleGrantedAuthority("ROLE_BUYER");
+        GrantedAuthority sellerUser = new SimpleGrantedAuthority("ROLE_SELLER");
+        List<GrantedAuthority> list = List.of(admUser, sellerUser, buyerUser, warehouseUser);
+        UserSpringSecurity u = new UserSpringSecurity(
+                "1",
+                "admin",
+                "password",
+                Collections.checkedList(list, GrantedAuthority.class)
+        );
+        Mockito.when(authService.authenticated()).thenReturn(u);
+        return u;
+    }
+
+    private User fakeSeller() {
+        User u = new User();
+        u.setRoles(Set.of(0));
+
+        Mockito.when(userRepository.findById(Mockito.any())).thenReturn(Optional.of(u));
+        return u;
+    }
 
     public Product creationSetup(){
         Product p = new Product();
         p.setName("ProductTeste");
+        p.setSeller(new User());
         Mockito.when(productRepository.save(p)).thenReturn(p);
         return p;
     }
@@ -73,6 +114,7 @@ public class ProductServiceImplTest {
         Product p = new Product();
         p.setName("Pizza");
         p.setId("1");
+        p.setSeller(new User());
         Mockito.when(productRepository.findById("1")).thenReturn(Optional.of(p));
         p.setName("Ice cream");
         Mockito.when(productRepository.save(p)).thenReturn(p);
@@ -89,6 +131,8 @@ public class ProductServiceImplTest {
 
     @Test
     public void testProductCreation(){
+        this.fakeAuthenticatedUSer();
+        this.fakeSeller();
         Product p = this.creationSetup();
         assertNotNull(productService.create(p));
     }
@@ -136,6 +180,8 @@ public class ProductServiceImplTest {
 
     @Test
     public void testUpdateProduct() {
+        this.fakeAuthenticatedUSer();
+        this.fakeSeller();
         Product p = this.updateProductSetup();
         assertEquals(productService.update("1", p).getName(), p.getName());
     }

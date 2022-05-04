@@ -36,7 +36,7 @@ public class ProductRequest {
     private BigDecimal price;
 
     @NotNull(groups = OnCreate.class, message = "Seller can not be null")
-    private UserRequestDTO seller;
+    private UserProductRequest seller;
 
     private List<BatchRequest> batchList = new ArrayList<>();
 

@@ -55,9 +55,16 @@ public class ProductServiceImpl implements ICrudService<Product> {
 
     @Override
     public Product update(String id, Product product) {
+        UserSpringSecurity warehouse = auth.authenticated();
+        if(warehouse == null && !warehouse.hasRole(Role.ADMIN) || !warehouse.hasRole(Role.ADMIN)) {
+            throw new UserNotAllowedException("This user authenticated has not authorization to create a product!");
+        }
+
         Product productToBeUpdated = repository.findById(id).orElseThrow(()-> new ProductNotFoundException(id));
-        if(!userRepository.findById(product.getSeller().getId()).get().getRoles().contains(Role.SELLER)) {
-            throw new UserNotAllowedException("This user is not a seller!");
+        if(product.getSeller() != null) {
+            if(!userRepository.findById(product.getSeller().getId()).get().getRoles().contains(Role.SELLER)) {
+                throw new UserNotAllowedException("This user is not a seller!");
+            }
         }
         return repository.save(updatingProduct(product, productToBeUpdated));
     }
@@ -99,6 +106,7 @@ public class ProductServiceImpl implements ICrudService<Product> {
         if(newProduct.getMinTemperature() != null) olderProduct.setMinTemperature(newProduct.getMinTemperature());
         if(newProduct.getMaxTemperature() != null) olderProduct.setMaxTemperature(newProduct.getMaxTemperature());
         if(newProduct.getWeight() != null) olderProduct.setWeight(newProduct.getWeight());
+        if(newProduct.getSeller() != null) olderProduct.setSeller(newProduct.getSeller());
         return olderProduct;
     }
 }
