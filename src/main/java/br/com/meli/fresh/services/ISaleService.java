@@ -4,5 +4,5 @@ import br.com.meli.fresh.model.Batch;
 import java.util.List;
 
 public interface ISaleService {
-    List<Batch> getProductsDueDate();
+    List<Batch> getAllProductsDueDate();
 }

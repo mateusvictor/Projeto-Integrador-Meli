@@ -1,6 +1,7 @@
 package br.com.meli.fresh.assembler;
 
 import br.com.meli.fresh.dto.response.BatchProductResponse;
+import br.com.meli.fresh.dto.response.SaleResponse;
 import br.com.meli.fresh.model.Batch;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -9,11 +10,14 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class SaleMapper {
 
-    public BatchProductResponse toResponseObject(Batch entity) {
-        BatchProductResponse response = BatchProductResponse.builder()
+    public SaleResponse toResponseObject(Batch entity) {
+        SaleResponse response = SaleResponse.builder()
                 .productId(entity.getProduct().getId())
+                .name(entity.getProduct().getName())
                 .dueDate(entity.getDueDate())
-                .productId(entity.getProduct().getPrice().toString())
+                .price(entity.getProduct().getPrice())
+                .quantity(entity.getCurrentQuantity())
+                .batchId(entity.getId())
                 .build();
         return response;
     }

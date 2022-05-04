@@ -116,6 +116,12 @@ public class ControllerHandlerException {
                 .body(new ErrorDTO("WarehouseManagerCanNotBeDeletedException", e.getMessage()));
     }
 
+    @ExceptionHandler(SaleProductNotFoundException.class)
+    public ResponseEntity<?> saleProductNotFoundException(SaleProductNotFoundException e){
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(new ErrorDTO("SaleProductNotFoundException", e.getMessage()));
+    }
+
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<?> constraintViolationException(ConstraintViolationException err) {

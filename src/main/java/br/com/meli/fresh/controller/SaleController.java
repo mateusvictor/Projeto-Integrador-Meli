@@ -2,6 +2,7 @@ package br.com.meli.fresh.controller;
 
 import br.com.meli.fresh.assembler.SaleMapper;
 import br.com.meli.fresh.dto.response.BatchProductResponse;
+import br.com.meli.fresh.dto.response.SaleResponse;
 import br.com.meli.fresh.model.Batch;
 import br.com.meli.fresh.services.ISaleService;
 import br.com.meli.fresh.services.impl.SaleServiceImpl;
@@ -26,11 +27,11 @@ public class SaleController {
     private final ISaleService iSaleService;
     private final SaleMapper saleMapper;
 
-    @GetMapping
-    public ResponseEntity<?> getProductDueDate(@RequestParam(required = false) String section,
+    @GetMapping()
+    public ResponseEntity<?> getAllProductDueDate(@RequestParam(required = false) String section,
                                                @RequestParam(required = false) Integer numberWeeks){
-        List<Batch> batchList = saleServiceImpl.getProductsDueDate();
-        List<BatchProductResponse> result = batchList.stream().map(batch -> saleMapper.toResponseObject(batch)).collect(Collectors.toList());
+        List<Batch> batchList = saleServiceImpl.getAllProductsDueDate();
+        List<SaleResponse> result = batchList.stream().map(batch -> saleMapper.toResponseObject(batch)).collect(Collectors.toList());
 
         return ResponseEntity.ok(result);
     }

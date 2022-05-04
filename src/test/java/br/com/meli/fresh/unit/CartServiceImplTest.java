@@ -63,7 +63,6 @@ public class CartServiceImplTest {
         return p;
     }
 
-
     public Product creationProductSetup() {
         Batch b = createBatch();
         Product p = createProduct(b);
