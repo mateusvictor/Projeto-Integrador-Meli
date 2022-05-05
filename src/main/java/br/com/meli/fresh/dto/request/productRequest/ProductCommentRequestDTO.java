@@ -16,10 +16,6 @@ import javax.validation.constraints.Size;
 @Builder
 public class ProductCommentRequestDTO {
 
-//    @NotBlank(message = "productId must not be blank")
-//    private String productId;
-//    @NotBlank(message = "buyerId must not be blank")
-//    private String buyerId;
     @Size(min=20, max=500, message = "Description size must be between 20 and 500 characters.")
     private String description;
     @Min(value = 1, message = "rating min value is 1")
