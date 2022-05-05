@@ -100,7 +100,7 @@ _Você pode utilizar a API pela documentação [Swagger](http://localhost:8080/s
 
 - Jessica Kopps
   - branch: [requisito6/jkopps](https://github.com/mateusvictor/Projeto-Integrador-Meli/tree/requisito6/jkopps)
-  - user story: [Requisito6-UserStory-jkopps.docx](https://github.com/mateusvictor/Projeto-Integrador-Meli/blob/main/doc/Requisito6-UserStory-jkopps.docx)
+  - [user story](https://github.com/mateusvictor/Projeto-Integrador-Meli/blob/main/doc/Requisito6-UserStory-jkopps.docx)
   
 - Rodrigo Paczkovski
 - Vinícius Coelho
