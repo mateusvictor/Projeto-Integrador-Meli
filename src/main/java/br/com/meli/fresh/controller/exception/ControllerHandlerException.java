@@ -126,4 +126,10 @@ public class ControllerHandlerException {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(messageErrors);
     }
 
+    @ExceptionHandler(VideoNotFoundException.class)
+    public ResponseEntity<?> handleVideoNotFoundException(VideoNotFoundException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new ErrorDTO("VideoNotFoundException", e.getMessage()));
+    }
+
 }
