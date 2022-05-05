@@ -1,11 +1,12 @@
 package br.com.meli.fresh.unit;
 
+import br.com.meli.fresh.model.Batch;
 import br.com.meli.fresh.model.Product;
-import br.com.meli.fresh.model.Role;
 import br.com.meli.fresh.model.User;
 import br.com.meli.fresh.model.exception.ProductNotFoundException;
 import br.com.meli.fresh.model.exception.ProductsNotFoundException;
 import br.com.meli.fresh.model.filter.ProductFilter;
+import br.com.meli.fresh.repository.IBatchRepository;
 import br.com.meli.fresh.repository.IProductRepository;
 import br.com.meli.fresh.repository.IUserRepository;
 import br.com.meli.fresh.security.UserSpringSecurity;
@@ -23,10 +24,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.time.LocalDate;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -41,6 +41,9 @@ public class ProductServiceImplTest {
 
     @Mock
     private static IUserRepository userRepository;
+
+    @Mock
+    private IBatchRepository batchRepository;
 
     @InjectMocks
     private ProductServiceImpl productService;
@@ -89,6 +92,44 @@ public class ProductServiceImplTest {
     public void productsNotFoundExceptionSetup() {
         Pageable pageable = Pageable.unpaged();
         Mockito.when(productRepository.findAll(pageable)).thenThrow(ProductsNotFoundException.class);
+    }
+
+    public Page<Product> productDuoDateFilterSetup() {
+        // Creating new product with batches expired and not expired
+        Product p1 = new Product();
+        Batch b1p1 = new Batch();
+        Batch b2p1 = new Batch();
+
+        // Creating date expiration
+        b1p1.setDueDate(LocalDate.of(2022, 01, 01));
+        b2p1.setDueDate(LocalDate.of(2022, 12, 31));
+
+        // Vinculating batches on product and the contrariwise;
+        p1.setBatchList(new ArrayList<>());
+        p1.getBatchList().add(b1p1);
+        p1.getBatchList().add(b2p1);
+        b1p1.setProduct(p1);
+        b2p1.setProduct(p1);
+
+        // Same process for the second product
+        Product p2 = new Product();
+        Batch b1p2 = new Batch();
+        Batch b2p2 = new Batch();
+
+        b1p2.setDueDate(LocalDate.of(2022, 01, 02));
+        b2p2.setDueDate(LocalDate.of(2022, 12, 30));
+
+        p2.setBatchList(new ArrayList<>());
+        p2.getBatchList().add(b1p2);
+        p2.getBatchList().add(b2p2);
+        b1p2.setProduct(p2);
+        b2p2.setProduct(p2);
+
+        // Return the page with products
+        Page<Product> pages = new PageImpl<>(List.of(p1, p2));
+        Mockito.when(productRepository.findAll(Pageable.unpaged())).thenReturn(pages);
+
+        return pages;
     }
 
     public Page<Product> productListSetup() {
@@ -176,6 +217,36 @@ public class ProductServiceImplTest {
         filter.setCategory("RF");
         assertEquals(1, productService.getAll(filter, pageable).getSize());
 
+    }
+
+    @Test
+    public void testNotExpiredFilterProducts() {
+        this.fakeAuthenticatedUSer();
+        this.productDuoDateFilterSetup();
+        Pageable pageable = Pageable.unpaged();
+        ProductFilter filter = new ProductFilter();
+        filter.setDuo_date("0");
+
+        Page<Product> pagesNotExpired = productService.getAll(filter, pageable);
+        List<Product> productsNotExpired = pagesNotExpired.stream().collect(Collectors.toList());
+
+        assertEquals(1, productsNotExpired.get(0).getBatchList().size());
+        assertEquals(0, productsNotExpired.get(0).getBatchList().get(0).getDueDate().compareTo(LocalDate.of(2022, 12, 31)));
+    }
+
+    @Test
+    public void testExpiredFilterProducts() {
+        this.fakeAuthenticatedUSer();
+        this.productDuoDateFilterSetup();
+        Pageable pageable = Pageable.unpaged();
+        ProductFilter filter = new ProductFilter();
+
+        filter.setDuo_date("1");
+        Page<Product> pagesExpired = productService.getAll(filter, pageable);
+        List<Product> productsExpired = pagesExpired.stream().collect(Collectors.toList());
+
+        assertEquals(1, productsExpired.get(1).getBatchList().size());
+        assertEquals(0, productsExpired.get(1).getBatchList().get(0).getDueDate().compareTo(LocalDate.of(2022, 01, 02)));
     }
 
     @Test

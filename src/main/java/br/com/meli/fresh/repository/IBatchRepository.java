@@ -19,4 +19,7 @@ public interface IBatchRepository extends JpaRepository<Batch, String> {
 
     List<Batch> findAllByProduct_CategoryOrderByDueDateAsc(String category);
     List<Batch> findAllByProduct_CategoryAndDueDateBetweenOrderByDueDateAsc(String category, LocalDate startDate, LocalDate endDate);
+
+    // Find bacthes from one warehouse
+    List<Batch> findAllByInboundOrder_Section_Warehouse_Id(String id);
 }

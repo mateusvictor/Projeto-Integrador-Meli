@@ -72,7 +72,8 @@ public class ProductController {
 
     @ApiOperation(value = "This endpoint can get all products with several filters.")
     @ApiImplicitParams({
-            @ApiImplicitParam(name = "category", value = "With this query param, you can filter products by fresh (FS), refrigerated (RF) and frozen (FF).")
+            @ApiImplicitParam(name = "category", value = "With this query param, you can filter products by fresh (FS), refrigerated (RF) and frozen (FF)."),
+            @ApiImplicitParam(name = "duo_date", value = "With this query param, you can filter by expired or not expired batches: 0 for not expired and 1 for expired batches.")
     })
     @GetMapping
     public ResponseEntity<Page<ProductResponse>> getAllProducts(ProductFilter filter, Pageable pageable){

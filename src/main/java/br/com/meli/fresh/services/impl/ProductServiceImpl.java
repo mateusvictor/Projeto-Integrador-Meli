@@ -1,5 +1,6 @@
 package br.com.meli.fresh.services.impl;
 
+import br.com.meli.fresh.model.Batch;
 import br.com.meli.fresh.model.Product;
 import br.com.meli.fresh.model.Role;
 import br.com.meli.fresh.model.User;
@@ -19,6 +20,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -91,6 +93,20 @@ public class ProductServiceImpl implements ICrudService<Product> {
                 return false;
             }).collect(Collectors.toList());
             pages = new PageImpl<Product>(list);
+        }
+        if(filter.getDuo_date() != null) {
+            UserSpringSecurity u = auth.authenticated();
+            if(u == null && !u.hasRole(Role.ADMIN) || !u.hasRole(Role.WAREHOUSEMANAGER)) {
+                throw new UserNotAllowedException("User do not have authorization to use the duo date filter!");
+            }
+            pages.stream().forEach(p -> {
+                List<Batch> batchesFiltered = p.getBatchList().stream().filter(b -> {
+                    if(filter.getDuo_date().equals("0")) return b.getDueDate().isAfter(LocalDate.now());
+                    if(filter.getDuo_date().equals("1")) return b.getDueDate().isBefore(LocalDate.now());
+                    return false;
+                }).collect(Collectors.toList());
+                p.setBatchList(batchesFiltered);
+            });
         }
 
         if(pages.getTotalElements() == 0) throw new ProductsNotFoundException();

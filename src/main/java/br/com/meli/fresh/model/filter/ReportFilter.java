@@ -5,8 +5,5 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class ProductFilter {
-    private String category;
-    private String duo_date;
-
+public class ReportFilter {
 }
