@@ -25,17 +25,21 @@
 </div> 
 
 ### Sobre o requisito 6
-O requisito que foi elaborado tem como objetivo criar uma nova funcionalidade. A nova funcionalidade possibilita que um usuário (Comprador) possa enviar um vídeo onde utiliza o produto fresco em uma receita, assim, outros usuários podem visualizar e experienciar como é comprar um produto fresco pelo Mercado Livre, aumentando as chances de um usuário comprar um produto fresco pelo site.
+A elaboração deste requisito tem como objetivo criar uma nova funcionalidade que possibilite usuários logados a enviarem vídeos onde utilizam um produto fresco em suas receitas. A adição desses vídeos na página do produto, ajudará novos compradores a experienciar a compra de um produto fresco e com isso contribuir com na conversão de uma nova compra. 
+Palavra-chaves: vídeo, receita, produtos, conversão.
 
 ### User Story
-* [User Story](https://docs.google.com/document/d/1w9DbDnEYHePsB7N8NUx1aA5aLu2fzEsD/edit?usp=sharing&ouid=100295646713509136755&rtpof=true&sd=true)
+* [Link do User Story](https://docs.google.com/document/d/1w9DbDnEYHePsB7N8NUx1aA5aLu2fzEsD/edit?usp=sharing&ouid=100295646713509136755&rtpof=true&sd=true)
 
 ### Tabelas criadas
-* [Database Schema Video - V1.0](./screenshots/requisito-6-rodrigo.png)
+![Database Schema Video - V1.0](./screenshots/requisito-6-rodrigo.png)
 
 ### Swagger
-* [Rotas da funcionalidade](./screenshots/routes-requisito-6-rodrigo.png)
+![Database Schema Video - V1.0](./screenshots/routes-requisito-6-rodrigo.png)
 
+
+### Controller principal
+Controller principal desse requisito é `VideoController.java`
 
 ---
 
@@ -94,8 +98,6 @@ O objetivo deste projeto final é implementar uma API REST no âmbito do slogan 
     cd target
     java -jar desafio-spring-0.0.1-SNAPSHOT.jar
     ```
-
-
 
 ---
 ### Banco de Dados
