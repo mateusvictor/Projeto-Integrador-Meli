@@ -13,7 +13,7 @@ import java.util.UUID;
 public class WarehouseFactory {
     public static Warehouse getWarehouse(){
 
-        return new Warehouse(null, UUID.randomUUID().toString(), null, null);
+        return new Warehouse(null, "WAREHOUSE REPETIDO", null, null);
     }
 
     public static Warehouse createWarehouse(){

@@ -21,5 +21,5 @@ public class ReportResponse {
     private Double percentageOfRefrigeratedProducts;
     private Integer totalFrozenProducts;
     private Double percentageOfFrozenProducts;
-    private Integer totalNexToExpiredProducts;
+    private Integer totalNextToExpiredProducts;
 }
