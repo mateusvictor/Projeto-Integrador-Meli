@@ -27,7 +27,7 @@ public class BatchDueDateController {
     private final BatchDueDateMapper mapper;
 
     @GetMapping()
-    public ResponseEntity<?> getProductsDueDate(@RequestParam(required = false) String section, @RequestParam(required = false) Integer numberDays) {
+    public ResponseEntity<List<BatchProductResponse>> getProductsDueDate(@RequestParam(required = false) String section, @RequestParam(required = false) Integer numberDays) {
         Section sectionFound = sectionService.getByType(section);
         List<Batch> list = batchDueDateService.getProductsDueDate(sectionFound, numberDays);
 
@@ -37,7 +37,7 @@ public class BatchDueDateController {
     }
 
     @GetMapping("/list")
-    public ResponseEntity<?> getProductsDueDateByCategory(
+    public ResponseEntity<List<BatchProductResponse>> getProductsDueDateByCategory(
                         @RequestParam(required = false) String category,
                         @RequestParam(required = false) Integer numberDays,
                         @RequestParam(required = false) String sort
