@@ -22,7 +22,7 @@
 <br />
 <div align="center">
   <h2 align="center">Projeto Integrador Meli - Wave 5 - Grupo 5</h2>
-</div>
+</div> 
 
 ### Sobre o requisito 6
 O requisito que foi elaborado tem como objetivo criar uma nova funcionalidade. A nova funcionalidade possibilita que um usuário (Comprador) possa enviar um vídeo onde utiliza o produto fresco em uma receita, assim, outros usuários podem visualizar e experienciar como é comprar um produto fresco pelo Mercado Livre, aumentando as chances de um usuário comprar um produto fresco pelo site.

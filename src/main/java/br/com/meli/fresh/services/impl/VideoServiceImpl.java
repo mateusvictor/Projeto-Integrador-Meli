@@ -19,7 +19,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
 
 @Service
 @AllArgsConstructor
@@ -35,8 +34,8 @@ public class VideoServiceImpl implements IVideoService {
     @Transactional
     public Video createByBuyer(Video video) {
         UserSpringSecurity auth = validationUser(Role.BUYER);
-        User user = userRepository.findById(auth.getId()).orElseThrow(() -> new UserNotFoundException("User not found."));
-        Product product = productRepository.findById(video.getProduct().getId()).orElseThrow(() -> new ProductNotFoundException("Product not found."));
+        User user = userRepository.findById(auth.getId()).orElseThrow(() -> new UserNotFoundException(video.getUser().getId()));
+        Product product = productRepository.findById(video.getProduct().getId()).orElseThrow(() -> new ProductNotFoundException(video.getProduct().getId()));
 
         video.setProduct(product);
         video.setUser(user);

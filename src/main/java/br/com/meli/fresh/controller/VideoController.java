@@ -6,7 +6,6 @@ import br.com.meli.fresh.dto.request.VideoStatusRequest;
 import br.com.meli.fresh.dto.response.VideoResponse;
 import br.com.meli.fresh.model.Video;
 import br.com.meli.fresh.services.impl.VideoServiceImpl;
-import io.swagger.annotations.ApiImplicitParam;
 import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.data.domain.Page;
