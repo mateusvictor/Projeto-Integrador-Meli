@@ -43,7 +43,6 @@ public class VideoController {
     }
 
     @ApiOperation(value = "This endpoint get all approved videos for a product.")
-    @ApiImplicitParam(name = "status", value = "Filter approved videos by passing a true or false boolean value.")
     @GetMapping("product/{productId}")
     public ResponseEntity<Page<VideoResponse>> getAllByProduct(@PathVariable String productId,
                                                                Pageable pageable) {
@@ -54,7 +53,6 @@ public class VideoController {
     }
 
     @ApiOperation(value = "This endpoint get all videos from a seller.")
-    @ApiImplicitParam(name = "status", value = "Filter approved videos by passing a true or false boolean value.")
     @GetMapping()
     public ResponseEntity<Page<VideoResponse>> getAllBySeller(@RequestParam(required = false) Boolean status, Pageable pageable) {
         boolean approved = true;
