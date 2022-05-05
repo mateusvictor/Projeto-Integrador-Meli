@@ -33,13 +33,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/swagger-resources/**",
             "/swagger-ui/**",
             "/webjars/**",
-            "/swagger-ui.html/**",
-            BASE_URL+"/**"
+            "/swagger-ui.html/**"
+
 
     };
 
     public final static String[] PUBLIC_GET_URLS = {
-            BASE_URL + "/products/**"
+            BASE_URL + "/products/**",
+            BASE_URL + "/sale/**"
+
     };
 
     public static final String[] PUBLIC_POST_URLS = {

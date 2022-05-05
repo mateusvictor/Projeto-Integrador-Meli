@@ -5,16 +5,13 @@ import br.com.meli.fresh.model.Batch;
 import br.com.meli.fresh.model.Product;
 import br.com.meli.fresh.model.exception.SaleProductNotFoundException;
 import br.com.meli.fresh.repository.IBatchRepository;
-import br.com.meli.fresh.repository.IProductRepository;
 import br.com.meli.fresh.services.impl.SaleServiceImpl;
-import br.com.meli.fresh.services.impl.UserAuthenticatedService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -26,9 +23,6 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @ExtendWith(MockitoExtension.class)
 public class SaleServiceImplTest {
-
-    @Mock
-    private static IProductRepository productRepository;
 
     @Mock
     private IBatchRepository batchRepository;

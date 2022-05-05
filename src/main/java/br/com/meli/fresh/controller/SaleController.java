@@ -6,6 +6,7 @@ import br.com.meli.fresh.dto.response.SaleResponse;
 import br.com.meli.fresh.model.Batch;
 import br.com.meli.fresh.services.ISaleService;
 import br.com.meli.fresh.services.impl.SaleServiceImpl;
+import io.swagger.annotations.ApiOperation;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
@@ -24,12 +25,11 @@ import java.util.stream.Collectors;
 public class SaleController {
 
     private final SaleServiceImpl saleServiceImpl;
-    private final ISaleService iSaleService;
     private final SaleMapper saleMapper;
 
+    @ApiOperation(value = "This endpoint can filter sale products.")
     @GetMapping()
-    public ResponseEntity<?> getAllProductDueDate(@RequestParam(required = false) String section,
-                                               @RequestParam(required = false) Integer numberWeeks){
+    public ResponseEntity<?> getAllProductDueDate(){
         List<Batch> batchList = saleServiceImpl.getAllProductsDueDate();
         List<SaleResponse> result = batchList.stream().map(batch -> saleMapper.toResponseObject(batch)).collect(Collectors.toList());
 

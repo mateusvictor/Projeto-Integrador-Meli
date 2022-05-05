@@ -21,6 +21,17 @@ public class BatchFactory {
         return batch;
     }
 
+    public static Batch createBatch() {
+        Batch batch = new Batch();
+        batch.setInitialQuantity(1);
+        batch.setCurrentQuantity(10);
+        batch.setManufacturingDateTime(LocalDateTime.now());
+        batch.setDueDate(LocalDate.now().plusMonths(1));
+        batch.setVolume(10f);
+        batch.setProduct(new Product());
+        return batch;
+    }
+
     public static Batch createBatch(Product product, InboundOrder inboundOrder, int currentQuantity, LocalDate dueDate) {
         Batch batch = createBatch(product, inboundOrder);
         batch.setCurrentQuantity(currentQuantity);

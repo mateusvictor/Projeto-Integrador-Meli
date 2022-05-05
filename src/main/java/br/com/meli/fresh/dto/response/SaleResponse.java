@@ -15,7 +15,7 @@ import java.time.LocalDate;
 public class SaleResponse {
     private String productId;
     private String name;
-    private LocalDate dueDate;
+    private String dueDate;
     private BigDecimal price;
     private int quantity;
     private String batchId;

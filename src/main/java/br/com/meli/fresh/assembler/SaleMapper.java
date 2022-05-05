@@ -14,7 +14,7 @@ public class SaleMapper {
         SaleResponse response = SaleResponse.builder()
                 .productId(entity.getProduct().getId())
                 .name(entity.getProduct().getName())
-                .dueDate(entity.getDueDate())
+                .dueDate(entity.getDueDate().toString())
                 .price(entity.getProduct().getPrice())
                 .quantity(entity.getCurrentQuantity())
                 .batchId(entity.getId())
