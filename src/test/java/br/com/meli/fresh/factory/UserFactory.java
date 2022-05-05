@@ -4,12 +4,15 @@ import br.com.meli.fresh.model.User;
 import br.com.meli.fresh.security.UserSpringSecurity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 import java.util.Collection;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 public class UserFactory {
+
+
     public static User getUserEntityA(){
         User user = new User(
                 "user1",
@@ -28,6 +31,13 @@ public class UserFactory {
                 "joana@gmail.com",
                 "1234",
                 Set.of(0, 1, 2, 3));
+
+        return user;
+    }
+
+    public static User getUserEntityC(String email){
+        BCryptPasswordEncoder pe = new BCryptPasswordEncoder();
+        User user = User.builder().name("testecomment").email(email).password(pe.encode("123")).roles(Set.of(0, 1, 2, 3)).build();
 
         return user;
     }

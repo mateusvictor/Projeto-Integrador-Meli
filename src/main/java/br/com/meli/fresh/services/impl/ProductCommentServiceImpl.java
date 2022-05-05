@@ -5,8 +5,10 @@ import br.com.meli.fresh.model.ProductComment;
 import br.com.meli.fresh.model.Role;
 import br.com.meli.fresh.model.exception.ProductNotFoundException;
 import br.com.meli.fresh.model.exception.UserNotAllowedException;
+import br.com.meli.fresh.model.exception.UserNotFoundException;
 import br.com.meli.fresh.repository.IProductCommentRepository;
 import br.com.meli.fresh.repository.IProductRepository;
+import br.com.meli.fresh.repository.IUserRepository;
 import br.com.meli.fresh.security.UserSpringSecurity;
 import br.com.meli.fresh.services.IProductCommentService;
 import br.com.meli.fresh.services.exception.CommentNotFoundException;
@@ -23,12 +25,14 @@ public class ProductCommentServiceImpl implements IProductCommentService<Product
 
     private final IProductCommentRepository commentRepository;
     private final IProductRepository productRepository;
+    private final IUserRepository userRepository;
     private final UserAuthenticatedService authService;
 
     @Override
     public ProductComment create(ProductComment productComment, String idProduto) {
-        this.validateUser();
+        String userId = this.validateUser();
         Product product = this.findProduct(idProduto);
+        productComment.setBuyer(this.userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("User not found")));
         productComment.setProduct(product);
         productComment.setCommentDateTime(LocalDateTime.now());
         return this.commentRepository.save(productComment);
@@ -63,11 +67,12 @@ public class ProductCommentServiceImpl implements IProductCommentService<Product
         }
     }
 
-    private void validateUser() {
+    private String validateUser() {
         UserSpringSecurity userClient = authService.authenticated();
         if(userClient == null || (!userClient.hasRole(Role.ADMIN) && !userClient.hasRole(Role.BUYER))){
             throw new UserNotAllowedException("User not allowed!");
         }
+        return userClient.getId();
     }
 
     private Product findProduct(String idProduto) {

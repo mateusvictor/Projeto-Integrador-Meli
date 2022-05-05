@@ -1,6 +1,7 @@
 package br.com.meli.fresh.factory;
 
 import br.com.meli.fresh.model.Product;
+import br.com.meli.fresh.model.User;
 
 import java.math.BigDecimal;
 import java.util.List;
@@ -35,9 +36,9 @@ public class ProductFactory {
                 null, UserFactory.getUserEntityA(),null, null, true);
     }
 
-    public static Product getFrozenProductB(){
-        return new Product(null, "Pao de Queijo", "congelado", -30F, 30F, 1F, null, UserFactory.getUserEntityA(),
-                null, null, true);
+    public static Product getProductComment(User user){
+        return new Product(null, "Pao de Queijo", "congelado", -30F, 30F, 1F, null,
+                user, null, null, true);
     }
 
     public static Product getProductCommented(){

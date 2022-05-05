@@ -13,8 +13,10 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -29,8 +31,13 @@ public class ProductCommentsController {
     private final ProductServiceImpl productService;
 
     @PostMapping()
-    public ResponseEntity<ProductCommentResponseDTO> createComment(@PathVariable String id, @RequestBody @Valid ProductCommentRequestDTO requestDTO){
-        return ResponseEntity.ok(this.mapper.toResponseObject(this.commentService.create(this.mapper.toDomainObject(requestDTO), id)));
+    public ResponseEntity<ProductCommentResponseDTO> createComment(@PathVariable String id, @RequestBody @Valid ProductCommentRequestDTO requestDTO, UriComponentsBuilder uriBuilder){
+        ProductComment comment = this.commentService.create(this.mapper.toDomainObject(requestDTO), id);
+        URI uri = uriBuilder
+                .path("api/v1/fresh-products/products/{id}/comment/{idComment}")
+                .buildAndExpand(id,comment.getId())
+                .toUri();
+        return ResponseEntity.created(uri).body(this.mapper.toResponseObject(comment));
     }
 
     @GetMapping()
