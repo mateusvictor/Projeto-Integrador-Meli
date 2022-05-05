@@ -87,7 +87,7 @@ O objetivo deste projeto final é implementar uma API REST no âmbito do slogan 
    ```
 2. Instale Maven packages
    ```sh
-   cd Desafio_Spring/desafio-spring
+   cd Projeto-Integrador-Meli
    mvn install
    ```
 3. Crie o pacote target
