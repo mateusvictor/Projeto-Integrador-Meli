@@ -31,7 +31,6 @@ public class ProductCommentServiceImpl implements IProductCommentService<Product
         Product product = this.findProduct(idProduto);
         productComment.setProduct(product);
         productComment.setCommentDateTime(LocalDateTime.now());
-        productComment.setId(null);
         return this.commentRepository.save(productComment);
     }
 

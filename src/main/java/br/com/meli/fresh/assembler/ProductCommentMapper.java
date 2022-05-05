@@ -13,7 +13,9 @@ public class ProductCommentMapper {
     private final ModelMapper modelMapper;
 
     public ProductComment toDomainObject(ProductCommentRequestDTO dto) {
-        return modelMapper.map(dto, ProductComment.class);
+        ProductComment comment =  modelMapper.map(dto, ProductComment.class);
+        comment.setId(null);
+        return comment;
     }
 
     public ProductCommentResponseDTO toResponseObject(ProductComment entity) {

@@ -3,6 +3,7 @@ package br.com.meli.fresh.factory;
 import br.com.meli.fresh.model.Product;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 public class ProductFactory {
 
@@ -20,19 +21,30 @@ public class ProductFactory {
     }
 
     public static Product getFreshProductA(){
-        return null;//return new Product("product1", "Bolacha Trakinas", "fresco", 5F, 30F, 0.25F, null, null, null, true);
+        return new Product("product1", "Bolacha Trakinas", "fresco", 5F,
+                30F, 0.25F, null, UserFactory.getUserEntityA(), null, null, true );
     }
 
     public static Product getFreshProductB(){
-        return null;//new Product("product2", "Batata Doce", "fresco", 10F, 30F, 1F, null, null, null, true);
+        return new Product("product2", "Batata Doce", "fresco", 10F, 30F, 1F,
+                null, UserFactory.getUserEntityB(), null,null, true);
     }
 
     public static Product getFrozenProductA(){
-        return null;//new Product("product3", "Pizza Quatro Queijos", "congelado", -20F, 30F, 0.25F, null, null, null, true);
+        return new Product("product3", "Pizza Quatro Queijos", "congelado", -20F, 30F, 0.25F,
+                null, UserFactory.getUserEntityA(),null, null, true);
     }
 
     public static Product getFrozenProductB(){
-        return null;//new Product(null, "Pao de Queijo", "congelado", -30F, 30F, 1F, null, null, null, true);
+        return new Product(null, "Pao de Queijo", "congelado", -30F, 30F, 1F, null, UserFactory.getUserEntityA(),
+                null, null, true);
+    }
+
+    public static Product getProductCommented(){
+        Product product = getFreshProductA();
+        product.setComments(List.of(ProductCommentFactory.createCommentA(), ProductCommentFactory.createCommentB()));
+        return product;
+
     }
 
 
