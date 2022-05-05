@@ -29,7 +29,7 @@ A elaboração deste requisito tem como objetivo criar uma nova funcionalidade q
 Palavra-chaves: vídeo, receita, produtos, conversão.
 
 ### User Story
-![Requisito 6 - Report](./screenshots/requisito-6-report.pdf)
+[User Story](./screenshots/requisito-6-report.pdf)
 
 ### Tabelas criadas
 ![Database Schema Video - V1.0](./screenshots/der-db-gustavo.png)
