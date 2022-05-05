@@ -116,8 +116,49 @@ public class UserFactory {
         return User.builder().name("teste").email("teste@teste2.com").password("aaaa").roles(Set.of(2)).build();
     }
 
+    // Cenarios de testes Users
+    public static UserRequestDTO createUserRequestDto() {
+        return UserRequestDTO.builder().name("Maria").email("teste123@email.com").password("password").roles(Set.of(1)).build();
+    }
 
+    public static User createUser() {
+        return new User("1", "Cirilo", "cirilo@email.com", "password", Set.of(0));
+    }
 
+    public static Page<User> createPageUser() {
+        List<User> list = new ArrayList<>();
+        User UserA = new User("1", "Cirilo", "Cirilo@email.com", "password", Set.of(0));
+        User UserB = new User("2", "Maria Joaquina", "mariajoaquina@email.com", "password", Set.of(0));
+        User UserC = new User("3", "Jaime", "Jaime@email.com", "password", Set.of(0));
+        list.add(UserA);
+        list.add(UserB);
+        list.add(UserC);
+        return new PageImpl<>(list);
+    }
+
+    public static User createUserA() {
+        return new User("1", "Joao", "joazinho@email.com", "password", Set.of(1));
+    }
+
+    public static User createUserB() {
+        return new User("1", "Bruce", "bruce@email.com", "password", Set.of(0));
+    }
+
+    public static User createUserC() {
+        return new User("1", "Peter", "peter@email.com", "password", Set.of(0));
+    }
+
+    public static User createUserD() {
+        return new User("1", "Caio", "caio@email.com", "password", Set.of(0));
+    }
+
+    public static UserRequestDTO createUserRequestDtoToThrow() {
+        return UserRequestDTO.builder().name("Maria").email("teste@email.com").password("password").roles(Set.of(1)).build();
+    }
+
+    public static UserRequestDTO createUserToUpdateRequestDto() {
+        return UserRequestDTO.builder().name("Peach").email("peach@email.com").password("password").roles(Set.of(0)).build();
+    }
 }
 
 
