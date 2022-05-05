@@ -82,7 +82,7 @@ O objetivo deste projeto final é implementar uma API REST no âmbito do slogan 
     ```
 
 ---
-## Documentação
+### Documentação
 
 _Você pode utilizar a API pela documentação [Swagger](http://localhost:8080/swagger-ui.html)._
 
@@ -94,7 +94,7 @@ _Você pode utilizar a API pela documentação [Swagger](http://localhost:8080/s
 ![Diagrama de entidade de relacionamento (DER)](./screenshots/db-schema-v2.png)
 
 --- 
-###Requisito 6 (individual)
+### Requisito 6 (individual)
 
 - Gustavo Barretto
 
