@@ -17,7 +17,7 @@ public class SaleServiceImpl implements ISaleService {
     private final IBatchRepository batchRepository;
 
     //Verify if the product due date have 3 weeks or less
-    //Apply the discount based on the weeks left (more closer to the due date, more the discount)
+    //Apply the discount based on the weeks left (the more closer to the due date, the more the discount)
     @Override
     public List<Batch> getAllProductsDueDate() {
         List<Batch> batches;

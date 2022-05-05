@@ -1,6 +1,5 @@
 package br.com.meli.fresh.assembler;
 
-import br.com.meli.fresh.dto.response.BatchProductResponse;
 import br.com.meli.fresh.dto.response.SaleResponse;
 import br.com.meli.fresh.model.Batch;
 import lombok.AllArgsConstructor;
