@@ -1,0 +1,373 @@
+{
+	"info": {
+		"_postman_id": "a621d4d6-1414-46c3-9bf4-179ee347c8fa",
+		"name": "Videos",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Super User",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"mateus\",\n    \"email\": \"mateus@gmail.com\",\n    \"password\": \"1234\",\n    \"roles\": [0,1,2,3]\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/fresh-products/users",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"fresh-products",
+								"users"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Login",
+			"item": [
+				{
+					"name": "Login",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"mateus@gmail.com\",\n    \"password\": \"1234\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/login",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Create",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXRldXNAZ21haWwuY29tIiwiZXhwIjoxNjUxNzgyMjAyfQ.3KLE_cKKU3hNJjOG9Pu5DJ830aVL6dqWIIFbQnoVSqKQ-G607BokhR_rvvFlmrqxnGWiwc65EZyVbVkxZSgGNQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"Peixe\",\n    \"category\": \"frozen\",\n    \"minTemperature\": -1,\n    \"maxTemperature\": 5,\n    \"weight\": 5,\n    \"price\": 3.50\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/fresh-products/products",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"fresh-products",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get products",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/fresh-products/products",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"fresh-products",
+								"products"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get product",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/fresh-products/products/d0ba6af5-ace1-42b0-a3e5-be711cc84909",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"fresh-products",
+								"products",
+								"d0ba6af5-ace1-42b0-a3e5-be711cc84909"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Video",
+			"item": [
+				{
+					"name": "Create video",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXRldXNAZ21haWwuY29tIiwiZXhwIjoxNjUxNzgyMjAyfQ.3KLE_cKKU3hNJjOG9Pu5DJ830aVL6dqWIIFbQnoVSqKQ-G607BokhR_rvvFlmrqxnGWiwc65EZyVbVkxZSgGNQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"Novo video 1000\",\n    \"url\": \"http://www.youtube.com\",\n    \"length\": 360,\n    \"productId\": \"361545a3-4856-4b3a-abe6-41845622a230\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/fresh-products/videos",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"fresh-products",
+								"videos"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get video by product",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXRldXNAZ21haWwuY29tIiwiZXhwIjoxNjUxNzE5ODI1fQ.HGcWOpzKeWE_aBRL_gYKRFOshiILc2dRzSNJWzjy7kkB8Mq7GJntOKGmd0p0RJu3wDfr8PA-EXPs3DjS2wb0lw",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "status",
+								"value": "true",
+								"type": "default"
+							},
+							{
+								"key": "",
+								"value": "",
+								"type": "default"
+							}
+						],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/fresh-products/videos/product/39b72dcc-243f-4015-9e15-5b80ddaf38c1",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"fresh-products",
+								"videos",
+								"product",
+								"39b72dcc-243f-4015-9e15-5b80ddaf38c1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get video by Seller",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXRldXNAZ21haWwuY29tIiwiZXhwIjoxNjUxNzgyMjAyfQ.3KLE_cKKU3hNJjOG9Pu5DJ830aVL6dqWIIFbQnoVSqKQ-G607BokhR_rvvFlmrqxnGWiwc65EZyVbVkxZSgGNQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "http://localhost:8080/api/v1/fresh-products/videos/?status=false",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"fresh-products",
+								"videos",
+								""
+							],
+							"query": [
+								{
+									"key": "status",
+									"value": "false"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update status to video",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzUxMiJ9.eyJzdWIiOiJtYXRldXNAZ21haWwuY29tIiwiZXhwIjoxNjUxNzIwMTA3fQ.TZ3nOObVUJcMieyk3TEifl0xa2Y2NIqNKSjUuT3f0qxeovO5bZ3Id40sZtVMZhTMjxAhwl9mY2IAYoxRhBLeQQ",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/fresh-products/videos/f9c3ba88-a639-4316-b5fd-1c331ad3cb90",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"fresh-products",
+								"videos",
+								"f9c3ba88-a639-4316-b5fd-1c331ad3cb90"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete video",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"status\": true\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "http://localhost:8080/api/v1/fresh-products/videos/ddc8a23f-9113-4ad2-8f74-f935b03acb2b",
+							"protocol": "http",
+							"host": [
+								"localhost"
+							],
+							"port": "8080",
+							"path": [
+								"api",
+								"v1",
+								"fresh-products",
+								"videos",
+								"ddc8a23f-9113-4ad2-8f74-f935b03acb2b"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

@@ -28,8 +28,13 @@
 A elaboração deste requisito tem como objetivo criar uma nova funcionalidade que possibilite usuários logados a enviarem vídeos onde utilizam um produto fresco em suas receitas. A adição desses vídeos na página do produto, ajudará novos compradores a experienciar a compra de um produto fresco e com isso contribuir com na conversão de uma nova compra. 
 Palavra-chaves: vídeo, receita, produtos, conversão.
 
-### User Story
-* [Link do User Story](https://docs.google.com/document/d/1w9DbDnEYHePsB7N8NUx1aA5aLu2fzEsD/edit?usp=sharing&ouid=100295646713509136755&rtpof=true&sd=true)
+### Coverage
+![Coverage Controller](./screenshots/controller-coverage.png)
+![Coverage Service](./screenshots/service-coverage.png)
+
+### Links
+* [Link do User Story](./screenshots/user-story.pdf)
+* [Collections Postman](./doc/postman.json)
 
 ### Tabelas criadas
 ![Database Schema Video - V1.0](./screenshots/requisito-6-rodrigo.png)
@@ -40,6 +45,9 @@ Palavra-chaves: vídeo, receita, produtos, conversão.
 
 ### Controller principal
 Controller principal desse requisito é `VideoController.java`
+
+### Observações
+É necessário um usuário do tipo Buyer e Seller, estar autenticado e logado, além de um produto cadastrado.
 
 ---
 
@@ -82,7 +90,7 @@ O objetivo deste projeto final é implementar uma API REST no âmbito do slogan 
 
 1. Clone o repo
    ```sh
-   git clone https://github.com/luizfelipers19/Desafio_Spring.git
+   git clone https://github.com/mateusvictor/Projeto-Integrador-Meli/tree/requisito6/rodrigo
    ```
 2. Instale Maven packages
    ```sh
