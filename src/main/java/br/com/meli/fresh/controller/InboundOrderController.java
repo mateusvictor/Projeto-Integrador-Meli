@@ -35,6 +35,8 @@ public class InboundOrderController {
     private final InboundOrderMapper orderMapper;
     private final BatchMapper batchMapper;
 
+    private final String BASE_URL = "/api/v1/fresh-products/inboundorder";
+
     @ApiOperation(value = "This endpoint creates an inbound order thats supply all warehouse of the storage app.")
     @PostMapping()
     public ResponseEntity<InboundOrderResponse> createOrder(@Valid @RequestBody InboundOrderRequest inboundOrderRequest,
@@ -43,7 +45,7 @@ public class InboundOrderController {
         inboundOrder = inboundOrderService.create(inboundOrder);
 
         URI uri = uriBuilder
-                .path("/{id}")
+                .path(BASE_URL + "/{id}")
                 .buildAndExpand(inboundOrder.getId())
                 .toUri();
 
@@ -60,7 +62,7 @@ public class InboundOrderController {
         inboundOrder = inboundOrderService.update(id, inboundOrder);
 
         URI uri = uriBuilder
-                .path("/{id}")
+                .path(BASE_URL + "/{id}")
                 .buildAndExpand(inboundOrder.getId())
                 .toUri();
 
