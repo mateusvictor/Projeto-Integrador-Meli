@@ -81,19 +81,32 @@ O objetivo deste projeto final é implementar uma API REST no âmbito do slogan 
     java -jar desafio-spring-0.0.1-SNAPSHOT.jar
     ```
 
+---
+### Documentação
 
+_Você pode utilizar a API pela documentação [Swagger](http://localhost:8080/swagger-ui.html)._
 
 ---
 ### Banco de Dados
 
-* [Database Schema - V2.0](./screenshots/db-schema-v2.png)
 * Diagrama de entidade de relacionamento (DER)
 
 ![Diagrama de entidade de relacionamento (DER)](./screenshots/db-schema-v2.png)
 
-## Documentação
+--- 
+### Requisito 6 (individual)
 
-_Você pode utilizar a API pela documentação [Swagger](http://localhost:8080/swagger-ui.html)._
+- Gustavo Barretto
+
+- Jessica Kopps
+  - branch: [requisito6/jkopps](https://github.com/mateusvictor/Projeto-Integrador-Meli/tree/requisito6/jkopps)
+  - [user story](https://github.com/mateusvictor/Projeto-Integrador-Meli/blob/main/doc/Requisito6-UserStory-jkopps.docx)
+  
+- Rodrigo Paczkovski
+- Vinícius Coelho
+- Mateus Silva
+- Caio Motta
+- Luiz Felipe Rosa
 
 
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>
