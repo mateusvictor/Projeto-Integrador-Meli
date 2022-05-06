@@ -22,8 +22,46 @@
 <br />
 <div align="center">
   <h2 align="center">Projeto Integrador Meli - Wave 5 - Grupo 5</h2>
-</div>
+</div> 
 
+### Sobre o requisito 6
+A elaboração deste requisito tem como objetivo criar uma nova funcionalidade que possibilite o envio de notificações via email, através de um outro microserviço, para novos compradores e vendedores no momento do cadastro de suas conta, e também quando realizarem compras em nosso marketplace. 
+
+Palavras-chave: email, notificação, microserviços, API, usuário, compra, cadastro.
+
+<!---
+### Coverage
+![Coverage Controller](./screenshots/controller-coverage.png)
+![Coverage Service](./screenshots/service-coverage.png)
+-->
+
+## Atenção!
+### Para executar esse requisito, é necessário clonar a API externa de emails que se encontra em:
+- https://github.com/luizfelipers19/PomboCorreioAPI
+
+### Links
+* [Link do User Story](./doc/user-story.pdf)
+* [Collections Postman](./doc/postman.json)
+
+
+<!---
+### Tabelas criadas
+![Database Schema Video - V1.0](./screenshots/requisito-6-rodrigo.png)
+
+### Swagger
+![Database Schema Video - V1.0](./screenshots/routes-requisito-6-rodrigo.png)
+-->
+
+### Controller principal
+O controller principal desse requisito é `EmailController.java`, encontrado no projeto externo linkado anteriormente. Esse controller será acessado através de requisições partindo da nossa API principal (deste repositório em que estamos agora).
+
+### Observações
+- Para realizar a notificação via email para um cadastro de usuário, é necessário que ambas as API's estejam rodando (seja localmente, ou deployadas no ambiente de sua escolha).
+- Confira se dentro da pasta /Connectors, a classe RestClient está com as informações corretas da API de notificação (endereços, portas e endpoints corretos).
+- Os arquivos de testes unitários e de integração foram criados na API externa. Logo, essa API de marketplace não terão testes que levem em consideração o envio de emails.
+- O projeto de notificação externa será aprimorado com o tempo, uma vez que no estado atual, não realiza verificações de segurança. Além de melhorias no código, será implementado o uso de um serviço
+
+---
 
 <!-- ABOUT THE PROJECT -->
 ### Sobre o projeto
@@ -64,11 +102,12 @@ O objetivo deste projeto final é implementar uma API REST no âmbito do slogan 
 
 1. Clone o repo
    ```sh
-   git clone https://github.com/luizfelipers19/Desafio_Spring.git
+   git clone https://github.com/mateusvictor/Projeto-Integrador-Meli.git
+   git checkout requisito6/rodrigo
    ```
 2. Instale Maven packages
    ```sh
-   cd Desafio_Spring/desafio-spring
+   cd Projeto-Integrador-Meli
    mvn install
    ```
 3. Crie o pacote target
@@ -81,8 +120,6 @@ O objetivo deste projeto final é implementar uma API REST no âmbito do slogan 
     java -jar desafio-spring-0.0.1-SNAPSHOT.jar
     ```
 
-
-
 ---
 ### Banco de Dados
 
@@ -90,10 +127,6 @@ O objetivo deste projeto final é implementar uma API REST no âmbito do slogan 
 * Diagrama de entidade de relacionamento (DER)
 
 ![Diagrama de entidade de relacionamento (DER)](./screenshots/db-schema-v2.png)
-
-## Documentação
-
-_Você pode utilizar a API pela documentação [Swagger](http://localhost:8080/swagger-ui.html)._
 
 
 <p align="right">(<a href="#top">voltar ao topo</a>)</p>
