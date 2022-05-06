@@ -33,7 +33,7 @@ Palavra-chaves: vídeo, receita, produtos, conversão.
 ![Coverage Service](./screenshots/service-coverage.png)
 
 ### Links
-* [Link do User Story](./screenshots/user-story.pdf)
+* [Link do User Story](./doc/user-story.pdf)
 * [Collections Postman](./doc/postman.json)
 
 ### Tabelas criadas
@@ -90,11 +90,12 @@ O objetivo deste projeto final é implementar uma API REST no âmbito do slogan 
 
 1. Clone o repo
    ```sh
-   git clone https://github.com/mateusvictor/Projeto-Integrador-Meli/tree/requisito6/rodrigo
+   git clone https://github.com/mateusvictor/Projeto-Integrador-Meli.git
+   git checkout requisito6/rodrigo
    ```
 2. Instale Maven packages
    ```sh
-   cd Desafio_Spring/desafio-spring
+   cd Projeto-Integrador-Meli
    mvn install
    ```
 3. Crie o pacote target
