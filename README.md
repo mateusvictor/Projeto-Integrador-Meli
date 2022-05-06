@@ -3,7 +3,7 @@
 ---
 ### Objetivo do requisito
 
-O objetivo deste requisito é filtrar os produtos que estão em promoção, que irão vencer três e uma semanas.
+O objetivo deste requisito é filtrar os produtos que estão em promoção, que irão vencer entre três e uma semana.
 
 Feature que gostaria de ter implementado: adicionar esses produtos ao carrinho.
 
