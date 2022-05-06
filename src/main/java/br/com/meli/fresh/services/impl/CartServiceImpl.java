@@ -1,5 +1,6 @@
 package br.com.meli.fresh.services.impl;
 
+import br.com.meli.fresh.connectors.RestClient;
 import br.com.meli.fresh.model.*;
 import br.com.meli.fresh.model.exception.*;
 import br.com.meli.fresh.repository.IBatchRepository;
@@ -29,6 +30,7 @@ public class CartServiceImpl implements ICartService {
     private final IUserRepository buyerRepository;
     private final IBatchRepository batchRepository;
     private final UserAuthenticatedService userAuthenticatedService;
+
 
 
     @Override
@@ -63,7 +65,7 @@ public class CartServiceImpl implements ICartService {
     @Override
     @Transactional()
     public Cart update(String id) {
-       validationUser();
+        UserSpringSecurity auth = validationUser();
 
         Cart cart = cartRepository.findById(id)
                 .orElseThrow(() -> new CartNotFoundException("Cart not found."));
@@ -75,6 +77,8 @@ public class CartServiceImpl implements ICartService {
         cart.getItems().forEach(cartItem -> decreaseTheQuantityOfBatchProducts(cartItem.getProduct().getId(), cartItem.getQuantity()));
 
         cart.setCartStatus(CartStatus.CLOSE);
+        User user = buyerRepository.findByEmail(auth.getEmail());
+        RestClient.NotifyBuyAction(user);
         return cartRepository.save(cart);
     }
 

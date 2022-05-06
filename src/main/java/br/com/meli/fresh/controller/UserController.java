@@ -1,8 +1,10 @@
 package br.com.meli.fresh.controller;
 
 import br.com.meli.fresh.assembler.UserMapper;
+import br.com.meli.fresh.connectors.RestClient;
 import br.com.meli.fresh.dto.request.UserRequestDTO;
 import br.com.meli.fresh.dto.response.UserResponseDTO;
+import br.com.meli.fresh.model.Role;
 import br.com.meli.fresh.model.User;
 import br.com.meli.fresh.services.impl.UserServiceImpl;
 import io.swagger.annotations.ApiOperation;
@@ -12,6 +14,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.net.URI;
@@ -27,6 +30,7 @@ public class UserController {
     private final UserMapper mapper;
     private final UserServiceImpl service;
 
+
         @ApiOperation(value = "This endpoint can create a user for the api. The user can be 0, for Seller, 1 for Buyer, 2 for Warehouse Manager and 3 for Admin.")
         @PostMapping()
         public ResponseEntity<UserResponseDTO> create(@RequestBody UserRequestDTO request, UriComponentsBuilder uriBuilder){
@@ -36,7 +40,17 @@ public class UserController {
                     .path("/{id}")
                     .buildAndExpand(user.getId())
                     .toUri();
-            return ResponseEntity.created(uri).body(this.mapper.toResponseObject(user));
+
+            UserResponseDTO userResponseDto = this.mapper.toResponseObject(user);
+            if(user.getRoles().contains(Role.BUYER)){
+                RestClient.NotifyBuyerRegistration(userResponseDto);
+            }
+            if(user.getRoles().contains(Role.SELLER)){
+                RestClient.NotifySellerRegistration(userResponseDto);
+            }
+
+
+            return ResponseEntity.created(uri).body(userResponseDto);
         }
 
         @ApiOperation(value = "This endpoint can get all users.")
