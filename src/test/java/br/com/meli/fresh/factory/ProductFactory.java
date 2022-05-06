@@ -23,22 +23,22 @@ public class ProductFactory {
 
     public static Product getFreshProductA(){
         return new Product("product1", "Bolacha Trakinas", "fresco", 5F,
-                30F, 0.25F, null, UserFactory.getUserEntityA(), null, null, true );
+                30F, 0.25F, null, UserFactory.getUserEntityA(), null, null, true, null);
     }
 
     public static Product getFreshProductB(){
         return new Product("product2", "Batata Doce", "fresco", 10F, 30F, 1F,
-                null, UserFactory.getUserEntityB(), null,null, true);
+                null, UserFactory.getUserEntityB(), null,null, true, null);
     }
 
     public static Product getFrozenProductA(){
         return new Product("product3", "Pizza Quatro Queijos", "congelado", -20F, 30F, 0.25F,
-                null, UserFactory.getUserEntityA(),null, null, true);
+                null, UserFactory.getUserEntityA(),null, null, true, null);
     }
 
     public static Product getProductComment(User user){
         return new Product(null, "Pao de Queijo", "congelado", -30F, 30F, 1F, null,
-                user, null, null, true);
+                user, null, null, true, null);
     }
 
     public static Product getProductCommented(){

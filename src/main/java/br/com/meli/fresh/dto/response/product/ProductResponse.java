@@ -20,4 +20,5 @@ public class ProductResponse {
     private UserResponseDTO seller;
     private List<ProductBatchResponse> batchList;
     private List<ProductCommentNestedResponseDTO> comments;
+    private Float rating;
 }

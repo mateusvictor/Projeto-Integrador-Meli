@@ -40,4 +40,5 @@ public class Product {
     private List<ProductComment> comments;
 
     private Boolean isActive = true;
+    private Float finalRating;
 }

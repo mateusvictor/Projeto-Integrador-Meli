@@ -18,6 +18,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @Service
@@ -34,10 +35,19 @@ public class ProductCommentServiceImpl implements IProductCommentService<Product
         Product product = this.findProduct(idProduto);
         productComment.setBuyer(this.userRepository.findById(userId).orElseThrow(()-> new UserNotFoundException("User not found")));
         productComment.setProduct(product);
+        product.getComments().add(productComment);
+        product.setFinalRating(caucMediaRating(productComment));
+        ProductComment productCommentCreate = this.commentRepository.save(productComment);
+        productRepository.save(product);
         productComment.setCommentDateTime(LocalDateTime.now());
-        return this.commentRepository.save(productComment);
+        return productCommentCreate;
     }
 
+    private Float caucMediaRating (ProductComment productComment){
+        Integer totalComment = productComment.getProduct().getComments().size();
+        Integer totalRating = productComment.getProduct().getComments().stream().reduce(0,(a,b)-> a + b.getRating(), Integer::sum);
+        return totalRating.floatValue() / totalComment.floatValue();
+    }
 
     @Override
     public ProductComment getById(String idProduto, String idComment) {
