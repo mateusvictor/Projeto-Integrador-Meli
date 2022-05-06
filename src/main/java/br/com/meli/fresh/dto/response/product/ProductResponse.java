@@ -1,5 +1,6 @@
 package br.com.meli.fresh.dto.response.product;
 
+import br.com.meli.fresh.dto.response.UserResponseDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -16,5 +17,6 @@ public class ProductResponse {
     private Float maxTemperature;
     private Float weight;
     private BigDecimal price;
+    private UserResponseDTO seller;
     private List<ProductBatchResponse> batchList;
 }
