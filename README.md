@@ -29,12 +29,13 @@ A elaboração deste requisito tem como objetivo criar uma nova funcionalidade q
 Palavra-chaves: vídeo, receita, produtos, conversão.
 
 ### User Story
-* [Link do User Story](https://docs.google.com/document/d/1w9DbDnEYHePsB7N8NUx1aA5aLu2fzEsD/edit?usp=sharing&ouid=100295646713509136755&rtpof=true&sd=true)
+[Link do User Story](./requisito6-us/Requisito6-Caio-US.pdf)
 
 ### Tabelas criadas
 ![Database Schema Video - V1.0](./screenshots/db-schema-requisito-6.png)
 
 ### Swagger
+/swagger-ui.html
 ![Database Schema Video - V1.0](./screenshots/swagger-caio.png)
 
 
@@ -82,22 +83,10 @@ O objetivo deste projeto final é implementar uma API REST no âmbito do slogan 
 
 1. Clone o repo
    ```sh
-   git clone https://github.com/luizfelipers19/Desafio_Spring.git
+   git clone https://github.com/mateusvictor/Projeto-Integrador-Meli.git
    ```
 2. Instale Maven packages
    ```sh
-   cd Desafio_Spring/desafio-spring
-   mvn install
-   ```
-3. Crie o pacote target
-   ```sh
-   mvn package
-   ```
-4. Acesse a pasta target e execute o .jar
-    ```sh
-    cd target
-    java -jar desafio-spring-0.0.1-SNAPSHOT.jar
-    ```
+   git checkout requisito6/caio
 
----
 

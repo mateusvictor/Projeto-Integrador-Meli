@@ -29,6 +29,7 @@ public class ProductCommentsController {
     private final ProductCommentServiceImpl commentService;
     private final ProductServiceImpl productService;
 
+
     @ApiOperation(value = "This endpoint creates a comment in a product.")
     @PostMapping()
     public ResponseEntity<ProductCommentResponseDTO> createComment(@PathVariable String idProduct, @RequestBody @Valid ProductCommentRequestDTO requestDTO, UriComponentsBuilder uriBuilder){

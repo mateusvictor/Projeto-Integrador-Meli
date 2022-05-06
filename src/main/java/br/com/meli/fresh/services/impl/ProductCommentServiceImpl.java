@@ -29,6 +29,9 @@ public class ProductCommentServiceImpl implements IProductCommentService<Product
     private final UserAuthenticatedService authService;
 
     @Override
+    /**
+     *This method creates a product comment
+     */
     public ProductComment create(ProductComment productComment, String idProduto) {
         String userId = this.validateUser();
         Product product = this.findProduct(idProduto);
@@ -60,6 +63,10 @@ public class ProductCommentServiceImpl implements IProductCommentService<Product
         this.commentRepository.delete(comment);
     }
 
+    /**
+     * This method validates the permission of a user to delete a productComment
+     * @return
+     */
     private void validateUser(String idBuyer) {
         UserSpringSecurity userClient = authService.authenticated();
         if(userClient == null || (!userClient.hasRole(Role.ADMIN) && !userClient.hasRole(Role.BUYER))||!userClient.getId().equals(idBuyer)){
@@ -67,6 +74,10 @@ public class ProductCommentServiceImpl implements IProductCommentService<Product
         }
     }
 
+    /**
+     * This method validates the permission of a user to post a productComment
+     * @return
+     */
     private String validateUser() {
         UserSpringSecurity userClient = authService.authenticated();
         if(userClient == null || (!userClient.hasRole(Role.ADMIN) && !userClient.hasRole(Role.BUYER))){
