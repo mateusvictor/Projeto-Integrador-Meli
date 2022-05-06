@@ -33,8 +33,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
             "/swagger-resources/**",
             "/swagger-ui/**",
             "/webjars/**",
-            "/swagger-ui.html/**",
-            BASE_URL+"/**"
+            "/swagger-ui.html/**"
     };
 
     public final static String[] PUBLIC_GET_URLS = {
@@ -54,8 +53,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.cors().and().csrf().disable();
         http.authorizeRequests()
                 .antMatchers(PUBLIC_URLS).permitAll()
-                .antMatchers(HttpMethod.GET, PUBLIC_GET_URLS).permitAll()
-                .antMatchers(HttpMethod.POST , PUBLIC_POST_URLS).permitAll()
+//                .antMatchers(HttpMethod.GET, PUBLIC_GET_URLS).permitAll()
+//                .antMatchers(HttpMethod.POST , PUBLIC_POST_URLS).permitAll()
                 .anyRequest().authenticated();
         http.addFilter(new JwtAuthenticationFilter(authenticationManager(), jwtUtil));
         http.addFilter(new JwtAuthorizationFilter(authenticationManager(), jwtUtil, userDetailsService));

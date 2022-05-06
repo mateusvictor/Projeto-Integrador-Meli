@@ -79,25 +79,9 @@ O objetivo deste projeto final é implementar uma API REST no âmbito do slogan 
 
 - Para a instalação do projeto, é necessário realizar um clone do seu repositório.
 
-
-1. Clone o repo
+Clone o repositório
    ```sh
    git clone https://github.com/mateusvictor/Projeto-Integrador-Meli.git
    git checkout requisito6/gustavo
    ```
-2. Instale Maven packages
-   ```sh
-   cd Projeto-Integrador-Meli
-   mvn install
-   ```
-3. Crie o pacote target
-   ```sh
-   mvn package
-   ```
-4. Acesse a pasta target e execute o .jar
-    ```sh
-    cd target
-    java -jar desafio-spring-0.0.1-SNAPSHOT.jar
-    ```
-
 ---
