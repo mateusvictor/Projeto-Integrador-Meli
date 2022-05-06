@@ -1,13 +1,19 @@
 package br.com.meli.fresh.services.impl;
 
 import br.com.meli.fresh.model.Product;
-import br.com.meli.fresh.model.exception.ProductAlreadyExistsException;
+import br.com.meli.fresh.model.Role;
+import br.com.meli.fresh.model.User;
 import br.com.meli.fresh.model.exception.ProductNotFoundException;
 import br.com.meli.fresh.model.exception.ProductsNotFoundException;
+import br.com.meli.fresh.model.exception.UserNotAllowedException;
+import br.com.meli.fresh.model.exception.UserNotFoundException;
 import br.com.meli.fresh.model.filter.ProductFilter;
 import br.com.meli.fresh.repository.IProductRepository;
+import br.com.meli.fresh.repository.IUserRepository;
+import br.com.meli.fresh.security.UserSpringSecurity;
 import br.com.meli.fresh.services.ICrudService;
 import lombok.AllArgsConstructor;
+import org.apache.tomcat.websocket.AuthenticationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -21,14 +27,24 @@ import java.util.stream.Collectors;
 public class ProductServiceImpl implements ICrudService<Product> {
 
     private final IProductRepository repository;
+    private final IUserRepository userRepository;
+    private final UserAuthenticatedService auth;
 
     @Override
     public Product create(Product product) {
-        Product p = repository.findByName(product.getName());
-        // This if statement will check if a given product already exists in our database.ß If so, we will raise an error, and if not, we will create the product
-        if(p != null) throw new ProductAlreadyExistsException();
 
-        // Vinculating the batches with the product
+        UserSpringSecurity warehouse = auth.authenticated();
+        if(warehouse == null && !warehouse.hasRole(Role.ADMIN) || !warehouse.hasRole(Role.ADMIN)) {
+            throw new UserNotAllowedException("This user authenticated has not authorization to create a product!");
+        }
+
+        userRepository.findById(product.getSeller().getId()).orElseThrow(() -> new UserNotFoundException(product.getSeller().getId()));
+
+        if(!userRepository.findById(product.getSeller().getId()).get().getRoles().contains(Role.SELLER)) {
+            throw new UserNotAllowedException("This user is not a seller!");
+        }
+
+       // Vinculating the batches with the product
         if(product.getBatchList() != null && product.getBatchList().size()  != 0) {
             product.setBatchList(product.getBatchList().stream().map(batch -> {
                  batch.setProduct(product);
@@ -42,7 +58,18 @@ public class ProductServiceImpl implements ICrudService<Product> {
 
     @Override
     public Product update(String id, Product product) {
+        UserSpringSecurity warehouse = auth.authenticated();
+        if(warehouse == null && !warehouse.hasRole(Role.ADMIN) || !warehouse.hasRole(Role.ADMIN)) {
+            throw new UserNotAllowedException("This user authenticated has not authorization to create a product!");
+        }
+
         Product productToBeUpdated = repository.findById(id).orElseThrow(()-> new ProductNotFoundException(id));
+        if(product.getSeller() != null) {
+            userRepository.findById(product.getSeller().getId()).orElseThrow(() -> new UserNotFoundException(product.getSeller().getId()));
+            if(!userRepository.findById(product.getSeller().getId()).get().getRoles().contains(Role.SELLER)) {
+                throw new UserNotAllowedException("This user is not a seller!");
+            }
+        }
         return repository.save(updatingProduct(product, productToBeUpdated));
     }
 
@@ -83,6 +110,7 @@ public class ProductServiceImpl implements ICrudService<Product> {
         if(newProduct.getMinTemperature() != null) olderProduct.setMinTemperature(newProduct.getMinTemperature());
         if(newProduct.getMaxTemperature() != null) olderProduct.setMaxTemperature(newProduct.getMaxTemperature());
         if(newProduct.getWeight() != null) olderProduct.setWeight(newProduct.getWeight());
+        if(newProduct.getSeller() != null) olderProduct.setSeller(newProduct.getSeller());
         return olderProduct;
     }
 }

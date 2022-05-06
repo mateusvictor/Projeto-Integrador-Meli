@@ -30,6 +30,8 @@ public class Product {
     private Float weight;
     private BigDecimal price;
 
+    @ManyToOne
+    private User seller;
 
     @OneToMany(mappedBy = "product", fetch = FetchType.EAGER, cascade = CascadeType.PERSIST)
     private List<Batch> batchList;
